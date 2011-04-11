@@ -34,6 +34,7 @@ import android.widget.ListAdapter;
 import android.widget.SimpleCursorAdapter;
 import edu.fsu.cs.contextprovider.R;
 
+
 public class ContextBrowserActivity extends ListActivity {
 	private static final int ADD_ID = Menu.FIRST + 1;
 	private static final int EDIT_ID = Menu.FIRST + 2;
