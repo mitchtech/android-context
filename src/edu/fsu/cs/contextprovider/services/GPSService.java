@@ -1,9 +1,15 @@
 package edu.fsu.cs.contextprovider.services;
 
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -23,11 +29,13 @@ import android.util.Log;
 public class GPSService extends Service
 {
 	private static final String TAG = "GPSService";
+	private static final String locationType = LocationManager.NETWORK_PROVIDER;
 	private static LocationManager manager;
 	private static LocationListener listener;
 	private static boolean running = false;
 	private static boolean isreliable = false;
-	private static Location currentLocation = null;
+	private static Location currentLocation = new Location(locationType);
+	private static String currentZip = null;
 	
 //	private final IBinder mBinder = new LocalBinder();
 //    private static boolean mBound = false;
@@ -68,6 +76,10 @@ public class GPSService extends Service
 		return currentLocation.getTime();
 	}
 	
+	public static String getZip() {
+		return currentZip;
+	}
+	
 	/**
 	 * Often times the GPS goes in and out of service.  We perform some logic to determine
 	 * if the current GPS reading is reliable or not.
@@ -78,12 +90,39 @@ public class GPSService extends Service
 		return isreliable;
 	}
 	
-	public void onCreate () {
+	
+	private String GeoZip() {
+		String result = null;
+		try{
+			Geocoder gcd = new Geocoder(this, Locale.getDefault());
+			List<Address> addresses = 
+				gcd.getFromLocation(GPSService.getLatitude(), GPSService.getLongitude(),100);
+			if (addresses.size() > 0) {
+				Address address =  addresses.get(0);
+				result = address.getPostalCode();
+			}
+		}
+		catch(IOException ex){
+			Log.i(TAG, "IO: " + ex);
+		}
+		return result;
+	}
+	
+	public void onCreate() {
 		Log.i(TAG, "Created()");
+//		context = this.getApplicationContext();
+//		context = this.getBaseContext();
+
+		
 		listener = new LocationListener() {
 			public void onLocationChanged(Location location) {
-				Log.i(TAG, "New location found: [" + location.getLongitude() + "," + location.getLatitude() + "] | Speed: [" + location.getSpeed() + "]");
+
+//				String result = getFromLocation();
+	            // TODO: We should lock the below to make our location update atomic
+//	            currentCity = result;
 				currentLocation.set(location);
+				currentZip = GeoZip();
+				Log.i(TAG, "New location found: [" + location.getLongitude() + "," + location.getLatitude() + "] | Speed: [" + location.getSpeed() + "] | Zip: [" + currentZip + "]");
 			}
 
 			public void onProviderDisabled(String provider) {
@@ -128,9 +167,11 @@ public class GPSService extends Service
 //	        }
 //	    };
 		
-		currentLocation = new Location(LocationManager.GPS_PROVIDER);
+
 		manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
+		//manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
+		manager.requestLocationUpdates(locationType, 0, 0, listener);
+
 
 	}
 
@@ -151,5 +192,5 @@ public class GPSService extends Service
 		stopSelf();
 	}
 	
-	
+
 }

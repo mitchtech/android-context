@@ -20,6 +20,7 @@ public class Movement extends TimerTask {
 	private static float speed;
 	private static Timer timer = new Timer();
 	private static Movement movementObj = new Movement();
+	private static boolean running = false;
 	
 	private static MovementState currentMovementState = null;
 
@@ -61,7 +62,11 @@ public class Movement extends TimerTask {
 	 * @param interval rate at which to run the thread, in seconds
 	 */
 	public static void Start(int interval) {
+		if (running == true) {
+			return;
+		}
 		timer.schedule(movementObj, 100, interval*1000);
+		running = true;
 	}
 	
 	/**
@@ -69,6 +74,7 @@ public class Movement extends TimerTask {
 	 */
 	public static void Stop() {
 		timer.cancel();
+		running = false;
 	}
 	
 	public static String getMovement() {
