@@ -40,6 +40,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -54,7 +55,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import edu.fsu.cs.contextprovider.R;
 
-public class ContextBrowserActivity extends ListActivity {
+public class ContextBrowserActivity extends ListActivity implements TextToSpeech.OnInitListener {
 	@SuppressWarnings("unused")
 	private static final String TAG = "ContextBrowserActivity";
 	private static final int ADD_ID = Menu.FIRST + 1;
@@ -66,16 +67,18 @@ public class ContextBrowserActivity extends ListActivity {
 	private static final String[] PROJECTION = new String[] { ContextProvider.Cntxt._ID, ContextProvider.Cntxt.TITLE, ContextProvider.Cntxt.VALUE };
 	private Cursor contextCursor;
 
+	public static TextToSpeech tts;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		tts = new TextToSpeech(this,this);
 		/* Start GPS Service */
 		Intent intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.GPSService.class);
 		startService(intent);
-		
+
 		/* Start Accelerometer Service */
-		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.AccelService.class);
+		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.AccelerometerService.class);
 		startService(intent);
 
 		/* Start movement context */
@@ -95,6 +98,15 @@ public class ContextBrowserActivity extends ListActivity {
 		MovementMonitor.StopThread();
 		super.onDestroy();
 		contextCursor.close();
+		tts.shutdown();
+	}
+
+	public void onInit(int status) {
+		Locale loc = Locale.getDefault();
+		if(tts.isLanguageAvailable(loc) >= TextToSpeech.LANG_AVAILABLE){
+			tts.setLanguage(loc);
+		}
+		tts.speak("Text to Speach Initialized", TextToSpeech.QUEUE_FLUSH, null);
 	}
 
 	@Override
@@ -117,7 +129,7 @@ public class ContextBrowserActivity extends ListActivity {
 			String res = GPSService.getZip();
 			Toast.makeText(getApplicationContext(), "GeoLocation: " + res, Toast.LENGTH_LONG).show();
 			return true;
-		
+
 		case WEATHER_ID:
 			Toast.makeText(getApplicationContext(), "Trying to get weather", Toast.LENGTH_SHORT).show();
 			String zip = GPSService.getZip();
@@ -158,7 +170,7 @@ public class ContextBrowserActivity extends ListActivity {
 				WeatherSet ws = gwh.getWeatherSet();
 
 				weather = ws.getWeatherCurrentCondition().getCondition() + " " + ws.getWeatherCurrentCondition().getTempFahrenheit() + " degrees F" + ws.getWeatherCurrentCondition().getHumidity()
-						+ " humidity" + ws.getWeatherCurrentCondition().getWindCondition() + " ";
+				+ " humidity" + ws.getWeatherCurrentCondition().getWindCondition() + " ";
 
 				// ((TextView) findViewById(R.id.temperature)).setText(""
 				// + ws.getWeatherCurrentCondition()

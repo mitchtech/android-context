@@ -9,7 +9,7 @@
 		<provider android:name="ContextProvider" android:authorities="edu.fsu.cs.contextprovider" />
 
 		<activity android:name="ContextBrowserActivity"
-			android:label="@string/app_name">
+			android:label="@string/app_name" android:screenOrientation="portrait">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
@@ -17,7 +17,7 @@
 		</activity>
 
 		<service android:name="edu.fsu.cs.contextprovider.sensor.GPSService"></service>
-		<service android:name="edu.fsu.cs.contextprovider.sensor.AccelService"></service>
+		<service android:name="edu.fsu.cs.contextprovider.sensor.AccelerometerService"></service>
 		<uses-library android:name="com.google.android.maps" />
 	</application>
 

@@ -4,10 +4,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.content.Context;
+import android.content.Intent;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.widget.Toast;
 
-import edu.fsu.cs.contextprovider.sensor.AccelService;
+import edu.fsu.cs.contextprovider.ContextBrowserActivity;
+import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
 import edu.fsu.cs.contextprovider.sensor.GPSService;
 
 /**
@@ -18,7 +21,10 @@ import edu.fsu.cs.contextprovider.sensor.GPSService;
  */
 public class MovementMonitor extends TimerTask {
 	private static final String TAG = "Movement";
-
+	
+	private static final boolean DEBUG_TTS = true;
+	private static final float METERS_PER_SECOND_TO_MPH = (float)0.44704;
+	
 	private static int latitude;
 	private static int longitude;
 	private static float speed;
@@ -27,10 +33,10 @@ public class MovementMonitor extends TimerTask {
 	private static boolean running = false;
 	
 	private static MovementState currentMovementState = null;
-
+	
 	public enum MovementState {
-		STILL 					(0, 0, 99999999),
-		WALKING					(1, 2, 1000),
+		STILL 					(0, 0, 1001),
+		WALKING					((float)0.5, 2, 1000),
 		WALKING_ALMOST_RUNNING	(3, 4, 700),
 		RUNNING					(5, 10, 500),
 		RUNNING_ALMOST_DRIVING	(11, 15, 100),
@@ -40,8 +46,8 @@ public class MovementMonitor extends TimerTask {
 		private final long stride_time;
 
 		MovementState(float min, float max, long stride_time) {
-			this.min = min;
-			this.max = max;
+			this.min = min*METERS_PER_SECOND_TO_MPH;
+			this.max = max*METERS_PER_SECOND_TO_MPH;
 			this.stride_time = stride_time;
 		}
 
@@ -81,8 +87,12 @@ public class MovementMonitor extends TimerTask {
 		running = false;
 	}
 
-	public static String getMovement() {
+	public static String getMovementState() {
 		return currentMovementState.toString();
+	}
+	
+	public static float getSpeedMph() {
+		return GPSService.getSpeed()*METERS_PER_SECOND_TO_MPH;
 	}
 
 	@Override
@@ -90,11 +100,21 @@ public class MovementMonitor extends TimerTask {
 
 		if (GPSService.isReliable() == true) {
 			currentMovementState = determineMovementStateFromGps();
+			Log.i(TAG, "GPS determined state: " + currentMovementState);
+			if (DEBUG_TTS == true) {
+				ContextBrowserActivity.tts.speak("GPS Movement " + currentMovementState, TextToSpeech.QUEUE_FLUSH, null);
+			}
 			// Use the accelerometer 
 		} else {
 			currentMovementState = determineMovementStateFromAccelerometer();
 			Log.i(TAG, "Accelerometer determined state: " + currentMovementState);
+			if (DEBUG_TTS == true) {
+				ContextBrowserActivity.tts.speak("Accelerometer Movement " + currentMovementState, TextToSpeech.QUEUE_FLUSH, null);
+			}
+
 		}
+		
+
 	}
 
 	/**
@@ -122,16 +142,17 @@ public class MovementMonitor extends TimerTask {
 	private MovementState determineMovementStateFromAccelerometer() {
 		MovementState newState = MovementState.STILL;
 		long currentTime = System.currentTimeMillis();
-		long stepTime = AccelService.step_timestamp;
+		long stepTime = AccelerometerService.step_timestamp;
 		long sinceStepTime = currentTime - stepTime;
 		
 		long diffCurrentStrideTime = 0, diffConsiderStrideTime = 0;
-		
+		Log.i(TAG, "Time since last step: " + sinceStepTime + " | CurrentTime: " + currentTime + " | StepTime: " + stepTime);
+
 		/* Find the state that has the closest stride time */
 		for (MovementState s : MovementState.values()) {
 			diffCurrentStrideTime = Math.abs(newState.stride_time - sinceStepTime);
 			diffConsiderStrideTime = Math.abs(s.stride_time - sinceStepTime);
-			
+			Log.i(TAG, "Considering: [" + diffConsiderStrideTime + "] | Current: [" + diffCurrentStrideTime + "]");
 			if (diffConsiderStrideTime < diffCurrentStrideTime) {
 				newState = s;
 			}
