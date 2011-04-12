@@ -15,10 +15,6 @@
 
 package edu.fsu.cs.contextprovider;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-
 import edu.fsu.cs.contextprovider.services.GPSService;
 import edu.fsu.cs.contextprovider.threads.Movement;
 
@@ -29,8 +25,6 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.location.Address;
-import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -48,6 +42,7 @@ import edu.fsu.cs.contextprovider.R;
 
 
 public class ContextBrowserActivity extends ListActivity {
+	@SuppressWarnings("unused")
 	private static final String TAG = "ContextBrowserActivity";
 	private static final int ADD_ID = Menu.FIRST + 1;
 	private static final int EDIT_ID = Menu.FIRST + 2;
@@ -65,9 +60,13 @@ public class ContextBrowserActivity extends ListActivity {
 		/* Start GPS Service */
 		Intent intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.services.GPSService.class);
 		startService(intent);
+		
+		/* Start Accelerometer Service */
+		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.services.AccelService.class);
+		startService(intent);
 
 		/* Start movement context */
-		Movement.Start(5);
+		Movement.StartThread(5);
 
 		contextCursor = managedQuery(ContextProvider.Cntxt.CONTENT_URI,
 				PROJECTION, null, null, null);
@@ -83,7 +82,7 @@ public class ContextBrowserActivity extends ListActivity {
 
 	@Override
 	public void onDestroy() {
-		Movement.Stop();
+		Movement.StopThread();
 		super.onDestroy();
 		contextCursor.close();
 	}

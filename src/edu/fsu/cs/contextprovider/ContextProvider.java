@@ -308,8 +308,8 @@ public class ContextProvider extends ContentProvider {
 	}
 
 	private void populateDefaultValues(ContentValues values) {
-		Long now = Long.valueOf(System.currentTimeMillis());
-		Resources r = Resources.getSystem();
+//		Long now = Long.valueOf(System.currentTimeMillis());
+//		Resources r = Resources.getSystem();
 
 		if (values.containsKey(ContextProvider.Cntxt.VALUE) == false) {
 			values.put(ContextProvider.Cntxt.VALUE, 0.0f);
