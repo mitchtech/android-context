@@ -29,9 +29,10 @@ import android.util.Log;
 public class GPSService extends Service
 {
 	private static final String TAG = "GPSService";
-	private static final String locationType = LocationManager.NETWORK_PROVIDER;
+	private static final String locationType = LocationManager.GPS_PROVIDER;
 	private static LocationManager manager;
 	private static LocationListener listener;
+	@SuppressWarnings("unused")
 	private static boolean running = false;
 	private static boolean isreliable = false;
 	private static Location currentLocation = new Location(locationType);
@@ -109,10 +110,6 @@ public class GPSService extends Service
 	}
 	
 	public void onCreate() {
-		Log.i(TAG, "Created()");
-//		context = this.getApplicationContext();
-//		context = this.getBaseContext();
-
 		
 		listener = new LocationListener() {
 			public void onLocationChanged(Location location) {
@@ -127,11 +124,13 @@ public class GPSService extends Service
 
 			public void onProviderDisabled(String provider) {
 				//manager.removeUpdates(this);
-				//isreliable = false;
+				Log.i(TAG, locationType + ": is no longer reliable");
+				isreliable = false;
 			}
 
 			public void onProviderEnabled(String provider) {
-				//isreliable = true;
+				Log.i(TAG, locationType + ": is reliable");
+				isreliable = true;
 			}
 
 			public void onStatusChanged(String provider, int status,
@@ -179,7 +178,7 @@ public class GPSService extends Service
 	{
 		Log.i(TAG, "Service has been started.");
 		running = true;
-		isreliable = true;
+		isreliable = false;
 		return 0;
 	}
 
