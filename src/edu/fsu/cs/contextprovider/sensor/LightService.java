@@ -1,4 +1,4 @@
-package edu.fsu.cs.contextprovider.sensors;
+package edu.fsu.cs.contextprovider.sensor;
 
 import java.util.List;
 import android.content.SharedPreferences;
@@ -10,30 +10,30 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-public class ProximityService extends AbstractContextService implements SensorEventListener {
+public class LightService extends AbstractContextService implements SensorEventListener {
 
-	private static final String TAG = "ProximitySensor Service";
+	private static final String TAG = "LightSensor Service";
 	private static final boolean DEBUG = true;
 
 	private SensorManager sm;
-	private Sensor proximitySensor;
+	private Sensor lightSensor;
 
 	@Override
 	public void init() {
 		if (!serviceEnabled) {
 
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-//			pluginId = prefs.getInt(ProximityEditActivity.KEY_PLUGIN_ID, -1);
+			// pluginId = prefs.getInt(LightEditActivity.KEY_PLUGIN_ID, -1);
 
 			// make sure not to call it twice
 			sm = (SensorManager) getSystemService(SENSOR_SERVICE);
-			List<Sensor> sensors = sm.getSensorList(Sensor.TYPE_PROXIMITY);
+			List<Sensor> sensors = sm.getSensorList(Sensor.TYPE_LIGHT);
 			if (sensors != null && sensors.size() > 0) {
-				proximitySensor = sensors.get(0);
-				sm.registerListener(this, proximitySensor, SensorManager.SENSOR_DELAY_UI);
+				lightSensor = sensors.get(0);
+				sm.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_UI);
 				serviceEnabled = true;
 			} else {
-				Toast.makeText(this, "Proximity sensor is not available on this device!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "Light sensor is not available on this device!", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -44,7 +44,6 @@ public class ProximityService extends AbstractContextService implements SensorEv
 			sm.unregisterListener(this);
 		}
 		super.onDestroy();
-
 	}
 
 	@Override
@@ -54,12 +53,14 @@ public class ProximityService extends AbstractContextService implements SensorEv
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+		if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
 
-			int cm = (int) event.values[0];
+			int lux = (int) event.values[0];
 
-			if (DEBUG) Log.d(TAG, "send: " + cm);
-//			Amarino.sendDataFromPlugin(this, pluginId, cm);
+			if (DEBUG)
+				Log.d(TAG, "send: " + lux);
+			// Amarino.sendDataFromPlugin(this, pluginId, lux);
+
 		}
 	}
 

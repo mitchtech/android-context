@@ -1,4 +1,4 @@
-package edu.fsu.cs.contextprovider.sensors;
+package edu.fsu.cs.contextprovider.sensor;
 import edu.fsu.cs.contextprovider.ContextIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -33,34 +33,34 @@ public class SensorServiceReceiver extends BroadcastReceiver {
 		
 		Log.d(TAG, "request for " + className);
 		if (className.equals(context.getPackageName() + ".compass.BackgroundService")){
-			i = new Intent(context, edu.fsu.cs.contextprovider.sensors.CompassService.class);
+			i = new Intent(context, edu.fsu.cs.contextprovider.sensor.CompassService.class);
 		}
 		else if (className.equals(context.getPackageName() + ".accelerometer.BackgroundService")){
-			i = new Intent(context, edu.fsu.cs.contextprovider.sensors.AccelerometerService.class);
+			i = new Intent(context, edu.fsu.cs.contextprovider.sensor.AccelerometerService.class);
 		}
 		else if (className.equals(context.getPackageName() + ".orientation.BackgroundService")){
-			i = new Intent(context, edu.fsu.cs.contextprovider.sensors.OrientationService.class);
+			i = new Intent(context, edu.fsu.cs.contextprovider.sensor.OrientationService.class);
 		}
 		else if (className.equals(context.getPackageName() + ".timetick.BackgroundService")){
-			i = new Intent(context, edu.fsu.cs.contextprovider.sensors.TimetickService.class);
+			i = new Intent(context, edu.fsu.cs.contextprovider.sensor.TimetickService.class);
 		}
 		else if (className.equals(context.getPackageName() + ".lightsensor.BackgroundService")){
-			i = new Intent(context, edu.fsu.cs.contextprovider.sensors.LightService.class);
+			i = new Intent(context, edu.fsu.cs.contextprovider.sensor.LightService.class);
 		}
 		else if (className.equals(context.getPackageName() + ".magneticfield.BackgroundService")){
-			i = new Intent(context, edu.fsu.cs.contextprovider.sensors.MagnetometerService.class);
+			i = new Intent(context, edu.fsu.cs.contextprovider.sensor.MagnetometerService.class);
 		}
 		else if (className.equals(context.getPackageName() + ".proximity.BackgroundService")){
-			i = new Intent(context, edu.fsu.cs.contextprovider.sensors.ProximityService.class);
+			i = new Intent(context, edu.fsu.cs.contextprovider.sensor.ProximityService.class);
 		}
 		else if (className.equals(context.getPackageName() + ".phonestate.BackgroundService")){
-			i = new Intent(context, edu.fsu.cs.contextprovider.sensors.PhoneService.class);
+			i = new Intent(context, edu.fsu.cs.contextprovider.sensor.PhoneService.class);
 		}
 		else if (className.equals(context.getPackageName() + ".batterylevel.BackgroundService")){
-			i = new Intent(context, edu.fsu.cs.contextprovider.sensors.BatteryService.class);
+			i = new Intent(context, edu.fsu.cs.contextprovider.sensor.BatteryService.class);
 		}
 		else if (className.equals(context.getPackageName() + ".sms.BackgroundService")){
-			i = new Intent(context, edu.fsu.cs.contextprovider.sensors.SmsService.class);
+			i = new Intent(context, edu.fsu.cs.contextprovider.sensor.SmsService.class);
 		}
 		else {
 			return;

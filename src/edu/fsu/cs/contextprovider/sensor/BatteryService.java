@@ -1,41 +1,44 @@
-package edu.fsu.cs.contextprovider.sensors;
+package edu.fsu.cs.contextprovider.sensor;
 
-import java.util.Date;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.BatteryManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-public class TimetickService extends AbstractContextService {
+public class BatteryService extends AbstractContextService {
 
-	private static final String TAG = "TimeTick Service";
+	private static final String TAG = "BatteryLevel Service";
 	private static final boolean DEBUG = true;
 
 	BroadcastReceiver receiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			int minutes = new Date().getMinutes();
+			int batteryLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
 
 			if (DEBUG)
-				Log.d(TAG, "send: " + minutes);
-			// Amarino.sendDataFromPlugin(context, pluginId, minutes);
+				Log.d(TAG, "send: " + batteryLevel);
+			// Amarino.sendDataFromPlugin(context, pluginId, batteryLevel);
 		}
 	};
 
 	@Override
 	public void init() {
 		if (!serviceEnabled) {
+			/* here should be your specific initialization code */
 
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-//			pluginId = prefs.getInt(TimetickEditActivity.KEY_PLUGIN_ID, -1);
+			// pluginId = prefs.getInt(BatteryEditActivity.KEY_PLUGIN_ID, -1);
 
-			IntentFilter filter = new IntentFilter(Intent.ACTION_TIME_TICK);
+			IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
 			registerReceiver(receiver, filter);
 
+			// don't forget to set plug-in enabled if everything was initialized
+			// fine
 			serviceEnabled = true;
 		}
 	}

@@ -1,6 +1,7 @@
-package edu.fsu.cs.contextprovider.sensors;
+package edu.fsu.cs.contextprovider.sensor;
 
 import java.util.List;
+
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.hardware.Sensor;
@@ -11,15 +12,19 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-public class OrientationService extends AbstractContextService implements SensorEventListener, OnSharedPreferenceChangeListener {
+public class AccelerometerService extends AbstractContextService implements SensorEventListener, OnSharedPreferenceChangeListener {
 
-	private static final String TAG = "Orientation Plugin";
+	private static final String TAG = "Accelerometer Service";
 	private static final boolean DEBUG = true;
-
 	private SensorManager sm;
-	private Sensor orientationSensor;
+	private Sensor accelerometerSensor;
+	
 	private int frequency;
 	private int ignoreThreshold = 0;
+	
+	int ACCELEROMETER_POLL_FREQUENCY;
+	int ACCELEROMETER_IGNORE_THRESHOLD;
+		
 	private int ignoreCounter = 0;
 
 	@Override
@@ -27,20 +32,19 @@ public class OrientationService extends AbstractContextService implements Sensor
 		if (!serviceEnabled) {
 
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-			// frequency = prefs.getInt(OrientationEditActivity.PREF_FREQUENCY,
-			// 50);
-			// pluginId = prefs.getInt(OrientationEditActivity.KEY_PLUGIN_ID,
+			// frequency =prefs.getInt(AccelerometerEditActivity.PREF_FREQUENCY, 50);
+			// pluginId = prefs.getInt(AccelerometerEditActivity.KEY_PLUGIN_ID,
 			// -1);
-			// ignoreThreshold = OrientationEditActivity.getRate(frequency);
+			// ignoreThreshold = AccelerometerEditActivity.getRate(frequency);
 
 			prefs.registerOnSharedPreferenceChangeListener(this);
 
 			// make sure not to call it twice
 			sm = (SensorManager) getSystemService(SENSOR_SERVICE);
-			List<Sensor> sensors = sm.getSensorList(Sensor.TYPE_ORIENTATION);
+			List<Sensor> sensors = sm.getSensorList(Sensor.TYPE_ACCELEROMETER);
 			if (sensors != null && sensors.size() > 0) {
-				orientationSensor = sensors.get(0);
-				sm.registerListener(this, orientationSensor, SensorManager.SENSOR_DELAY_UI);
+				accelerometerSensor = sensors.get(0);
+				sm.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_UI);
 				serviceEnabled = true;
 			} else {
 				Toast.makeText(this, "Accelerometer sensor is not available on this device!", Toast.LENGTH_SHORT).show();
@@ -64,7 +68,7 @@ public class OrientationService extends AbstractContextService implements Sensor
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		if (event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
+		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
 			if (ignoreCounter >= ignoreThreshold) {
 				ignoreCounter = 0;
@@ -81,8 +85,8 @@ public class OrientationService extends AbstractContextService implements Sensor
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		// if (OrientationEditActivity.PREF_FREQUENCY.equals(key)) {
-		// ignoreThreshold = OrientationEditActivity.getRate(prefs.getInt(key,
+		// if (AccelerometerEditActivity.PREF_FREQUENCY.equals(key)) {
+		// ignoreThreshold = AccelerometerEditActivity.getRate(prefs.getInt(key,
 		// 50));
 		// }
 	}

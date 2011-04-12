@@ -1,4 +1,4 @@
-package edu.fsu.cs.contextprovider.sensors;
+package edu.fsu.cs.contextprovider.sensor;
 
 import edu.fsu.cs.contextprovider.ContextIntent;
 import android.app.Service;

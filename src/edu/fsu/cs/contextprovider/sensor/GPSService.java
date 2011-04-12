@@ -1,4 +1,4 @@
-package edu.fsu.cs.contextprovider.services;
+package edu.fsu.cs.contextprovider.sensor;
 
 
 import java.io.IOException;
