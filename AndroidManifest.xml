@@ -16,7 +16,7 @@
 			</intent-filter>
 		</activity>
 
-		<service android:name="edu.fsu.cs.contextprovider.services.GPSService"></service>
+		<service android:name="services.GPSService"></service>
 				<uses-library android:name="com.google.android.maps" />
 	</application>
 
