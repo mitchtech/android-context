@@ -26,8 +26,8 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
-import edu.fsu.cs.contextprovider.services.GPSService;
-import edu.fsu.cs.contextprovider.threads.Movement;
+import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
+import edu.fsu.cs.contextprovider.sensor.GPSService;
 import edu.fsu.cs.contextprovider.weather.GoogleWeatherHandler;
 import edu.fsu.cs.contextprovider.weather.WeatherSet;
 
@@ -71,15 +71,15 @@ public class ContextBrowserActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 
 		/* Start GPS Service */
-		Intent intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.services.GPSService.class);
+		Intent intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.GPSService.class);
 		startService(intent);
 		
 		/* Start Accelerometer Service */
-		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.services.AccelService.class);
+		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.AccelService.class);
 		startService(intent);
 
 		/* Start movement context */
-		Movement.StartThread(5);
+		MovementMonitor.StartThread(5);
 
 		contextCursor = managedQuery(ContextProvider.Cntxt.CONTENT_URI, PROJECTION, null, null, null);
 
@@ -92,7 +92,7 @@ public class ContextBrowserActivity extends ListActivity {
 
 	@Override
 	public void onDestroy() {
-		Movement.StopThread();
+		MovementMonitor.StopThread();
 		super.onDestroy();
 		contextCursor.close();
 	}

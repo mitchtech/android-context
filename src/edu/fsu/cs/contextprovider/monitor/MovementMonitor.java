@@ -1,4 +1,4 @@
-package edu.fsu.cs.contextprovider.threads;
+package edu.fsu.cs.contextprovider.monitor;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -7,8 +7,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import edu.fsu.cs.contextprovider.services.AccelService;
-import edu.fsu.cs.contextprovider.services.GPSService;
+import edu.fsu.cs.contextprovider.sensor.AccelService;
+import edu.fsu.cs.contextprovider.sensor.GPSService;
 
 /**
  * The structure of this class allows for only 1 Movement object to be created.  Because of this the Start() and Stop()
@@ -16,14 +16,14 @@ import edu.fsu.cs.contextprovider.services.GPSService;
  * @author Meyers
  *
  */
-public class Movement extends TimerTask {
+public class MovementMonitor extends TimerTask {
 	private static final String TAG = "Movement";
 
 	private static int latitude;
 	private static int longitude;
 	private static float speed;
 	private static Timer timer = new Timer();
-	private static Movement movementObj = new Movement();
+	private static MovementMonitor movementObj = new MovementMonitor();
 	private static boolean running = false;
 	
 	private static MovementState currentMovementState = null;
@@ -77,7 +77,7 @@ public class Movement extends TimerTask {
 	public static void StopThread() {
 		Log.i(TAG, "Stop()");
 		timer.purge();
-		movementObj = new Movement();
+		movementObj = new MovementMonitor();
 		running = false;
 	}
 

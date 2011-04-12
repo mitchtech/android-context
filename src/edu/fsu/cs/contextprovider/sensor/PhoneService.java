@@ -1,4 +1,4 @@
-package edu.fsu.cs.contextprovider.sensors;
+package edu.fsu.cs.contextprovider.sensor;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
