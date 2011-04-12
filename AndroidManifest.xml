@@ -16,8 +16,8 @@
 			</intent-filter>
 		</activity>
 
-		<service android:name="edu.fsu.cs.contextprovider.services.GPSService"></service>
-		<service android:name="edu.fsu.cs.contextprovider.services.AccelService"></service>
+		<service android:name="edu.fsu.cs.contextprovider.sensor.GPSService"></service>
+		<service android:name="edu.fsu.cs.contextprovider.sensor.AccelService"></service>
 		<uses-library android:name="com.google.android.maps" />
 	</application>
 
