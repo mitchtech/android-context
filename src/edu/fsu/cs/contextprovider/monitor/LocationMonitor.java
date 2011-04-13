@@ -74,8 +74,9 @@ public class LocationMonitor extends TimerTask {
 		Log.i(TAG, "Address: [" + currentAddress + "] | Zip: [" + currentZip + "]");
 	}
 
-	public static float proximityTo(String loc) {
-		return 0;
+	public static double proximityTo(String loc) {
+		Address address = getGeoFromAddress(loc);		
+		return distanceMeters(address.getLatitude(), address.getLongitude(), getLatitude(), getLongitude());
 	}
 
 	public static double proximityTo(double longitude, double latitude) {
@@ -116,8 +117,23 @@ public class LocationMonitor extends TimerTask {
 		}
 		return 0;
 	}
+	
+	private static Address getGeoFromAddress(String str) {
+		List<Address> addresses = null;
+		Address address = null;
+		try {
+			addresses = geocoder.getFromLocationName(str, 1);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (addresses.size() > 0) {
+			address =  addresses.get(0);
+		}
+		return address;
+	}
 
-	private Address getAddressFromGeo(double latitude, double longitude) {
+	private static Address getAddressFromGeo(double latitude, double longitude) {
 		List<Address> addresses = null;
 		try {
 			addresses = geocoder.getFromLocation(latitude, longitude,1);
