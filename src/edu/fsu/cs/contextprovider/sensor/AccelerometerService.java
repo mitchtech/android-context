@@ -41,8 +41,10 @@ public class AccelerometerService extends Service implements SensorEventListener
 	public static Stack<Float> yHistory = new Stack<Float>();
 	public static Stack<Float> zHistory = new Stack<Float>();
 	public static float x = 0, y = 0, z = 0;
+	public static float lastX=0, lastY=0, lastZ=0;
 	public static long step_count = 0;
 	public static long step_timestamp = 0;
+	public static int shakeCount = 0;
 
 	/* Accelerometer -> walking calculation variables */
 	private static float   mLimit = 10;
@@ -135,23 +137,27 @@ public class AccelerometerService extends Service implements SensorEventListener
 			//			xHistory.push(event.values[0]);
 			//			yHistory.push(event.values[1]);
 			//			zHistory.push(event.values[2]);
+			lastX = x;
+			lastY = y;
+			lastZ = z;
+			
 			x = event.values[0];
 			y = event.values[0];
 			z = event.values[0];
-
-			if (DEBUG) {
-				Log.i(TAG, "New: [" + event.values[0] + "," + event.values[1] + "," + event.values[2] + "]");
-				String history = new String();
-				for (int i=0; i < xHistory.size(); ++i) {
-					Float a = xHistory.get(i);
-					Float b = yHistory.get(i);
-					Float c = zHistory.get(i);
-
-					history += "[" + a + "," + b + "," + c + "]" + ", ";            		
-				}
-
-				Log.i(TAG, "Old: " + history);
-			}
+//
+//			if (DEBUG) {
+//				Log.i(TAG, "New: [" + event.values[0] + "," + event.values[1] + "," + event.values[2] + "]");
+//				String history = new String();
+//				for (int i=0; i < xHistory.size(); ++i) {
+//					Float a = xHistory.get(i);
+//					Float b = yHistory.get(i);
+//					Float c = zHistory.get(i);
+//
+//					history += "[" + a + "," + b + "," + c + "]" + ", ";            		
+//				}
+//
+//				Log.i(TAG, "Old: " + history);
+//			}
 		}
 
 		/* Check if a step was taken */
@@ -161,6 +167,9 @@ public class AccelerometerService extends Service implements SensorEventListener
 			step_timestamp = System.currentTimeMillis();
 			Log.i(TAG, "Step Taken: [" + step_count + "] | At: [" + step_timestamp + "]");
 		}
+		
+		boolean isShaken = isShakeEnough(x, y, z);
+		
 	}
 
 	private boolean isStepTaken() {
@@ -203,6 +212,36 @@ public class AccelerometerService extends Service implements SensorEventListener
 		mLastValues[k] = v;
 		return stepTaken;
 	}
+	
+	private boolean isShakeEnough(float x, float y, float z) {
+		double force = 0.0d;
+		force += Math.pow((x - lastX) / SensorManager.GRAVITY_EARTH, 2.0);
+		force += Math.pow((y - lastY) / SensorManager.GRAVITY_EARTH, 2.0);
+		force += Math.pow((z - lastZ) / SensorManager.GRAVITY_EARTH, 2.0);
+		force = Math.sqrt(force);
+
+		lastX = x;
+		lastY = y;
+		lastZ = z;
+
+		if (force > Defaults.THRESHOLD) {
+			shakeCount++;
+			if (shakeCount > Defaults.SHAKE_COUNT) {
+				shakeCount = 0;
+				lastX = 0;
+				lastY = 0;
+				lastZ = 0;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static class Defaults {
+	        public static final float THRESHOLD = (float)2.75;
+	        public static final int SHAKE_COUNT = 4;
+	}
+
 
 
 	public static void setSensitivity(float sensitivity) {

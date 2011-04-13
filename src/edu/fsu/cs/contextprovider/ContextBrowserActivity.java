@@ -26,6 +26,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
+import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
 import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
 import edu.fsu.cs.contextprovider.sensor.GPSService;
 import edu.fsu.cs.contextprovider.weather.GoogleWeatherHandler;
@@ -38,6 +39,7 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -53,7 +55,6 @@ import android.widget.ListAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import edu.fsu.cs.contextprovider.R;
 
 public class ContextBrowserActivity extends ListActivity implements TextToSpeech.OnInitListener {
 	@SuppressWarnings("unused")
@@ -73,8 +74,14 @@ public class ContextBrowserActivity extends ListActivity implements TextToSpeech
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		tts = new TextToSpeech(this,this);
+		Intent intent = null;
+		
 		/* Start GPS Service */
-		Intent intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.GPSService.class);
+		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.GPSService.class);
+		startService(intent);
+		
+		/* Start Network Service */
+		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.NetworkService.class);
 		startService(intent);
 
 		/* Start Accelerometer Service */
@@ -83,6 +90,10 @@ public class ContextBrowserActivity extends ListActivity implements TextToSpeech
 
 		/* Start movement context */
 		MovementMonitor.StartThread(5);
+		
+		/* Start LocationMonitor */
+		Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+		LocationMonitor.StartThread(5, geocoder);
 
 		contextCursor = managedQuery(ContextProvider.Cntxt.CONTENT_URI, PROJECTION, null, null, null);
 
@@ -126,13 +137,13 @@ public class ContextBrowserActivity extends ListActivity implements TextToSpeech
 			return (true);
 		case GEO_ID:
 			Toast.makeText(getApplicationContext(), "Trying to get geolocation", Toast.LENGTH_SHORT).show();
-			String res = GPSService.getZip();
+			String res = LocationMonitor.getZip();
 			Toast.makeText(getApplicationContext(), "GeoLocation: " + res, Toast.LENGTH_LONG).show();
 			return true;
 
 		case WEATHER_ID:
 			Toast.makeText(getApplicationContext(), "Trying to get weather", Toast.LENGTH_SHORT).show();
-			String zip = GPSService.getZip();
+			String zip = LocationMonitor.getZip();
 			String weather = "weather unavailable";
 			URL url;
 

@@ -18,6 +18,8 @@
 
 		<service android:name="edu.fsu.cs.contextprovider.sensor.GPSService"></service>
 		<service android:name="edu.fsu.cs.contextprovider.sensor.AccelerometerService"></service>
+		<service android:name="edu.fsu.cs.contextprovider.sensor.NetworkService"></service>
+		
 		<uses-library android:name="com.google.android.maps" />
 	</application>
 

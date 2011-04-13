@@ -58,19 +58,19 @@ public class NetworkService extends Service {
 				case LocationProvider.OUT_OF_SERVICE:
 				case LocationProvider.TEMPORARILY_UNAVAILABLE:
 					if (DEBUG_TTS == true) {
-						ContextBrowserActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
+						ContextBrowserActivity.tts.speak("Network reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
 					}
 					isreliable = false;
 					break;
 				case LocationProvider.AVAILABLE:
 					if (DEBUG_TTS == true) {
-						ContextBrowserActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
+						ContextBrowserActivity.tts.speak("Network reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
 					}
 					isreliable = true;
 					break;
 				default:
 					if (DEBUG_TTS == true) {
-						ContextBrowserActivity.tts.speak("Other GPS event detected", TextToSpeech.QUEUE_FLUSH, null);
+						ContextBrowserActivity.tts.speak("Network other event detected", TextToSpeech.QUEUE_FLUSH, null);
 					}
 				}
 				// TODO Check the status here to update isreliable

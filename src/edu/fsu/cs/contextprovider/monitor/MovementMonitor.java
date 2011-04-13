@@ -20,13 +20,13 @@ import edu.fsu.cs.contextprovider.sensor.GPSService;
  *
  */
 public class MovementMonitor extends TimerTask {
-	private static final String TAG = "Movement";
+	private static final String TAG = "MovementMonitor";
 	
 	private static final boolean DEBUG_TTS = true;
 	private static final float METERS_PER_SECOND_TO_MPH = (float)0.44704;
 	
-	private static int latitude;
-	private static int longitude;
+	private static double latitude;
+	private static double longitude;
 	private static float speed;
 	private static Timer timer = new Timer();
 	private static MovementMonitor movementObj = new MovementMonitor();

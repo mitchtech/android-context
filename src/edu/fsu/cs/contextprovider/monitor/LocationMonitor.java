@@ -15,12 +15,15 @@
  *******************************************************************************/
 package edu.fsu.cs.contextprovider.monitor;
 
-import android.content.Context;
-import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
+import java.io.IOException;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import edu.fsu.cs.contextprovider.sensor.GPSService;
+import edu.fsu.cs.contextprovider.sensor.NetworkService;
+import android.location.Address;
+import android.location.Geocoder;
 import android.util.Log;
 
 
@@ -28,67 +31,132 @@ import android.util.Log;
  * The class is responsible for communication with the Location Service. It provides access to
  * Location Services External Attribute, as well as Initiates Location Change Intents.
  */
-public class LocationMonitor implements SystemServiceEventMonitor {
-  private static final String SYSTEM_SERVICE_NAME = "LOCATION_SERVICE";
-  private static final String MONITOR_NAME = "LocationMonitor";
-  private static Location lastLocation;
-  /** Minimum frequency in updates(in milliseconds). Default value is 300000 (5 minutes). */
-  private static final long MIN_PROVIDER_UPDATE_INTERVAL = 300000;
-  /** Minimum change in location(in meters). Default value is 50 meters. */
-  private static final float MIN_PROVIDER_UPDATE_DISTANCE = 50;
-  private static final String PROVIDER = LocationManager.GPS_PROVIDER;
+public class LocationMonitor extends TimerTask {
+	private static final String TAG = "LocationMonitor";
+	private static final long radiusOfEarthMeters = 6378100;
 
-  private Context context;
-  
-  public LocationMonitor(Context context) {
-    this.context = context;
-  }
-  
-  public void init() {
-    lastLocation = null;
-    LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-    if (lm == null) {
-      Log.i("LocationService", "Could not obtain LOCATION_SERVICE from the system.");
-      return;
-    }
-    lm.requestLocationUpdates(PROVIDER, MIN_PROVIDER_UPDATE_INTERVAL, MIN_PROVIDER_UPDATE_DISTANCE,
-        locationListener);
-  }
+	private static final boolean DEBUG_TTS = true;
+	private static boolean running = false;
+	private static Timer timer = new Timer();
+	private static String currentZip = null;
+	private static String currentAddress = null;
+	private static String currentSubLocality = null;
+	private static String currentNeighborhood = null;
+	private static LocationMonitor locationObj = new LocationMonitor();
+	private static Geocoder geocoder = null;
 
-  public void stop() {
-    LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-    lm.removeUpdates(locationListener);
-  }
+	public static void StartThread(int interval, Geocoder geo) {
+		if (running == true) {
+			return;
+		}
+		Log.i(TAG, "Start()");
+		timer.schedule(locationObj, 100, interval*1000);
+		running = true;
+		geocoder = geo;
+	}
 
-  private final LocationListener locationListener = new LocationListener() {
-    public void onLocationChanged(Location location) {
+	/**
+	 * Stop the thread/timer that keeps the movement state up to date
+	 */
+	public static void StopThread() {
+		Log.i(TAG, "Stop()");
+		timer.purge();
+		locationObj = new LocationMonitor();
+		running = false;
+	}
 
-    	if (location != null && lastLocation != location) {
-        
-        String temp = location.toString();
-        
-        
-      }
-    }
 
-    /** Required to implement. Do nothing. */
-    public void onProviderDisabled(String provider) {
-    }
 
-    /** Required to implement. Do nothing. */
-    public void onProviderEnabled(String provider) {
-    }
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		updateGeoLocation();
+		Log.i(TAG, "Address: [" + currentAddress + "] | Zip: [" + currentZip + "]");
+	}
 
-    /** Required to implement. Do nothing. */
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-    }
-  };
+	public static float proximityTo(String loc) {
+		return 0;
+	}
 
-  public String getMonitorName() {
-    return MONITOR_NAME;
-  }
+	public static double proximityTo(double longitude, double latitude) {
+		return distanceMeters(latitude, longitude, getLatitude(), getLongitude());
+	}
 
-  public String getSystemServiceName() {
-    return SYSTEM_SERVICE_NAME;
-  }
+	public static String getZip() {
+		return currentZip;
+	}
+
+	public static String getAddress() {
+		return currentAddress;
+	}
+
+	public static String getNeighborhood() {
+		return currentNeighborhood;
+	}
+
+	public static String getSubLocality() {
+		return currentSubLocality;
+	}
+
+	public static double getLongitude() {
+		if (GPSService.isReliable() == true) {
+			return GPSService.getLongitude();
+		} else if (NetworkService.isReliable() == true) {
+			return NetworkService.getLatitude();
+		}
+		return 0;
+	}
+
+	public static double getLatitude() {
+		if (GPSService.isReliable() == true) {
+			return GPSService.getLatitude();
+		} else if (NetworkService.isReliable() == true) {
+
+			return NetworkService.getLatitude();
+		}
+		return 0;
+	}
+
+	private Address getAddressFromGeo(double latitude, double longitude) {
+		List<Address> addresses = null;
+		try {
+			addresses = geocoder.getFromLocation(latitude, longitude,1);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Address address = null;
+		if (addresses.size() > 0) {
+			address =  addresses.get(0);
+		}
+		return address;
+	}
+
+	private void updateGeoLocation() {
+		Address address = getAddressFromGeo(getLatitude(), getLongitude());
+		currentZip = address.getPostalCode();
+		currentAddress = address.toString();
+		currentSubLocality = address.getSubLocality();
+		currentNeighborhood = address.getThoroughfare();
+		Log.i(TAG, "Sublocality: " + currentSubLocality);
+
+	}
+	public static double milesPerHourToMetersPerSecond(double milesPerHour) {
+		return 0.44704 * milesPerHour;
+	}
+
+
+	public static double distanceMeters(double aLat, double aLon, double bLat, double bLon) {
+		// Haversine formula, from http://mathforum.org/library/drmath/view/51879.html
+		double dlon = bLon - aLon;
+		double dlat = bLat - aLat;
+		double a = Math.pow(Math.sin(Math.toRadians(dlat/2)), 2) +
+		Math.cos(Math.toRadians(aLat)) *
+		Math.cos(Math.toRadians(bLat)) *
+		Math.pow(Math.sin(Math.toRadians(dlon / 2)), 2);
+		double greatCircleDistance = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+		return radiusOfEarthMeters * greatCircleDistance;
+	}
+
+
 }

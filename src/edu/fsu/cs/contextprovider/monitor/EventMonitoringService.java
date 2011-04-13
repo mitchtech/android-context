@@ -35,7 +35,7 @@ public class EventMonitoringService extends Service {
 	// Internal binding to provide service bindings
 	private final IBinder mBinder = new LocalBinder();
 
-	private final SystemServiceEventMonitor MONITORS[] = { new PhoneStateMonitor(this), new LocationMonitor(this), new TimeMonitor(this), new NetworkStateMonitor(this) };
+	private final SystemServiceEventMonitor MONITORS[] = { new PhoneStateMonitor(this), new TimeMonitor(this), new NetworkStateMonitor(this) };
 
 	// Keep track if already running or not
 	private static boolean isAlreadyRunning = false;
