@@ -75,7 +75,11 @@ public class LocationMonitor extends TimerTask {
 	}
 
 	public static double proximityTo(String loc) {
-		Address address = getGeoFromAddress(loc);		
+		Address address = getGeoFromAddress(loc);
+		if (address == null) {
+			Log.i(TAG, "proximityTo() could not convert [" + loc + "]");
+			return -1.0;
+		}
 		return distanceMeters(address.getLatitude(), address.getLongitude(), getLatitude(), getLongitude());
 	}
 
@@ -103,7 +107,7 @@ public class LocationMonitor extends TimerTask {
 		if (GPSService.isReliable() == true) {
 			return GPSService.getLongitude();
 		} else if (NetworkService.isReliable() == true) {
-			return NetworkService.getLatitude();
+			return NetworkService.getLongitude();
 		}
 		return 0;
 	}
@@ -112,49 +116,50 @@ public class LocationMonitor extends TimerTask {
 		if (GPSService.isReliable() == true) {
 			return GPSService.getLatitude();
 		} else if (NetworkService.isReliable() == true) {
-
 			return NetworkService.getLatitude();
 		}
 		return 0;
 	}
-	
+
 	private static Address getGeoFromAddress(String str) {
 		List<Address> addresses = null;
 		Address address = null;
 		try {
 			addresses = geocoder.getFromLocationName(str, 1);
+			if (addresses.size() > 0) {
+				address =  addresses.get(0);
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		if (addresses.size() > 0) {
-			address =  addresses.get(0);
 		}
 		return address;
 	}
 
 	private static Address getAddressFromGeo(double latitude, double longitude) {
 		List<Address> addresses = null;
+		Address address = null;
 		try {
 			addresses = geocoder.getFromLocation(latitude, longitude,1);
+			if (addresses.size() > 0) {
+				address = addresses.get(0);
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		Address address = null;
-		if (addresses.size() > 0) {
-			address =  addresses.get(0);
 		}
 		return address;
 	}
 
 	private void updateGeoLocation() {
 		Address address = getAddressFromGeo(getLatitude(), getLongitude());
-		currentZip = address.getPostalCode();
-		currentAddress = address.toString();
-		currentSubLocality = address.getSubLocality();
-		currentNeighborhood = address.getThoroughfare();
-		Log.i(TAG, "Sublocality: " + currentSubLocality);
+		if (address != null) {
+			currentZip = address.getPostalCode();
+			currentAddress = address.toString();
+			currentSubLocality = address.getSubLocality();
+			currentNeighborhood = address.getThoroughfare();
+			Log.i(TAG, "Sublocality: " + currentSubLocality);
+		}
 
 	}
 	public static double milesPerHourToMetersPerSecond(double milesPerHour) {

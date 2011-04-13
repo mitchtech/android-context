@@ -169,7 +169,9 @@ public class AccelerometerService extends Service implements SensorEventListener
 		}
 		
 		boolean isShaken = isShakeEnough(x, y, z);
+		Intent intent = new Intent(this, edu.fsu.cs.contextprovider.ContextBrowserActivity.class);
 		
+		sendBroadcast(intent);
 	}
 
 	private boolean isStepTaken() {

@@ -95,7 +95,9 @@ public class GPSService extends Service
 
 			public void onProviderDisabled(String provider) {
 				//manager.removeUpdates(this);
-				Log.i(TAG, locationType + ": is no longer reliable");
+				if (DEBUG == true) {
+					Log.i(TAG, locationType + ": is no longer reliable");
+				}
 				isreliable = false;
 				if (DEBUG_TTS == true) {
 					ContextBrowserActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
