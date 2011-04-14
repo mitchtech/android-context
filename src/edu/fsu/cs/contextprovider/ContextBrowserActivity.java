@@ -69,7 +69,6 @@ public class ContextBrowserActivity extends ListActivity implements TextToSpeech
 	private Cursor contextCursor;
 
 	public static TextToSpeech tts;
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

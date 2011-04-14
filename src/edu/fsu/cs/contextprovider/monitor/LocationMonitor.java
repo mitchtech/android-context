@@ -126,7 +126,7 @@ public class LocationMonitor extends TimerTask {
 		Address address = null;
 		try {
 			addresses = geocoder.getFromLocationName(str, 1);
-			if (addresses.size() > 0) {
+			if (address != null && addresses.size() > 0) {
 				address =  addresses.get(0);
 			}
 		} catch (IOException e) {
@@ -141,7 +141,7 @@ public class LocationMonitor extends TimerTask {
 		Address address = null;
 		try {
 			addresses = geocoder.getFromLocation(latitude, longitude,1);
-			if (addresses.size() > 0) {
+			if (address != null && addresses.size() > 0) {
 				address = addresses.get(0);
 			}
 		} catch (IOException e) {
