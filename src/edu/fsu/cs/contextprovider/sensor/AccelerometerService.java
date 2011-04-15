@@ -26,7 +26,6 @@ public class AccelerometerService extends Service implements SensorEventListener
 	private SensorManager sm;
 	private Sensor accelerometerSensor;
 
-	private int frequency;
 	private int ignoreThreshold = 0;
 
 	int ACCELEROMETER_POLL_FREQUENCY;

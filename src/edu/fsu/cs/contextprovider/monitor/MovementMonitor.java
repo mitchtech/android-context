@@ -32,7 +32,7 @@ public class MovementMonitor extends TimerTask {
 	private static MovementMonitor movementObj = new MovementMonitor();
 	private static boolean running = false;
 	
-	private static MovementState currentMovementState = null;
+	private static MovementState currentMovementState = MovementState.STILL;
 	
 	public enum MovementState {
 		STILL 					(0, 0, 1001),

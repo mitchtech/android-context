@@ -7,6 +7,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 
 public class ContextConstants {
+	public static String TAG_GEO = "Geocoder";
 	
 	public static int TEXT = 0;
 	public static int GRAPH = 1;
