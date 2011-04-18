@@ -28,6 +28,7 @@ import android.provider.BaseColumns;
 import android.text.TextUtils;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
 import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
@@ -40,9 +41,7 @@ public class ContextProvider extends ContentProvider {
 	private static final UriMatcher MATCHER;
 	private static HashMap<String, String> CNTXT_LIST_PROJECTION;
 
-	public static LinkedHashMap<String, String> getAll() {
-		LinkedHashMap<String, String> results = new LinkedHashMap<String, String>();
-		
+	private static void getAll(Map<String, String> results) {
 		results.put("longitude", String.valueOf(LocationMonitor.getLongitude()));
 		results.put("latitude", String.valueOf(LocationMonitor.getLatitude()));
 		results.put("address", LocationMonitor.getAddress());
@@ -52,7 +51,17 @@ public class ContextProvider extends ContentProvider {
 		results.put("Step Timestamp", String.valueOf(AccelerometerService.getStepTimestamp()));
 		results.put("Movement State", MovementMonitor.getMovementState());
 		results.put("Speed", String.valueOf(MovementMonitor.getSpeedMph()));
-
+	}
+	
+	public static LinkedHashMap<String, String> getAllOrdered() {
+		LinkedHashMap<String, String> results = new LinkedHashMap<String, String>();
+		getAll(results);
+		return results;
+	}
+	
+	public static HashMap<String, String> getAllUnordered() {
+		HashMap<String, String> results = new HashMap<String, String>();
+		getAll(results);
 		return results;
 	}
 	

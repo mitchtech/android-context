@@ -58,6 +58,9 @@ public class GPSService extends Service
 	}
 
 	public static float getSpeed() {
+		if (currentLocation == null) {
+			return 0;
+		}
 		return currentLocation.getSpeed();
 	}
 

@@ -28,20 +28,26 @@ import org.xml.sax.XMLReader;
 
 import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
 import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
+import edu.fsu.cs.contextprovider.rpc.ContextProviderService;
+import edu.fsu.cs.contextprovider.rpc.IContextProviderService;
 import edu.fsu.cs.contextprovider.sensor.GPSService;
 import edu.fsu.cs.contextprovider.weather.GoogleWeatherHandler;
 import edu.fsu.cs.contextprovider.weather.WeatherSet;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -65,10 +71,14 @@ public class ContextBrowserActivity extends ListActivity implements TextToSpeech
 	private static final int GEO_ID = Menu.FIRST + 4;
 	private static final int WEATHER_ID = Menu.FIRST + 5;
 
+
 	private static final String[] PROJECTION = new String[] { ContextProvider.Cntxt._ID, ContextProvider.Cntxt.TITLE, ContextProvider.Cntxt.VALUE };
 	private Cursor contextCursor;
 
 	public static TextToSpeech tts;
+
+
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -93,7 +103,7 @@ public class ContextBrowserActivity extends ListActivity implements TextToSpeech
 		/* Start LocationMonitor */
 		Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 		LocationMonitor.StartThread(5, geocoder);
-
+    	
 		contextCursor = managedQuery(ContextProvider.Cntxt.CONTENT_URI, PROJECTION, null, null, null);
 
 		ListAdapter adapter = new SimpleCursorAdapter(this, R.layout.row, contextCursor, new String[] { ContextProvider.Cntxt.TITLE, ContextProvider.Cntxt.VALUE },
