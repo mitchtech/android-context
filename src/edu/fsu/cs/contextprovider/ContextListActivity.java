@@ -1,32 +1,48 @@
 package edu.fsu.cs.contextprovider;
 
+import com.google.ads.*;
+import com.google.ads.AdRequest.Gender;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
+
 import java.util.LinkedHashMap;
-import java.util.Set;
 import java.util.Vector;
 
-import android.app.ListActivity;
+//import com.adwhirl.AdWhirlLayout;
+//import com.adwhirl.AdWhirlManager;
+//import com.adwhirl.AdWhirlTargeting;
+//import com.adwhirl.AdWhirlLayout.AdWhirlInterface;
+//import com.adwhirl.adapters.AdWhirlAdapter;
+//import com.adwhirl.util.AdWhirlUtil;
+
+import android.app.Activity;
 import android.content.Context;
+import android.location.Location;
 import android.os.Bundle;
 import android.text.ClipboardManager;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ContextListActivity extends ListActivity {
+public class ContextListActivity extends Activity {
 	public static boolean running = false;
+	private static final String MY_AD_UNIT_ID = "a14dab536d4a388";
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.context_list);
+		
 		Vector<ContextListItem> Clist = new Vector<ContextListItem>();
 		running = true;
 
@@ -39,7 +55,58 @@ public class ContextListActivity extends ListActivity {
 		}
 		
 		ListAdapter adapter = new ContextListAdapter(Clist, getBaseContext());
-		setListAdapter(adapter);
+		ListView lv = (ListView)findViewById(R.id.contextList);
+		lv.setAdapter(adapter);
+		
+	    AdView adView = new AdView(this, AdSize.BANNER, MY_AD_UNIT_ID);
+	    
+	    // Lookup your LinearLayout assuming it’s been given
+	    // the attribute android:id="@+id/mainLayout"
+	    LinearLayout layout = (LinearLayout)findViewById(R.id.rootLayout);
+	    // Add the adView to it
+	    layout.addView(adView);
+	    // Initiate a generic request to load it with an ad
+	    AdRequest req = new AdRequest();
+//	    req.setTesting(false);
+	    req.setBirthday("19851022");
+	    req.setGender(AdRequest.Gender.MALE);
+//	    req.addKeyword("jenn");
+//	    req.addKeyword("sterger");
+//	    req.addKeyword("fsu");
+//	    Location loc = LocationMonitor.getLocation();
+//	    if (loc != null){
+//	    	req.setLocation(loc);
+//	    }
+	  
+	    req.addKeyword("hamburger");
+//	    req.addKeyword("frenchfries");
+//	    req.addKeyword("McDonalds");
+	    adView.loadAd(req);
+	  
+	    
+
+	    
+//		/* AdWhirl */
+//        int width = 320;
+//        int height = 52;
+//        
+//        String keywords[] = { "big", "tasty" };
+//        AdWhirlTargeting.setKeywordSet(new HashSet<String>(Arrays.asList(keywords)));        
+//        AdWhirlTargeting.setPostalCode("32301");
+//        AdWhirlAdapter.setGoogleAdSenseCompanyName(COMPANY_NAME);
+//        AdWhirlAdapter.setGoogleAdSenseAppName(APP_NAME);
+//        
+//		LinearLayout layout = (LinearLayout) findViewById(R.id.rootLayout);
+//        AdWhirlLayout adWhirlLayout = new AdWhirlLayout(this, "2bd8256fa48849cba30b7e31b2abc77b");
+//        adWhirlLayout.setAdWhirlInterface(this);
+//
+//        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+//        float density = displayMetrics.density;
+//
+//        width = (int) (width * density);
+//        height = (int) (height * density);
+//        RelativeLayout.LayoutParams adWhirlLayoutParams = new RelativeLayout.LayoutParams(width, height);
+//        layout.addView(adWhirlLayout, adWhirlLayoutParams);
 	}
 	
 	@Override
@@ -131,4 +198,10 @@ public class ContextListActivity extends ListActivity {
 			this.value = value;
 		}
 	}
+
+//	@Override
+//	public void adWhirlGeneric() {
+//		// TODO Auto-generated method stub
+//	    Log.e(AdWhirlUtil.ADWHIRL, "In adWhirlGeneric()");
+//	}
 }
