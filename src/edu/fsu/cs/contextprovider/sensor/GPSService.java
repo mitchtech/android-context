@@ -33,7 +33,7 @@ import android.util.Log;
 public class GPSService extends Service
 {
 	private static final String TAG = "GPSService";
-	private static final boolean DEBUG_TTS = true;
+	private static final boolean DEBUG_TTS = false;
 	private static final boolean DEBUG = true;
 	private static final String locationType = LocationManager.GPS_PROVIDER;
 	private static LocationManager manager;
@@ -58,6 +58,9 @@ public class GPSService extends Service
 	}
 
 	public static float getSpeed() {
+		if (currentLocation == null) {
+			return 0;
+		}
 		return currentLocation.getSpeed();
 	}
 
@@ -85,9 +88,6 @@ public class GPSService extends Service
 		listener = new LocationListener() {
 			public void onLocationChanged(Location location) {
 				isreliable = true;
-//				String result = getFromLocation();
-	            // TODO: We should lock the below to make our location update atomic
-//	            currentCity = result;
 				currentLocation.set(location);
 				
 				Log.i(TAG, "New location found: [" + location.getLongitude() + "," + location.getLatitude() + "] | Speed: [" + location.getSpeed() + "]");

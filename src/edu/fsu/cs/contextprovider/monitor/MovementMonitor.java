@@ -22,7 +22,7 @@ import edu.fsu.cs.contextprovider.sensor.GPSService;
 public class MovementMonitor extends TimerTask {
 	private static final String TAG = "MovementMonitor";
 	
-	private static final boolean DEBUG_TTS = true;
+	private static final boolean DEBUG_TTS = false;
 	private static final float METERS_PER_SECOND_TO_MPH = (float)0.44704;
 	
 	private static double latitude;
@@ -32,7 +32,7 @@ public class MovementMonitor extends TimerTask {
 	private static MovementMonitor movementObj = new MovementMonitor();
 	private static boolean running = false;
 	
-	private static MovementState currentMovementState = null;
+	private static MovementState currentMovementState = MovementState.STILL;
 	
 	public enum MovementState {
 		STILL 					(0, 0, 1001),
@@ -142,7 +142,7 @@ public class MovementMonitor extends TimerTask {
 	private MovementState determineMovementStateFromAccelerometer() {
 		MovementState newState = MovementState.STILL;
 		long currentTime = System.currentTimeMillis();
-		long stepTime = AccelerometerService.step_timestamp;
+		long stepTime = AccelerometerService.getStepTimestamp();
 		long sinceStepTime = currentTime - stepTime;
 		
 		long diffCurrentStrideTime = 0, diffConsiderStrideTime = 0;

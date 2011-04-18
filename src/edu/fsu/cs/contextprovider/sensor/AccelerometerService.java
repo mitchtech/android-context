@@ -3,6 +3,8 @@ package edu.fsu.cs.contextprovider.sensor;
 import java.util.List;
 import java.util.Stack;
 
+import edu.fsu.cs.contextprovider.ContextListActivity;
+
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,11 +22,10 @@ public class AccelerometerService extends Service implements SensorEventListener
 
 	private static final String TAG = "AccelerometerService";
 	private static boolean serviceEnabled = false;
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	private SensorManager sm;
 	private Sensor accelerometerSensor;
 
-	private int frequency;
 	private int ignoreThreshold = 0;
 
 	int ACCELEROMETER_POLL_FREQUENCY;
@@ -42,9 +43,9 @@ public class AccelerometerService extends Service implements SensorEventListener
 	public static Stack<Float> zHistory = new Stack<Float>();
 	public static float x = 0, y = 0, z = 0;
 	public static float lastX=0, lastY=0, lastZ=0;
-	public static long step_count = 0;
-	public static long step_timestamp = 0;
-	public static int shakeCount = 0;
+	private static long step_count = 0;
+	private static long step_timestamp = 0;
+	private static int shakeCount = 0;
 
 	/* Accelerometer -> walking calculation variables */
 	private static float   mLimit = 10;
@@ -66,6 +67,14 @@ public class AccelerometerService extends Service implements SensorEventListener
 		mYOffset = h * 0.5f;
 		mScale[0] = - (h * 0.5f * (1.0f / (SensorManager.STANDARD_GRAVITY * 2)));
 		mScale[1] = - (h * 0.5f * (1.0f / (SensorManager.MAGNETIC_FIELD_EARTH_MAX)));
+	}
+	
+	static public long getStepCount() {
+		return step_count;
+	}
+	
+	static public long getStepTimestamp() {
+		return step_timestamp;
 	}
 
 	@Override
@@ -168,10 +177,17 @@ public class AccelerometerService extends Service implements SensorEventListener
 			Log.i(TAG, "Step Taken: [" + step_count + "] | At: [" + step_timestamp + "]");
 		}
 		
-		boolean isShaken = isShakeEnough(x, y, z);
-		Intent intent = new Intent(this, edu.fsu.cs.contextprovider.ContextBrowserActivity.class);
-		
-		sendBroadcast(intent);
+		if (ContextListActivity.running == false) {
+			boolean isShaken = isShakeEnough(x, y, z);
+			if (isShaken == true) {
+				if (DEBUG == true) {
+					Log.i(TAG, "Shake detected, going to start activity");
+				}
+				Intent intent = new Intent(this, edu.fsu.cs.contextprovider.ContextListActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(intent);
+			}
+		}
 	}
 
 	private boolean isStepTaken() {
@@ -226,7 +242,9 @@ public class AccelerometerService extends Service implements SensorEventListener
 		lastY = y;
 		lastZ = z;
 
+		Log.i(TAG, "Force detected [" + force + "]");
 		if (force > Defaults.THRESHOLD) {
+			Log.i(TAG, "Shake detected but we haven't reached our limit yet");
 			shakeCount++;
 			if (shakeCount > Defaults.SHAKE_COUNT) {
 				shakeCount = 0;
@@ -240,7 +258,7 @@ public class AccelerometerService extends Service implements SensorEventListener
 	}
 
 	private static class Defaults {
-	        public static final float THRESHOLD = (float)2.75;
+	        public static final float THRESHOLD = (float)0.275;
 	        public static final int SHAKE_COUNT = 4;
 	}
 

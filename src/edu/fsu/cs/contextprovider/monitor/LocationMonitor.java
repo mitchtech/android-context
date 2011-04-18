@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edu.fsu.cs.contextprovider.ContextConstants;
 import edu.fsu.cs.contextprovider.sensor.GPSService;
 import edu.fsu.cs.contextprovider.sensor.NetworkService;
 import android.location.Address;
@@ -38,10 +39,7 @@ public class LocationMonitor extends TimerTask {
 	private static final boolean DEBUG_TTS = true;
 	private static boolean running = false;
 	private static Timer timer = new Timer();
-	private static String currentZip = null;
-	private static String currentAddress = null;
-	private static String currentSubLocality = null;
-	private static String currentNeighborhood = null;
+	private static Address currentAddress = null;
 	private static LocationMonitor locationObj = new LocationMonitor();
 	private static Geocoder geocoder = null;
 
@@ -71,7 +69,7 @@ public class LocationMonitor extends TimerTask {
 	public void run() {
 		// TODO Auto-generated method stub
 		updateGeoLocation();
-		Log.i(TAG, "Address: [" + currentAddress + "] | Zip: [" + currentZip + "]");
+		Log.i(TAG, "Address: [" + currentAddress + "]");
 	}
 
 	public static double proximityTo(String loc) {
@@ -88,19 +86,25 @@ public class LocationMonitor extends TimerTask {
 	}
 
 	public static String getZip() {
-		return currentZip;
+		if (currentAddress == null)
+			return null;
+		return currentAddress.getPostalCode();
 	}
 
 	public static String getAddress() {
+		if (currentAddress == null)
+			return null;
+		return currentAddress.getAddressLine(0);
+	}
+
+	public static Address getAddressObj() {
 		return currentAddress;
 	}
 
 	public static String getNeighborhood() {
-		return currentNeighborhood;
-	}
-
-	public static String getSubLocality() {
-		return currentSubLocality;
+		if (currentAddress == null)
+			return null;
+		return currentAddress.getSubLocality();
 	}
 
 	public static double getLongitude() {
@@ -126,6 +130,10 @@ public class LocationMonitor extends TimerTask {
 		Address address = null;
 		try {
 			addresses = geocoder.getFromLocationName(str, 1);
+			if (addresses == null) {
+				Log.i(ContextConstants.TAG_GEO, "getGeoFromAddress(): getFromLocationName() returned null");
+				return null;
+			}
 			if (addresses.size() > 0) {
 				address =  addresses.get(0);
 			}
@@ -141,6 +149,10 @@ public class LocationMonitor extends TimerTask {
 		Address address = null;
 		try {
 			addresses = geocoder.getFromLocation(latitude, longitude,1);
+			if (addresses == null) {
+				Log.i(ContextConstants.TAG_GEO, "getAddressFromGeo(): getFromLocation() returned null");
+				return null;
+			}
 			if (addresses.size() > 0) {
 				address = addresses.get(0);
 			}
@@ -154,11 +166,7 @@ public class LocationMonitor extends TimerTask {
 	private void updateGeoLocation() {
 		Address address = getAddressFromGeo(getLatitude(), getLongitude());
 		if (address != null) {
-			currentZip = address.getPostalCode();
-			currentAddress = address.toString();
-			currentSubLocality = address.getSubLocality();
-			currentNeighborhood = address.getThoroughfare();
-			Log.i(TAG, "Sublocality: " + currentSubLocality);
+			currentAddress = address;
 		}
 
 	}
