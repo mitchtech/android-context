@@ -3,7 +3,7 @@ package edu.fsu.cs.contextprovider.sensor;
 import java.util.List;
 import java.util.Stack;
 
-import edu.fsu.cs.contextprovider.ContextListActivity;
+import edu.fsu.cs.contextprovider.ContextExpandableListActivity;
 
 import android.app.Service;
 import android.content.Intent;
@@ -177,13 +177,13 @@ public class AccelerometerService extends Service implements SensorEventListener
 			Log.i(TAG, "Step Taken: [" + step_count + "] | At: [" + step_timestamp + "]");
 		}
 		
-		if (ContextListActivity.running == false) {
+		if (ContextExpandableListActivity.running == false) {
 			boolean isShaken = isShakeEnough(x, y, z);
 			if (isShaken == true) {
 				if (DEBUG == true) {
 					Log.i(TAG, "Shake detected, going to start activity");
 				}
-				Intent intent = new Intent(this, edu.fsu.cs.contextprovider.ContextListActivity.class);
+				Intent intent = new Intent(this, edu.fsu.cs.contextprovider.ContextExpandableListActivity.class);
 				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				startActivity(intent);
 			}

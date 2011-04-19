@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-		<string name="app_name">ContextProvider</string>
-		<string name="ok">OK</string>
-		<string name="cancel">Cancel</string>
-		<string name="add_context">Add Context</string>
-		<string name="delete_context">Delete Context: Are You Sure?</string>
+	<string name="app_name">ContextProvider</string>
+	<string name="ok">OK</string>
+	<string name="cancel">Cancel</string>
+	<string name="add_context">Add Context</string>
+	<string name="delete_context">Delete Context: Are You Sure?</string>
+
+	<string name="expandable_list_sample_action">Sample action</string>
+
 </resources>

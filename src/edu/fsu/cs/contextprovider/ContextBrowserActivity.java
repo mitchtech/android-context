@@ -71,8 +71,6 @@ public class ContextBrowserActivity extends ListActivity implements TextToSpeech
 	private static final int DELETE_ID = Menu.FIRST + 3;
 	private static final int GEO_ID = Menu.FIRST + 4;
 	private static final int WEATHER_ID = Menu.FIRST + 5;
-
-
 	private static final int PHONE_ID = Menu.FIRST + 6;
 	private static final int SMS_ID = Menu.FIRST + 7;
 	
@@ -109,7 +107,6 @@ public class ContextBrowserActivity extends ListActivity implements TextToSpeech
 		Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 		LocationMonitor.StartThread(5, geocoder);
     	
-
 		/* Start System/Phone/SMS State Monitor Services */
 		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.TelephonyService.class);
 		startService(intent);		

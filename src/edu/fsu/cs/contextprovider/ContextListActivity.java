@@ -143,7 +143,6 @@ public class ContextListActivity extends ListActivity {
 			item.setValue(entry.getValue());
 			adapter.add(item);
 		}
-
 	}
 
 
@@ -164,7 +163,7 @@ public class ContextListActivity extends ListActivity {
 		return (super.onOptionsItemSelected(item));
 	}
 
-	private class ContextListItem {
+	public class ContextListItem {
 		private String name;
 		private String value;
 
