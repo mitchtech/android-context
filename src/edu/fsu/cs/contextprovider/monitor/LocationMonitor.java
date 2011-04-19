@@ -16,6 +16,7 @@
 package edu.fsu.cs.contextprovider.monitor;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -42,6 +43,8 @@ public class LocationMonitor extends TimerTask {
 	private static Address currentAddress = null;
 	private static LocationMonitor locationObj = new LocationMonitor();
 	private static Geocoder geocoder = null;
+	
+	private static HashMap<String, Address> proximityAddressBook = new HashMap<String, Address>();
 
 	public static void StartThread(int interval, Geocoder geo) {
 		if (running == true) {
@@ -78,6 +81,8 @@ public class LocationMonitor extends TimerTask {
 			Log.i(TAG, "proximityTo() could not convert [" + loc + "]");
 			return -1.0;
 		}
+		
+		
 		return distanceMeters(address.getLatitude(), address.getLongitude(), getLatitude(), getLongitude());
 	}
 
