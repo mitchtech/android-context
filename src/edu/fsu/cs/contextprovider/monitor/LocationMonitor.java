@@ -18,6 +18,7 @@ package edu.fsu.cs.contextprovider.monitor;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -44,7 +45,9 @@ public class LocationMonitor extends TimerTask {
 	private static LocationMonitor locationObj = new LocationMonitor();
 	private static Geocoder geocoder = null;
 	
-	private static HashMap<String, Address> proximityAddressBook = new HashMap<String, Address>();
+//	private static HashMap<String, Address> addressBook = new HashMap<String, Address>();
+//	private static HashMap<String, String> nicknameToAddress = new HashMap<String, String>();
+	private static HashMap<String, Address> proximityAddressCache = new HashMap<String, Address>();
 
 	public static void StartThread(int interval, Geocoder geo) {
 		if (running == true) {
@@ -76,13 +79,24 @@ public class LocationMonitor extends TimerTask {
 	}
 
 	public static double proximityTo(String loc) {
-		Address address = getGeoFromAddress(loc);
-		if (address == null) {
-			Log.i(TAG, "proximityTo() could not convert [" + loc + "]");
-			return -1.0;
+		Address tmpAddress = null;
+		Address address = null;
+		
+		/* Try grabbing the address from our cache first */
+		if ((tmpAddress = proximityAddressCache.get(loc)) != null) {
+			address = tmpAddress;
+		} else {
+		/* not in the cache, translate it */
+			address = getGeoFromAddress(loc);
+			if (address == null) {
+				Log.i(TAG, "proximityTo() could not convert [" + loc + "]");
+				return -1.0;
+			} else {
+				/* Successful translation, store it */
+				proximityAddressCache.put(loc, address);
+			}
 		}
-		
-		
+
 		return distanceMeters(address.getLatitude(), address.getLongitude(), getLatitude(), getLongitude());
 	}
 
