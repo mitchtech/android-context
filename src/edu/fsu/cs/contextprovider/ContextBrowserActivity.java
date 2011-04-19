@@ -31,8 +31,7 @@ import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
 import edu.fsu.cs.contextprovider.rpc.ContextProviderService;
 import edu.fsu.cs.contextprovider.rpc.IContextProviderService;
 import edu.fsu.cs.contextprovider.sensor.GPSService;
-import edu.fsu.cs.contextprovider.sensor.PhoneService;
-import edu.fsu.cs.contextprovider.sensor.SmsService;
+import edu.fsu.cs.contextprovider.sensor.TelephonyService;
 import edu.fsu.cs.contextprovider.weather.GoogleWeatherHandler;
 import edu.fsu.cs.contextprovider.weather.WeatherSet;
 
@@ -112,9 +111,7 @@ public class ContextBrowserActivity extends ListActivity implements TextToSpeech
     	
 
 		/* Start System/Phone/SMS State Monitor Services */
-		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.PhoneService.class);
-		startService(intent);		
-		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.SmsService.class);
+		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.TelephonyService.class);
 		startService(intent);		
 		
 		
@@ -203,11 +200,11 @@ public class ContextBrowserActivity extends ListActivity implements TextToSpeech
 			return true;
 		case PHONE_ID:
 			Toast.makeText(getApplicationContext(), "Trying to get recent phone state", Toast.LENGTH_SHORT).show();
-			Toast.makeText(getApplicationContext(), "State: " + PhoneService.PHONE_STATE + "Updated: " + PhoneService.PHONE_STATE_UPDATE, Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(), "State: " + TelephonyService.PHONE_STATE + "Updated: " + TelephonyService.PHONE_STATE_UPDATE, Toast.LENGTH_LONG).show();
 			return true;
 		case SMS_ID:
 			Toast.makeText(getApplicationContext(), "Trying to get recent SMS state", Toast.LENGTH_SHORT).show();
-			Toast.makeText(getApplicationContext(), "State: " + SmsService.SMS_STATE + "Updated: " + SmsService.SMS_STATE_UPDATE, Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(), "State: " + TelephonyService.SMS_STATE + "Updated: " + TelephonyService.SMS_STATE_UPDATE, Toast.LENGTH_LONG).show();
 			return true;
 			
 		}

@@ -1,24 +1,28 @@
 package edu.fsu.cs.contextprovider.sensor;
 
 import java.util.List;
+
+import android.app.Service;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-public class ProximityService extends AbstractContextService implements SensorEventListener {
+public class ProximityService extends Service implements SensorEventListener {
 
 	private static final String TAG = "ProximitySensor Service";
 	private static final boolean DEBUG = true;
-
+	protected boolean serviceEnabled = false;
+	
 	private SensorManager sm;
 	private Sensor proximitySensor;
 
-	@Override
 	public void init() {
 		if (!serviceEnabled) {
 
@@ -63,9 +67,14 @@ public class ProximityService extends AbstractContextService implements SensorEv
 		}
 	}
 
-	@Override
 	public String getTAG() {
 		return TAG;
+	}
+
+	@Override
+	public IBinder onBind(Intent intent) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
