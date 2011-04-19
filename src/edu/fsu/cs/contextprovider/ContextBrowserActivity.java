@@ -31,6 +31,8 @@ import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
 import edu.fsu.cs.contextprovider.rpc.ContextProviderService;
 import edu.fsu.cs.contextprovider.rpc.IContextProviderService;
 import edu.fsu.cs.contextprovider.sensor.GPSService;
+import edu.fsu.cs.contextprovider.sensor.PhoneService;
+import edu.fsu.cs.contextprovider.sensor.SmsService;
 import edu.fsu.cs.contextprovider.weather.GoogleWeatherHandler;
 import edu.fsu.cs.contextprovider.weather.WeatherSet;
 
@@ -72,6 +74,10 @@ public class ContextBrowserActivity extends ListActivity implements TextToSpeech
 	private static final int WEATHER_ID = Menu.FIRST + 5;
 
 
+	private static final int PHONE_ID = Menu.FIRST + 6;
+	private static final int SMS_ID = Menu.FIRST + 7;
+	
+	
 	private static final String[] PROJECTION = new String[] { ContextProvider.Cntxt._ID, ContextProvider.Cntxt.TITLE, ContextProvider.Cntxt.VALUE };
 	private Cursor contextCursor;
 
@@ -104,6 +110,15 @@ public class ContextBrowserActivity extends ListActivity implements TextToSpeech
 		Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 		LocationMonitor.StartThread(5, geocoder);
     	
+
+		/* Start System/Phone/SMS State Monitor Services */
+		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.PhoneService.class);
+		startService(intent);		
+		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.SmsService.class);
+		startService(intent);		
+		
+		
+
 		contextCursor = managedQuery(ContextProvider.Cntxt.CONTENT_URI, PROJECTION, null, null, null);
 
 		ListAdapter adapter = new SimpleCursorAdapter(this, R.layout.row, contextCursor, new String[] { ContextProvider.Cntxt.TITLE, ContextProvider.Cntxt.VALUE },
@@ -134,7 +149,9 @@ public class ContextBrowserActivity extends ListActivity implements TextToSpeech
 		menu.add(Menu.NONE, ADD_ID, Menu.NONE, "Add").setIcon(R.drawable.add).setAlphabeticShortcut('a');
 		menu.add(Menu.NONE, GEO_ID, Menu.NONE, "Geo Loc").setIcon(R.drawable.add).setAlphabeticShortcut('g');
 		menu.add(Menu.NONE, WEATHER_ID, Menu.NONE, "Weather").setIcon(R.drawable.add).setAlphabeticShortcut('w');
-
+		menu.add(Menu.NONE, PHONE_ID, Menu.NONE, "Phone").setIcon(R.drawable.add).setAlphabeticShortcut('p');
+		menu.add(Menu.NONE, SMS_ID, Menu.NONE, "SMS").setIcon(R.drawable.add).setAlphabeticShortcut('s');
+		
 		return (super.onCreateOptionsMenu(menu));
 	}
 
@@ -157,48 +174,26 @@ public class ContextBrowserActivity extends ListActivity implements TextToSpeech
 			URL url;
 
 			try {
-				/* Get what user typed to the EditText. */
 				// String cityParamString = "32304"; // "Tallahassee,Florida";
-				// String cityParamString = findViewById(R.id.addressText)
-				// .toString();
-
 				String cityParamString = zip;
-
 				Log.d(TAG, "cityParamString: " + cityParamString);
-
 				String queryString = "http://www.google.com/ig/api?weather=" + cityParamString;
 				/* Replace blanks with HTML-Equivalent. */
 				url = new URL(queryString.replace(" ", "%20"));
-
 				/* Get a SAXParser from the SAXPArserFactory. */
 				SAXParserFactory spf = SAXParserFactory.newInstance();
 				SAXParser sp = spf.newSAXParser();
-
 				/* Get the XMLReader of the SAXParser we created. */
-				XMLReader xr = sp.getXMLReader();
-
-				/*
-				 * Create a new ContentHandler and apply it to the XML-Reader
-				 */
+				XMLReader xr = sp.getXMLReader();		
+				/* Create a new ContentHandler and apply it to the XML-Reader */
 				GoogleWeatherHandler gwh = new GoogleWeatherHandler();
 				xr.setContentHandler(gwh);
-
 				/* Parse the xml-data our URL-call returned. */
 				xr.parse(new InputSource(url.openStream()));
-
 				/* Our Handler now provides the parsed weather-data to us. */
 				WeatherSet ws = gwh.getWeatherSet();
-
 				weather = ws.getWeatherCurrentCondition().getCondition() + " " + ws.getWeatherCurrentCondition().getTempFahrenheit() + " degrees F" + ws.getWeatherCurrentCondition().getHumidity()
 				+ " humidity" + ws.getWeatherCurrentCondition().getWindCondition() + " ";
-
-				// ((TextView) findViewById(R.id.temperature)).setText(""
-				// + ws.getWeatherCurrentCondition()
-				// .getTempFahrenheit() + " degrees F");
-				// ((TextView) findViewById(R.id.condition)).setText(""
-				// + ws.getWeatherCurrentCondition().getCondition());
-				// ((TextView) findViewById(R.id.humidity)).setText(""
-				// + ws.getWeatherCurrentCondition().getHumidity());
 
 			} catch (Exception e) {
 				Log.e(TAG, "WeatherQueryError", e);
@@ -206,7 +201,15 @@ public class ContextBrowserActivity extends ListActivity implements TextToSpeech
 
 			Toast.makeText(getApplicationContext(), "Current Conditions: " + weather, Toast.LENGTH_LONG).show();
 			return true;
-
+		case PHONE_ID:
+			Toast.makeText(getApplicationContext(), "Trying to get recent phone state", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "State: " + PhoneService.PHONE_STATE + "Updated: " + PhoneService.PHONE_STATE_UPDATE, Toast.LENGTH_LONG).show();
+			return true;
+		case SMS_ID:
+			Toast.makeText(getApplicationContext(), "Trying to get recent SMS state", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "State: " + SmsService.SMS_STATE + "Updated: " + SmsService.SMS_STATE_UPDATE, Toast.LENGTH_LONG).show();
+			return true;
+			
 		}
 
 		return (super.onOptionsItemSelected(item));
