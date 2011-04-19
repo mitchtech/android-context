@@ -1,24 +1,28 @@
 package edu.fsu.cs.contextprovider.sensor;
 
 import java.util.List;
+
+import android.app.Service;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-public class LightService extends AbstractContextService implements SensorEventListener {
+public class LightService extends Service implements SensorEventListener {
 
 	private static final String TAG = "LightSensor Service";
 	private static final boolean DEBUG = true;
-
+	protected int contextId;
+	protected boolean serviceEnabled = false;
 	private SensorManager sm;
 	private Sensor lightSensor;
 
-	@Override
 	public void init() {
 		if (!serviceEnabled) {
 
@@ -64,9 +68,15 @@ public class LightService extends AbstractContextService implements SensorEventL
 		}
 	}
 
-	@Override
+	
 	public String getTAG() {
 		return TAG;
+	}
+
+	@Override
+	public IBinder onBind(Intent intent) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
