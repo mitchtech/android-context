@@ -13,7 +13,7 @@ public class ContextConstants {
 	public static int GRAPH = 1;
 	public static int BARS = 2;
 	
-	
+	public static final String PREFS_ADDRESS = "PREFS_ADDRESS";
 	
 	public static int COMPASS_POLL_FREQUENCY;
 	public static int COMPASS_IGNORE_THRESHOLD;
