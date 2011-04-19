@@ -20,7 +20,7 @@ public class NetworkService extends Service {
 	private static LocationManager manager;
 	private static LocationListener listener;
 	private static boolean isreliable = false;
-	private static final boolean DEBUG_TTS = true;
+	private static final boolean DEBUG_TTS = false;
 	private static final boolean DEBUG = true;
 	@SuppressWarnings("unused")
 	private static boolean running = false;

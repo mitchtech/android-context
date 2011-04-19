@@ -7,9 +7,12 @@
 
 package edu.fsu.cs.contextprovider;
 
+import java.util.Locale;
 import java.util.Map;
 
 import edu.fsu.cs.contextprovider.dialog.AddressDialog;
+import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
+import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
 import edu.fsu.cs.contextprovider.rpc.ContextProviderService;
 import edu.fsu.cs.contextprovider.rpc.IContextProviderService;
 import android.app.AlertDialog;
@@ -20,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -58,13 +62,33 @@ public class ContextProximityActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		running = true;
+		
+		Intent intent = null;
+		/* Start GPS Service */
+		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.GPSService.class);
+		startService(intent);
+
+		/* Start Network Service */
+		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.NetworkService.class);
+		startService(intent);
+
+		/* Start Accelerometer Service */
+		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.AccelerometerService.class);
+		startService(intent);
+
+		/* Start movement context */
+		MovementMonitor.StartThread(5);
+
+		/* Start LocationMonitor */
+		Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+		LocationMonitor.StartThread(5, geocoder);
+
+		/* Start System/Phone/SMS State Monitor Services */
+		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.TelephonyService.class);
+		startService(intent);
 
 		/* Start ContextProviderService */
-		bindService(new Intent(this,ContextProviderService.class), conn, Context.BIND_AUTO_CREATE);
-
-		//		LinkedHashMap<String, String> cntx = ContextProvider.getAllOrdered();
-
-
+		bindService(new Intent(this, ContextProviderService.class), conn, Context.BIND_AUTO_CREATE);
 
 		
 		adapter = new ContextListAdapter(getBaseContext(), R.layout.row);
@@ -86,8 +110,17 @@ public class ContextProximityActivity extends ListActivity {
 		Map<String, String> list = (Map<String, String>)pref.getAll();
 		for (Map.Entry<String,String> entry: list.entrySet()) {
 			ContextListItem item = new ContextListItem();
+			//item.setName(entry.getKey());
 			item.setName(entry.getKey());
-			item.setValue(entry.getValue());
+			double proximity = 0;
+			try {
+				proximity = mService.proximityToAddress(entry.getValue());
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			item.setValue(String.valueOf(proximity));
+			
 			adapter.add(item);
 		}
 		adapter.notifyDataSetChanged();

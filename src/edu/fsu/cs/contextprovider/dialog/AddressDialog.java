@@ -49,6 +49,10 @@ public class AddressDialog {
 			String nickname = nicknameEdit.getText().toString();
 			String address = addressEdit.getText().toString();
 
+			if (nickname == null || nickname.equals("")) {
+				nickname = address;
+			}
+			
 			SharedPreferences.Editor editor = pref.edit();
 			editor.putString(nickname, address);
 			editor.commit();
