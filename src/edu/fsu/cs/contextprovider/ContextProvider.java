@@ -42,16 +42,29 @@ public class ContextProvider extends ContentProvider {
 	private static HashMap<String, String> CNTXT_LIST_PROJECTION;
 
 	private static void getAll(Map<String, String> results) {
-		results.put("longitude", String.valueOf(LocationMonitor.getLongitude()));
-		results.put("latitude", String.valueOf(LocationMonitor.getLatitude()));
-		results.put("address", LocationMonitor.getAddress());
-		results.put("neighborhood", LocationMonitor.getNeighborhood());
-		results.put("zip", LocationMonitor.getZip());
-		results.put("Steps", String.valueOf(AccelerometerService.getStepCount()));
-		results.put("Step Timestamp", String.valueOf(AccelerometerService.getStepTimestamp()));
-		results.put("Movement State", MovementMonitor.getMovementState());
-		results.put("Speed", String.valueOf(MovementMonitor.getSpeedMph()));
+		getLocation(results);
+		getMovement(results);
+
+	
 	}
+	
+	private static void getLocation(Map<String, String> results) {
+		results.put("LOCATION_ADDRESS", LocationMonitor.getAddress());
+		results.put("LOCATION_HOOD", LocationMonitor.getNeighborhood());
+		results.put("LOCATION_ZIP", LocationMonitor.getZip());		
+		results.put("LOCATION_LATITUDE", String.valueOf(LocationMonitor.getLatitude()));
+		results.put("LOCATION_LONGITUDE", String.valueOf(LocationMonitor.getLongitude()));
+		results.put("LOCATION_ALTITUDE", String.valueOf(LocationMonitor.getAltitude()));
+	}	
+	
+	private static void getMovement(Map<String, String> results) {
+		results.put("MOVEMENT_STATE", MovementMonitor.getMovementState());
+		results.put("MOVEMENT_SPEED", String.valueOf(MovementMonitor.getSpeedMph()));
+		results.put("MOVEMENT_BEARING", String.valueOf(LocationMonitor.getBearing()));
+		results.put("MOVEMENT_STEP_COUNT", String.valueOf(AccelerometerService.getStepCount()));
+		results.put("MOVEMENT_LAST_STEP", String.valueOf(AccelerometerService.getStepTimestamp()));
+	}		
+	
 	
 	public static LinkedHashMap<String, String> getAllOrdered() {
 		LinkedHashMap<String, String> results = new LinkedHashMap<String, String>();

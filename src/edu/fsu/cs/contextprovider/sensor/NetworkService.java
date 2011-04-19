@@ -88,6 +88,10 @@ public class NetworkService extends Service {
 	public static int getLongitude() {
 		return (int)currentLocation.getLongitude();
 	}
+
+	public static int getAltitude() {
+		return (int)currentLocation.getAltitude();
+	}
 	
 	public static boolean isReliable() {
 		return isreliable;

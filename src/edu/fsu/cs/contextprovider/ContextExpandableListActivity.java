@@ -194,12 +194,50 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		locationMap.put(NAME, "Location");
 		locationMap.put(VALUE, "Location");
 		List<Map<String, String>> location = new ArrayList<Map<String, String>>();
-		for (int j = 0; j < 5; j++) {
+
 			Map<String, String> curChildMap = new HashMap<String, String>();
-			location.add(curChildMap);
-			curChildMap.put(NAME, "Child " + j);
-			curChildMap.put(VALUE, "Value");
-		}
+			location.add(curChildMap);			
+			curChildMap.put(NAME, "LOCATION_ADDRESS");
+			curChildMap.put(VALUE, LocationMonitor.getAddress());
+			curChildMap = new HashMap<String, String>();
+			location.add(curChildMap);	
+			curChildMap.put(NAME, "LOCATION_HOOD");
+			curChildMap.put(VALUE, LocationMonitor.getNeighborhood());		
+			curChildMap = new HashMap<String, String>();
+			location.add(curChildMap);	
+			curChildMap.put(NAME, "LOCATION_ZIP");		
+			curChildMap.put(VALUE, LocationMonitor.getZip());	
+			curChildMap = new HashMap<String, String>();
+			location.add(curChildMap);	
+			curChildMap.put(NAME, "LOCATION_LATITUDE");
+			curChildMap.put(VALUE, String.valueOf(LocationMonitor.getLatitude()));			
+			curChildMap = new HashMap<String, String>();
+			location.add(curChildMap);	
+			curChildMap.put(NAME, "LOCATION_LONGITUDE");
+			curChildMap.put(VALUE, String.valueOf(LocationMonitor.getLongitude()));		
+			curChildMap = new HashMap<String, String>();
+			location.add(curChildMap);	
+			curChildMap.put(NAME, "LOCATION_ALTITUDE");
+			curChildMap.put(VALUE, String.valueOf(LocationMonitor.getAltitude()));
+			curChildMap = new HashMap<String, String>();
+			location.add(curChildMap);	
+//			curChildMap.put("LOCATION_ADDRESS", LocationMonitor.getAddress());
+//			Map<String, String> curChildMap = new HashMap<String, String>();
+//			location.add(curChildMap);
+//			curChildMap.put("LOCATION_HOOD", LocationMonitor.getNeighborhood());
+//			Map<String, String> curChildMap = new HashMap<String, String>();
+//			location.add(curChildMap);
+//			curChildMap.put("LOCATION_ZIP", LocationMonitor.getZip());		
+//			Map<String, String> curChildMap = new HashMap<String, String>();
+//			location.add(curChildMap);
+//			curChildMap.put("LOCATION_LATITUDE", String.valueOf(LocationMonitor.getLatitude()));
+//			Map<String, String> curChildMap = new HashMap<String, String>();
+//			location.add(curChildMap);
+//			curChildMap.put("LOCATION_LONGITUDE", String.valueOf(LocationMonitor.getLongitude()));
+//			Map<String, String> curChildMap = new HashMap<String, String>();
+//			location.add(curChildMap);
+//			curChildMap.put("LOCATION_ALTITUDE", String.valueOf(LocationMonitor.getAltitude()));
+			
 		childData.add(location);		
 	}
 

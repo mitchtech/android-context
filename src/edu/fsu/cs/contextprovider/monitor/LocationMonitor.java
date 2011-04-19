@@ -144,6 +144,22 @@ public class LocationMonitor extends TimerTask {
 		return 0;
 	}
 
+	public static double getAltitude() {
+		if (GPSService.isReliable() == true) {
+			return GPSService.getAltitude();
+		} else if (NetworkService.isReliable() == true) {
+			return NetworkService.getAltitude();
+		}
+		return 0;
+	}
+
+	public static float getBearing() {
+		if (GPSService.isReliable() == true) {
+			return GPSService.getBearing();
+		} 
+		return 0;
+	}
+	
 	private static Address getGeoFromAddress(String str) {
 		List<Address> addresses = null;
 		Address address = null;
