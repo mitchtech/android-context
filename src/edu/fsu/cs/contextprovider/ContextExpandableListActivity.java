@@ -61,6 +61,7 @@ import edu.fsu.cs.contextprovider.ContextListActivity.ContextListItem;
 import edu.fsu.cs.contextprovider.dialog.AddressDialog;
 import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
 import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
+import edu.fsu.cs.contextprovider.monitor.SocialMonitor;
 import edu.fsu.cs.contextprovider.monitor.SystemBroadcastMonitor;
 import edu.fsu.cs.contextprovider.rpc.ContextProviderService;
 import edu.fsu.cs.contextprovider.rpc.IContextProviderService;
@@ -110,6 +111,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		}
 
 		public void onServiceDisconnected(ComponentName name) {
+			unbindService(conn);
 		}
 	};
 
@@ -142,6 +144,9 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.TelephonyService.class);
 		startService(intent);
 
+		/* Start social monitor */
+		SocialMonitor.StartThread(60);
+
 		/* Start ContextProviderService */
 		bindService(new Intent(this, ContextProviderService.class), conn, Context.BIND_AUTO_CREATE);
 
@@ -152,6 +157,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		refreshWeather();
 		refreshSystem();
 		refreshTelephony();
+		refreshSocial();
 		refreshDerived();
 
 		// Set up our adapter
@@ -183,19 +189,20 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		refreshWeather();
 		refreshSystem();
 		refreshTelephony();
+		refreshSocial();
 		refreshDerived();
 
 		BaseExpandableListAdapter refresh = (BaseExpandableListAdapter) mAdapter;
 		refresh.notifyDataSetChanged();
 		// refresh.notifyDataSetInvalidated();
 	}
-	
+
 	private GoogleFinanceQuote getQuotes(String quotesToFind) {
 		try {
 			URL financeUrl = new URL(
 					this.getString(R.string.google_finance_url) + quotesToFind);
 			XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser()
-					.getXMLReader();
+			.getXMLReader();
 			GoogleFinanceHandler financeHandler = new GoogleFinanceHandler();
 			xmlReader.setContentHandler(financeHandler);
 			xmlReader.parse(new InputSource(financeUrl.openStream()));
@@ -211,15 +218,15 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		}
 		return null;
 	}
-	
+
 	private void refreshFinance() {
 		if (mService == null) {
 			return;
 		}
-		
+
 		String company = "GOOG";
 		GoogleFinanceQuote quote = getQuotes(company);
-		
+
 		Map<String, String> financeMap = new HashMap<String, String>();
 		groupData.add(financeMap);
 		financeMap.put(NAME, "Finance");
@@ -228,11 +235,19 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		Map<String, String> curChildMap = new HashMap<String, String>();
 		finance.add(curChildMap);
 		curChildMap.put(NAME, "COMPANY_NAME");
-		curChildMap.put(VALUE, quote.getCompany());
+		if (quote == null) {
+			curChildMap.put(VALUE, "NA");
+		} else {
+			curChildMap.put(VALUE, quote.getCompany());
+		}
 		curChildMap = new HashMap<String, String>();
 		finance.add(curChildMap);
 		curChildMap.put(NAME, "COMPANY_SYMBOL");
-		curChildMap.put(VALUE, quote.getPrettySymbol());
+		if (quote == null) {
+			curChildMap.put(VALUE, "NA");
+		} else {
+			curChildMap.put(VALUE, quote.getPrettySymbol());
+		}
 		childData.add(finance);
 	}
 
@@ -269,7 +284,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		location.add(curChildMap);
 		curChildMap.put(NAME, "LOCATION_ALTITUDE");
 		curChildMap.put(VALUE, String.valueOf(LocationMonitor.getAltitude()));
-		
+
 		childData.add(location);
 	}
 
@@ -331,7 +346,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 			}
 			curChildMap.put(VALUE, String.valueOf(prox));
 		}
-		
+
 		childData.add(proximity);
 	}
 
@@ -357,9 +372,9 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 			xr.setContentHandler(gwh);
 			xr.parse(new InputSource(url.openStream()));
 			ws = gwh.getWeatherSet();
-//			current = ws.getWeatherCurrentCondition().getCondition() + " " + ws.getWeatherCurrentCondition().getTempFahrenheit() + " degrees F" + ws.getWeatherCurrentCondition().getHumidity()
-//					+ " humidity" + ws.getWeatherCurrentCondition().getWindCondition() + " ";
-			
+			//			current = ws.getWeatherCurrentCondition().getCondition() + " " + ws.getWeatherCurrentCondition().getTempFahrenheit() + " degrees F" + ws.getWeatherCurrentCondition().getHumidity()
+			//					+ " humidity" + ws.getWeatherCurrentCondition().getWindCondition() + " ";
+
 			// Toast.makeText(getApplicationContext(), "Current Conditions: " + weather, Toast.LENGTH_LONG).show();
 			Map<String, String> weatherMap = new HashMap<String, String>();
 			groupData.add(weatherMap);
@@ -382,14 +397,14 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 			weather.add(curChildMap);
 			curChildMap.put(NAME, "WEATHER_CUR_WIND");
 			curChildMap.put(VALUE, ws.getWeatherCurrentCondition().getWindCondition());
-			
+
 			childData.add(weather);
-			
-			
+
+
 		} catch (Exception e) {
 			Log.e(TAG, "WeatherQueryError", e);
 		}
-		
+
 
 	}
 
@@ -418,7 +433,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		system.add(curChildMap);
 		curChildMap.put(NAME, "SYSTEM_PLUGGED");
 		curChildMap.put(VALUE,  String.valueOf(SystemBroadcastMonitor.BATTERY_LAST_PLUGGED));
-		
+
 		childData.add(system);
 	}
 
@@ -463,8 +478,30 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		telephony.add(curChildMap);
 		curChildMap.put(NAME, "TELEPHONY_SMS_LAST_UPDATE");
 		curChildMap.put(VALUE, String.valueOf(TelephonyService.SMS_STATE_UPDATE));	
-				
+
 		childData.add(telephony);
+	}
+
+	private void refreshSocial() {
+		if (mService == null) {
+			return;
+		}
+		Map<String, String> socialMap = new HashMap<String, String>();
+		groupData.add(socialMap);
+		socialMap.put(NAME, "Social");
+		socialMap.put(VALUE, "Social");
+		List<Map<String, String>> social = new ArrayList<Map<String, String>>();
+		Map<String, String> curChildMap = new HashMap<String, String>();
+		social.add(curChildMap);
+		curChildMap.put(NAME, "SOCIAL_TWITTER_LAST");
+		String status = SocialMonitor.getCurrentTwitterStatus();
+		if (status == null) {
+			curChildMap.put(VALUE, "NA");
+		} else {
+			curChildMap.put(VALUE, SocialMonitor.getCurrentTwitterStatus());
+		}
+
+		childData.add(social);
 	}
 
 	private void refreshDerived() {
@@ -484,8 +521,8 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		derived.add(curChildMap);
 		curChildMap.put(NAME, "MOOD");
 		curChildMap.put(VALUE, "Happy");	
-		
-		
+
+
 		childData.add(derived);
 	}
 
@@ -581,7 +618,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 				/* Our Handler now provides the parsed weather-data to us. */
 				WeatherSet ws = gwh.getWeatherSet();
 				weather = ws.getWeatherCurrentCondition().getCondition() + " " + ws.getWeatherCurrentCondition().getTempFahrenheit() + " degrees F" + ws.getWeatherCurrentCondition().getHumidity()
-						+ " humidity" + ws.getWeatherCurrentCondition().getWindCondition() + " ";
+				+ " humidity" + ws.getWeatherCurrentCondition().getWindCondition() + " ";
 
 			} catch (Exception e) {
 				Log.e(TAG, "WeatherQueryError", e);

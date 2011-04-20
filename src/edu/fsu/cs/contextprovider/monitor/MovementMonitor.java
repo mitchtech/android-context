@@ -21,19 +21,20 @@ import edu.fsu.cs.contextprovider.sensor.GPSService;
  */
 public class MovementMonitor extends TimerTask {
 	private static final String TAG = "MovementMonitor";
-	
+
+	private static final boolean DEBUG = false;
 	private static final boolean DEBUG_TTS = false;
 	private static final float METERS_PER_SECOND_TO_MPH = (float)0.44704;
-	
+
 	private static double latitude;
 	private static double longitude;
 	private static float speed;
 	private static Timer timer = new Timer();
 	private static MovementMonitor movementObj = new MovementMonitor();
 	private static boolean running = false;
-	
+
 	private static MovementState currentMovementState = MovementState.STILL;
-	
+
 	public enum MovementState {
 		STILL 					(0, 0, 1001),
 		WALKING					((float)0.5, 2, 1000),
@@ -72,7 +73,9 @@ public class MovementMonitor extends TimerTask {
 		if (running == true) {
 			return;
 		}
-		Log.i(TAG, "Start()");
+		if (DEBUG == true) {
+			Log.i(TAG, "Start()");
+		}
 		timer.schedule(movementObj, 100, interval*1000);
 		running = true;
 	}
@@ -81,7 +84,9 @@ public class MovementMonitor extends TimerTask {
 	 * Stop the thread/timer that keeps the movement state up to date
 	 */
 	public static void StopThread() {
-		Log.i(TAG, "Stop()");
+		if (DEBUG == true) {
+			Log.i(TAG, "Stop()");
+		}
 		timer.purge();
 		movementObj = new MovementMonitor();
 		running = false;
@@ -90,7 +95,7 @@ public class MovementMonitor extends TimerTask {
 	public static String getMovementState() {
 		return currentMovementState.toString();
 	}
-	
+
 	public static float getSpeedMph() {
 		return GPSService.getSpeed()*METERS_PER_SECOND_TO_MPH;
 	}
@@ -100,20 +105,24 @@ public class MovementMonitor extends TimerTask {
 
 		if (GPSService.isReliable() == true) {
 			currentMovementState = determineMovementStateFromGps();
-			Log.i(TAG, "GPS determined state: " + currentMovementState);
+			if (DEBUG == true) {
+				Log.i(TAG, "GPS determined state: " + currentMovementState);
+			}
 			if (DEBUG_TTS == true) {
 				ContextBrowserActivity.tts.speak("GPS Movement " + currentMovementState, TextToSpeech.QUEUE_FLUSH, null);
 			}
 			// Use the accelerometer 
 		} else {
 			currentMovementState = determineMovementStateFromAccelerometer();
-			Log.i(TAG, "Accelerometer determined state: " + currentMovementState);
+			if (DEBUG == true) {
+				Log.i(TAG, "Accelerometer determined state: " + currentMovementState);
+			}
 			if (DEBUG_TTS == true) {
 				ContextBrowserActivity.tts.speak("Accelerometer Movement " + currentMovementState, TextToSpeech.QUEUE_FLUSH, null);
 			}
 
 		}
-		
+
 
 	}
 
@@ -131,11 +140,15 @@ public class MovementMonitor extends TimerTask {
 		for (MovementState s : MovementState.values()) {
 			if (s.isInside(speed) == true) {
 				newState = s;
-				Log.i(TAG, "Changed movement state to: [" + currentMovementState + "]");
+				if (DEBUG == true) {
+					Log.i(TAG, "Changed movement state to: [" + currentMovementState + "]");
+				}
 				break;
 			}
 		}
-		Log.i(TAG, "GPS location (" + latitude + ", " + longitude + ") | Speed: [" + speed + "]");
+		if (DEBUG == true) {
+			Log.i(TAG, "GPS location (" + latitude + ", " + longitude + ") | Speed: [" + speed + "]");
+		}
 		return newState;
 	}
 
@@ -144,15 +157,19 @@ public class MovementMonitor extends TimerTask {
 		long currentTime = System.currentTimeMillis();
 		long stepTime = AccelerometerService.getStepTimestamp();
 		long sinceStepTime = currentTime - stepTime;
-		
+
 		long diffCurrentStrideTime = 0, diffConsiderStrideTime = 0;
-		Log.i(TAG, "Time since last step: " + sinceStepTime + " | CurrentTime: " + currentTime + " | StepTime: " + stepTime);
+		if (DEBUG == true) {
+			Log.i(TAG, "Time since last step: " + sinceStepTime + " | CurrentTime: " + currentTime + " | StepTime: " + stepTime);
+		}
 
 		/* Find the state that has the closest stride time */
 		for (MovementState s : MovementState.values()) {
 			diffCurrentStrideTime = Math.abs(newState.stride_time - sinceStepTime);
 			diffConsiderStrideTime = Math.abs(s.stride_time - sinceStepTime);
-			Log.i(TAG, "Considering: [" + diffConsiderStrideTime + "] | Current: [" + diffCurrentStrideTime + "]");
+			if (DEBUG == true) {
+				Log.i(TAG, "Considering: [" + diffConsiderStrideTime + "] | Current: [" + diffCurrentStrideTime + "]");
+			}
 			if (diffConsiderStrideTime < diffCurrentStrideTime) {
 				newState = s;
 			}

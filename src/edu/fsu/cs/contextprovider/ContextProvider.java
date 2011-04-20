@@ -32,6 +32,7 @@ import java.util.Map;
 
 import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
 import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
+import edu.fsu.cs.contextprovider.monitor.SocialMonitor;
 import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
 
 public class ContextProvider extends ContentProvider {
@@ -44,7 +45,7 @@ public class ContextProvider extends ContentProvider {
 	private static void getAll(Map<String, String> results) {
 		getLocation(results);
 		getMovement(results);
-
+		getSocial(results);
 	
 	}
 	
@@ -63,6 +64,10 @@ public class ContextProvider extends ContentProvider {
 		results.put("MOVEMENT_BEARING", String.valueOf(LocationMonitor.getBearing()));
 		results.put("MOVEMENT_STEP_COUNT", String.valueOf(AccelerometerService.getStepCount()));
 		results.put("MOVEMENT_LAST_STEP", String.valueOf(AccelerometerService.getStepTimestamp()));
+	}
+	
+	private static void getSocial(Map<String, String> results) {
+		results.put("SOCIAL_TWITTER_LAST", SocialMonitor.getCurrentTwitterStatus());
 	}
 	
 	private static void getFinance(Map<String, String> results) {
