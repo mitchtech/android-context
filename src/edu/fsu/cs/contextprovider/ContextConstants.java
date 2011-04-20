@@ -60,6 +60,7 @@ public class ContextConstants {
 	public static final String DERIVED_HEALTH = "Health";
 	public static final String DERIVED_MOOD = "Mood";
 	public static final String DERIVED_SHELTER = "Shelter";
+	public static final String DERIVED_POCKET = "Pocket";
 	public static final String DERIVED_DENSITY = "Density";
 	public static final String DERIVED_BIOME = "Biome";
 

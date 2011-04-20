@@ -104,6 +104,13 @@ public class LocationMonitor extends TimerTask {
 		return distanceMeters(latitude, longitude, getLatitude(), getLongitude());
 	}
 
+	public static boolean isInside() {
+		if (GPSService.isReliable() == false) {
+			return true;
+		}
+		return false;
+	}
+	
 	public static String getZip() {
 		if (currentAddress == null)
 			return null;

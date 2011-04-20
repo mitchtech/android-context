@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.speech.tts.TextToSpeech;
+import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -36,8 +37,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.Toast;
+import android.widget.ExpandableListView.OnChildClickListener;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -66,8 +69,10 @@ import edu.fsu.cs.contextprovider.monitor.SystemBroadcastMonitor;
 import edu.fsu.cs.contextprovider.rpc.ContextProviderService;
 import edu.fsu.cs.contextprovider.rpc.IContextProviderService;
 import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
+import edu.fsu.cs.contextprovider.sensor.LightService;
 import edu.fsu.cs.contextprovider.sensor.TelephonyService;
 import edu.fsu.cs.contextprovider.weather.GoogleWeatherHandler;
+import edu.fsu.cs.contextprovider.weather.WeatherCurrentCondition;
 import edu.fsu.cs.contextprovider.weather.WeatherSet;
 import edu.fsu.cs.contextprovider.finance.GoogleFinanceQuote;
 import edu.fsu.cs.contextprovider.finance.GoogleFinanceHandler;
@@ -75,7 +80,7 @@ import edu.fsu.cs.contextprovider.finance.GoogleFinanceHandler;
 /**
  * Demonstrates expandable lists backed by a Simple Map-based adapter
  */
-public class ContextExpandableListActivity extends ExpandableListActivity {
+public class ContextExpandableListActivity extends ExpandableListActivity implements OnChildClickListener {
 	private static final String PKG = "edu.fsu.cs.contextprovider";
 	private static final String TAG = "ContextExpandableListActivity";
 
@@ -94,6 +99,8 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 	private static final int SMS_ID = Menu.FIRST + 8;
 
 	public static boolean running = false;
+	
+	ClipboardManager clip = null;
 
 	List<Map<String, String>> groupData = new ArrayList<Map<String, String>>();
 	List<List<Map<String, String>>> childData = new ArrayList<List<Map<String, String>>>();
@@ -104,6 +111,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 	// ArrayAdapter<ContextListItem> adapter = null;
 
 	ArrayAdapter<ContextListItem> addressAdapter = null;
+	private CopyState copyState = new CopyState();
 
 	private ServiceConnection conn = new ServiceConnection() {
 		public void onServiceConnected(ComponentName name, IBinder service) {
@@ -116,11 +124,16 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 	};
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState)  {
 		super.onCreate(savedInstanceState);
 
 		running = true;
 		Intent intent = null;
+		
+		if (clip == null) {
+			clip = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+		}
+		
 		/* Start GPS Service */
 		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.GPSService.class);
 		startService(intent);
@@ -161,11 +174,11 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		refreshDerived();
 
 		// Set up our adapter
-//		mAdapter = new SimpleExpandableListAdapter(this, groupData, android.R.layout.simple_expandable_list_item_1, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 },
-//				childData, android.R.layout.simple_expandable_list_item_2, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 });
+		mAdapter = new SimpleExpandableListAdapter(this, groupData, android.R.layout.simple_expandable_list_item_1, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 },
+				childData, android.R.layout.simple_expandable_list_item_2, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 });
 
-		mAdapter = new SimpleExpandableListAdapter(this, groupData, R.layout.group_row, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 },
-				childData, R.layout.child_row, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 });
+//		mAdapter = new SimpleExpandableListAdapter(this, groupData, R.layout.group_row, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 },
+//				childData, R.layout.child_row, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 });
 
 		
 		setListAdapter(mAdapter);
@@ -198,6 +211,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 
 		BaseExpandableListAdapter refresh = (BaseExpandableListAdapter) mAdapter;
 		refresh.notifyDataSetChanged();
+		copyState.reset();
 		// refresh.notifyDataSetInvalidated();
 	}
 
@@ -365,6 +379,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		URL url;
 
 		try {
+			String tmpStr = null;
 			String cityParamString = zip;
 			Log.d(TAG, "cityParamString: " + cityParamString);
 			String queryString = "http://www.google.com/ig/api?weather=" + cityParamString;
@@ -376,6 +391,27 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 			xr.setContentHandler(gwh);
 			xr.parse(new InputSource(url.openStream()));
 			ws = gwh.getWeatherSet();
+			if (ws == null)
+				return;
+			WeatherCurrentCondition wcc = ws.getWeatherCurrentCondition();
+			
+			String weatherTemp = "NA";
+			String weatherCond = "NA";
+			String weatherHumid = "NA";
+			String weatherWindCond = "NA";
+			
+			if (wcc != null) {
+				weatherTemp = null;
+				Integer weatherTempInt = wcc.getTempFahrenheit();
+				if (weatherTempInt != null) {
+					weatherTemp = String.valueOf(weatherTempInt);
+				}
+				weatherCond = wcc.getCondition();
+				weatherHumid = wcc.getHumidity();
+				weatherWindCond = wcc.getWindCondition();
+			}
+			
+			
 			//			current = ws.getWeatherCurrentCondition().getCondition() + " " + ws.getWeatherCurrentCondition().getTempFahrenheit() + " degrees F" + ws.getWeatherCurrentCondition().getHumidity()
 			//					+ " humidity" + ws.getWeatherCurrentCondition().getWindCondition() + " ";
 
@@ -388,19 +424,19 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 			Map<String, String> curChildMap = new HashMap<String, String>();
 			weather.add(curChildMap);
 			curChildMap.put(NAME, ContextConstants.WEATHER_CUR_TEMP);
-			curChildMap.put(VALUE, ws.getWeatherCurrentCondition().getTempFahrenheit() + " degrees F");
+			curChildMap.put(VALUE, weatherTemp + " degrees F");
 			curChildMap = new HashMap<String, String>();
 			weather.add(curChildMap);
 			curChildMap.put(NAME, ContextConstants.WEATHER_CUR_CONDITION);
-			curChildMap.put(VALUE, ws.getWeatherCurrentCondition().getCondition());
+			curChildMap.put(VALUE, weatherCond);
 			curChildMap = new HashMap<String, String>();
 			weather.add(curChildMap);
 			curChildMap.put(NAME, ContextConstants.WEATHER_CUR_HUMIDITY);
-			curChildMap.put(VALUE, ws.getWeatherCurrentCondition().getHumidity());
+			curChildMap.put(VALUE, weatherHumid);
 			curChildMap = new HashMap<String, String>();
 			weather.add(curChildMap);
 			curChildMap.put(NAME, ContextConstants.WEATHER_CUR_WIND);
-			curChildMap.put(VALUE, ws.getWeatherCurrentCondition().getWindCondition());
+			curChildMap.put(VALUE, weatherWindCond);
 
 			childData.add(weather);
 
@@ -525,7 +561,14 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		derived.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.DERIVED_MOOD);
 		curChildMap.put(VALUE, "Happy");	
-
+		curChildMap = new HashMap<String, String>();
+		derived.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.DERIVED_POCKET);
+		curChildMap.put(VALUE, String.valueOf(LightService.isInPocket()));
+		curChildMap = new HashMap<String, String>();
+		derived.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.DERIVED_SHELTER);
+		curChildMap.put(VALUE, String.valueOf(LocationMonitor.isInside()));
 
 		childData.add(derived);
 	}
@@ -688,5 +731,64 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 			return name + ": " + value;
 		}
 	}
+	
 
+	@Override
+	public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+		String copiedString = null;
+		Context context = getApplicationContext();
+		List<Map<String, String>> category = childData.get(groupPosition);
+		Map<String, String> item = category.get(childPosition);
+
+		String name = item.get(NAME);
+		String value = item.get(VALUE);
+		
+		boolean wasClicked = copyState.click(groupPosition, childPosition);
+		/* copy value on first click */
+		if (wasClicked == false) {
+			copiedString = value;
+		/* copy name on second click */
+		} else {
+			copiedString = name;
+		}
+		
+		Toast.makeText(context, "Copied: [" + copiedString + "]", Toast.LENGTH_SHORT).show();
+		clip.setText(copiedString);
+		Log.i("LIST", "Name [" + name + "] | Value [" + value +"] | id [" + id + "]");
+
+		return true;
+	}
+	
+	private class CopyState {
+		int groupPosition = -1;
+		int childPosition = -1;
+		boolean wasClicked = false;
+		
+		CopyState() {
+			
+		}
+		
+		void reset() {
+			wasClicked = false;
+			groupPosition = -1;
+			childPosition = -1;
+		}
+		
+		boolean click(int group, int child) {
+			if (groupPosition != group || childPosition != child) {
+				wasClicked = true;
+				groupPosition = group;
+				childPosition = child;
+				return false;
+			}
+			
+			if (wasClicked == true) {
+				wasClicked = false;
+				return true;
+			} else {
+				wasClicked = true;
+				return false;
+			}
+		}
+	}
 }

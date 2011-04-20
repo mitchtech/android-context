@@ -22,6 +22,7 @@ public class LightService extends Service implements SensorEventListener {
 	protected boolean serviceEnabled = false;
 	private SensorManager sm;
 	private Sensor lightSensor;
+	private static int lux=0;
 
 	public void init() {
 		if (!serviceEnabled) {
@@ -59,13 +60,20 @@ public class LightService extends Service implements SensorEventListener {
 	public void onSensorChanged(SensorEvent event) {
 		if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
 
-			int lux = (int) event.values[0];
+			lux = (int) event.values[0];
 
 			if (DEBUG)
 				Log.d(TAG, "send: " + lux);
 			// Amarino.sendDataFromPlugin(this, pluginId, lux);
 
 		}
+	}
+	
+	public static boolean isInPocket() {
+		if (lux < 10) {
+			return true;
+		}
+		return false;
 	}
 
 	
