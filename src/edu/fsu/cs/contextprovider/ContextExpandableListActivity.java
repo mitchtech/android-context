@@ -57,6 +57,7 @@ import edu.fsu.cs.contextprovider.ContextListActivity.ContextListItem;
 import edu.fsu.cs.contextprovider.dialog.AddressDialog;
 import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
 import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
+import edu.fsu.cs.contextprovider.monitor.SystemBroadcastMonitor;
 import edu.fsu.cs.contextprovider.rpc.ContextProviderService;
 import edu.fsu.cs.contextprovider.rpc.IContextProviderService;
 import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
@@ -172,7 +173,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		refreshMovement();
 		refreshProximity();
 		refreshWeather();
-		// refreshSystem();
+		refreshSystem();
 		// refreshTelephony();
 		// refreshDerived();
 
@@ -331,9 +332,6 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 			childData.add(weather);
 			
 			
-			
-			
-			
 		} catch (Exception e) {
 			Log.e(TAG, "WeatherQueryError", e);
 		}
@@ -350,12 +348,23 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		systemMap.put(NAME, "System");
 		systemMap.put(VALUE, "System");
 		List<Map<String, String>> system = new ArrayList<Map<String, String>>();
-		for (int j = 0; j < 5; j++) {
-			Map<String, String> curChildMap = new HashMap<String, String>();
-			system.add(curChildMap);
-			curChildMap.put(NAME, "Child " + j);
-			curChildMap.put(VALUE, "Value");
-		}
+		Map<String, String> curChildMap = new HashMap<String, String>();
+		system.add(curChildMap);
+		curChildMap.put(NAME, "SYSTEM_BATTERY_LEVEL");
+		curChildMap.put(VALUE,  String.valueOf(SystemBroadcastMonitor.BATTERY_LEVEL));
+		curChildMap = new HashMap<String, String>();
+		system.add(curChildMap);
+		curChildMap.put(NAME, "SYSTEM_BATTERY_LOW");
+		curChildMap.put(VALUE,  String.valueOf(SystemBroadcastMonitor.BATTERY_LEVEL_LOW));
+		curChildMap = new HashMap<String, String>();
+		system.add(curChildMap);
+		curChildMap.put(NAME, "SYSTEM_PLUGGED");
+		curChildMap.put(VALUE,  String.valueOf(SystemBroadcastMonitor.BATTERY_PLUGGED));
+		curChildMap = new HashMap<String, String>();
+		system.add(curChildMap);
+		curChildMap.put(NAME, "SYSTEM_PLUGGED");
+		curChildMap.put(VALUE,  String.valueOf(SystemBroadcastMonitor.BATTERY_LAST_PLUGGED));
+		
 		childData.add(system);
 	}
 

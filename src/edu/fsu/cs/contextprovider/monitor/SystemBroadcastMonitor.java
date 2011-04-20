@@ -54,10 +54,10 @@ public class SystemBroadcastMonitor extends BroadcastReceiver {
 	private static String ACTION_POWER_DISCONNECTED = "android.intent.action.ACTION_POWER_DISCONNECTED";
 	private static String UMS_CONNECTED = "android.intent.action.UMS_CONNECTED";
 	private static String UMS_DISCONNECTED = "android.intent.action.UMS_DISCONNECTED";
-	private static boolean BATTERY_PLUGGED = false;
-	private static boolean BATTERY_LEVEL_LOW = false;
-	private static int BATTERY_LEVEL = 0;
-	private static long BATTERY_LAST_PLUGGED = 0;
+	public static boolean BATTERY_PLUGGED = false;
+	public static boolean BATTERY_LEVEL_LOW = false;
+	public static int BATTERY_LEVEL = 0;
+	public static long BATTERY_LAST_PLUGGED = 0;
 	
 	
 	// services
