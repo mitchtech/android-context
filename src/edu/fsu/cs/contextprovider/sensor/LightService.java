@@ -22,7 +22,7 @@ public class LightService extends Service implements SensorEventListener {
 	protected boolean serviceEnabled = false;
 	private SensorManager sm;
 	private Sensor lightSensor;
-	private static int lux=0;
+	private static float lux=0;
 
 	public void init() {
 		if (!serviceEnabled) {
@@ -60,7 +60,7 @@ public class LightService extends Service implements SensorEventListener {
 	public void onSensorChanged(SensorEvent event) {
 		if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
 
-			lux = (int) event.values[0];
+			lux = event.values[0];
 
 			if (DEBUG)
 				Log.d(TAG, "send: " + lux);
@@ -70,7 +70,7 @@ public class LightService extends Service implements SensorEventListener {
 	}
 	
 	public static boolean isInPocket() {
-		if (lux < 10) {
+		if (lux < .5) {
 			return true;
 		}
 		return false;
