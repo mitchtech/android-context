@@ -526,25 +526,29 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		childData.add(derived);
 	}
 
-	private void refreshAddress() {
-		addressAdapter.clear();
-		SharedPreferences pref = getSharedPreferences(ContextConstants.PREFS_ADDRESS, 0);
-		Map<String, String> list = (Map<String, String>) pref.getAll();
-		for (Map.Entry<String, String> entry : list.entrySet()) {
-			ContextListItem item = new ContextListItem();
-			item.setName(entry.getKey());
-			double proximity = 0;
-			try {
-				proximity = mService.proximityToAddress(entry.getValue());
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			item.setValue(String.valueOf(proximity));
-			addressAdapter.add(item);
-		}
-		addressAdapter.notifyDataSetChanged();
-	}
+	/* I think refrehsProximity replaces this function */
+//	private void refreshAddress() {
+//		if (mService == null) {
+//			return;
+//		}
+//		addressAdapter.clear();
+//		SharedPreferences pref = getSharedPreferences(ContextConstants.PREFS_ADDRESS, 0);
+//		Map<String, String> list = (Map<String, String>) pref.getAll();
+//		for (Map.Entry<String, String> entry : list.entrySet()) {
+//			ContextListItem item = new ContextListItem();
+//			item.setName(entry.getKey());
+//			double proximity = 0;
+//			try {
+//				proximity = mService.proximityToAddress(entry.getValue());
+//			} catch (RemoteException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			item.setValue(String.valueOf(proximity));
+//			addressAdapter.add(item);
+//		}
+//		addressAdapter.notifyDataSetChanged();
+//	}
 
 	@Override
 	public void onDestroy() {
@@ -584,7 +588,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 			}
 			AddressDialog.add addAddressDialog = new AddressDialog.add(this, address);
 			addAddressDialog.show();
-			this.refreshAddress();
+			this.refreshProximity();
 			return (true);
 		case GEO_ID:
 			Toast.makeText(getApplicationContext(), "Trying to get geolocation", Toast.LENGTH_SHORT).show();
