@@ -153,7 +153,6 @@ public class LocationMonitor extends TimerTask {
 		return 0;
 	}
 
-<<<<<<< HEAD
 	public static double getAltitude() {
 		if (GPSService.isReliable() == true) {
 			return GPSService.getAltitude();
@@ -175,6 +174,7 @@ public class LocationMonitor extends TimerTask {
 			return GPSService.getSpeed();
 		} 
 		return 0;
+	}
 
 	public static Location getLocation() {
 		if (GPSService.isReliable() == true) {

@@ -60,7 +60,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import edu.fsu.cs.contextprovider.ContextListActivity.ContextListItem;
 import edu.fsu.cs.contextprovider.dialog.AddressDialog;
 import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
 import edu.fsu.cs.contextprovider.monitor.MovementMonitor;

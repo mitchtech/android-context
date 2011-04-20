@@ -136,12 +136,6 @@
 			</intent-filter>
 		</receiver>
 
-
-	</application>
-
-=======
->>>>>>> adwhirl
-
 	</application>
 
 	<supports-screens android:largeScreens="true"
