@@ -97,8 +97,8 @@ public class ContextProximityActivity extends ListActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(Menu.NONE, REFRESH_ID, Menu.NONE, "Refresh").setIcon(R.drawable.add).setAlphabeticShortcut('a');
-		menu.add(Menu.NONE, ADD_ID, Menu.NONE, "Add").setIcon(R.drawable.add).setAlphabeticShortcut('a');
+		menu.add(Menu.NONE, REFRESH_ID, Menu.NONE, "Refresh").setIcon(R.drawable.add64).setAlphabeticShortcut('a');
+		menu.add(Menu.NONE, ADD_ID, Menu.NONE, "Add").setIcon(R.drawable.add64).setAlphabeticShortcut('a');
 
 		return (super.onCreateOptionsMenu(menu));
 	}

@@ -140,11 +140,11 @@ public class ContextBrowserActivity extends ListActivity implements TextToSpeech
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(Menu.NONE, ADD_ID, Menu.NONE, "Add").setIcon(R.drawable.add).setAlphabeticShortcut('a');
-		menu.add(Menu.NONE, GEO_ID, Menu.NONE, "Geo Loc").setIcon(R.drawable.add).setAlphabeticShortcut('g');
-		menu.add(Menu.NONE, WEATHER_ID, Menu.NONE, "Weather").setIcon(R.drawable.add).setAlphabeticShortcut('w');
-		menu.add(Menu.NONE, PHONE_ID, Menu.NONE, "Phone").setIcon(R.drawable.add).setAlphabeticShortcut('p');
-		menu.add(Menu.NONE, SMS_ID, Menu.NONE, "SMS").setIcon(R.drawable.add).setAlphabeticShortcut('s');
+		menu.add(Menu.NONE, ADD_ID, Menu.NONE, "Add").setIcon(R.drawable.add64).setAlphabeticShortcut('a');
+		menu.add(Menu.NONE, GEO_ID, Menu.NONE, "Geo Loc").setIcon(R.drawable.add64).setAlphabeticShortcut('g');
+		menu.add(Menu.NONE, WEATHER_ID, Menu.NONE, "Weather").setIcon(R.drawable.add64).setAlphabeticShortcut('w');
+		menu.add(Menu.NONE, PHONE_ID, Menu.NONE, "Phone").setIcon(R.drawable.add64).setAlphabeticShortcut('p');
+		menu.add(Menu.NONE, SMS_ID, Menu.NONE, "SMS").setIcon(R.drawable.add64).setAlphabeticShortcut('s');
 		
 		return (super.onCreateOptionsMenu(menu));
 	}
@@ -211,7 +211,7 @@ public class ContextBrowserActivity extends ListActivity implements TextToSpeech
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-		menu.add(Menu.NONE, DELETE_ID, Menu.NONE, "Delete").setIcon(R.drawable.delete).setAlphabeticShortcut('d');
+		menu.add(Menu.NONE, DELETE_ID, Menu.NONE, "Delete").setIcon(R.drawable.delete64).setAlphabeticShortcut('d');
 	}
 
 	@Override

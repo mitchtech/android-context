@@ -3,7 +3,7 @@
 	package="edu.fsu.cs.contextprovider">
 	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
 
-	<application android:label="@string/app_name" android:icon="@drawable/cw">
+	<application android:label="@string/app_name" android:icon="@drawable/context128">
 		<uses-library android:name="com.google.android.maps" />
 
 
@@ -57,6 +57,10 @@
 		<service android:name="edu.fsu.cs.contextprovider.sensor.AccelerometerService"></service>
 		<service android:name="edu.fsu.cs.contextprovider.sensor.NetworkService"></service>
 		<service android:name="edu.fsu.cs.contextprovider.rpc.ContextProviderService"></service>
+		<service android:name="edu.fsu.cs.contextprovider.sensor.LightService"></service>
+		<service android:name="edu.fsu.cs.contextprovider.sensor.TelephonyService"></service>
+		<service android:name="edu.fsu.cs.contextprovider.sensor.ProximityService"></service>
+
 
 		<receiver android:name="edu.fsu.cs.contextprovider.monitor.SystemBroadcastMonitor">
 			<intent-filter>

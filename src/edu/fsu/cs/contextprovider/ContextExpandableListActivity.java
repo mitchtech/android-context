@@ -161,9 +161,13 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		refreshDerived();
 
 		// Set up our adapter
-		mAdapter = new SimpleExpandableListAdapter(this, groupData, android.R.layout.simple_expandable_list_item_1, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 },
-				childData, android.R.layout.simple_expandable_list_item_2, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 });
+//		mAdapter = new SimpleExpandableListAdapter(this, groupData, android.R.layout.simple_expandable_list_item_1, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 },
+//				childData, android.R.layout.simple_expandable_list_item_2, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 });
 
+		mAdapter = new SimpleExpandableListAdapter(this, groupData, R.layout.group_row, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 },
+				childData, R.layout.child_row, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 });
+
+		
 		setListAdapter(mAdapter);
 	}
 
@@ -262,27 +266,27 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		List<Map<String, String>> location = new ArrayList<Map<String, String>>();
 		Map<String, String> curChildMap = new HashMap<String, String>();
 		location.add(curChildMap);
-		curChildMap.put(NAME, "LOCATION_ADDRESS");
+		curChildMap.put(NAME, ContextConstants.LOCATION_ADDRESS);
 		curChildMap.put(VALUE, LocationMonitor.getAddress());
 		curChildMap = new HashMap<String, String>();
 		location.add(curChildMap);
-		curChildMap.put(NAME, "LOCATION_HOOD");
+		curChildMap.put(NAME, ContextConstants.LOCATION_HOOD);
 		curChildMap.put(VALUE, LocationMonitor.getNeighborhood());
 		curChildMap = new HashMap<String, String>();
 		location.add(curChildMap);
-		curChildMap.put(NAME, "LOCATION_ZIP");
+		curChildMap.put(NAME, ContextConstants.LOCATION_ZIP);
 		curChildMap.put(VALUE, LocationMonitor.getZip());
 		curChildMap = new HashMap<String, String>();
 		location.add(curChildMap);
-		curChildMap.put(NAME, "LOCATION_LATITUDE");
+		curChildMap.put(NAME, ContextConstants.LOCATION_LATITUDE);
 		curChildMap.put(VALUE, String.valueOf(LocationMonitor.getLatitude()));
 		curChildMap = new HashMap<String, String>();
 		location.add(curChildMap);
-		curChildMap.put(NAME, "LOCATION_LONGITUDE");
+		curChildMap.put(NAME, ContextConstants.LOCATION_LONGITUDE);
 		curChildMap.put(VALUE, String.valueOf(LocationMonitor.getLongitude()));
 		curChildMap = new HashMap<String, String>();
 		location.add(curChildMap);
-		curChildMap.put(NAME, "LOCATION_ALTITUDE");
+		curChildMap.put(NAME, ContextConstants.LOCATION_ALTITUDE);
 		curChildMap.put(VALUE, String.valueOf(LocationMonitor.getAltitude()));
 
 		childData.add(location);
@@ -299,23 +303,23 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		List<Map<String, String>> movement = new ArrayList<Map<String, String>>();
 		Map<String, String> curChildMap = new HashMap<String, String>();
 		movement.add(curChildMap);
-		curChildMap.put(NAME, "MOVEMENT_STATE");
+		curChildMap.put(NAME, ContextConstants.MOVEMENT_STATE);
 		curChildMap.put(VALUE, MovementMonitor.getMovementState());
 		curChildMap = new HashMap<String, String>();
 		movement.add(curChildMap);
-		curChildMap.put(NAME, "MOVEMENT_SPEED");
+		curChildMap.put(NAME, ContextConstants.MOVEMENT_SPEED);
 		curChildMap.put(VALUE, String.valueOf(MovementMonitor.getSpeedMph()));
 		curChildMap = new HashMap<String, String>();
 		movement.add(curChildMap);
-		curChildMap.put(NAME, "MOVEMENT_SPEED");
+		curChildMap.put(NAME, ContextConstants.MOVEMENT_SPEED);
 		curChildMap.put(VALUE, String.valueOf(LocationMonitor.getBearing()));
 		curChildMap = new HashMap<String, String>();
 		movement.add(curChildMap);
-		curChildMap.put(NAME, "MOVEMENT_STEP_COUNT");
+		curChildMap.put(NAME, ContextConstants.MOVEMENT_STEP_COUNT);
 		curChildMap.put(VALUE, String.valueOf(AccelerometerService.getStepCount()));
 		curChildMap = new HashMap<String, String>();
 		movement.add(curChildMap);
-		curChildMap.put(NAME, "MOVEMENT_LAST_STEP");
+		curChildMap.put(NAME, ContextConstants.MOVEMENT_LAST_STEP);
 		curChildMap.put(VALUE, String.valueOf(AccelerometerService.getStepTimestamp()));
 
 		childData.add(movement);
@@ -383,19 +387,19 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 			List<Map<String, String>> weather = new ArrayList<Map<String, String>>();
 			Map<String, String> curChildMap = new HashMap<String, String>();
 			weather.add(curChildMap);
-			curChildMap.put(NAME, "WEATHER_CUR_TEMP");
+			curChildMap.put(NAME, ContextConstants.WEATHER_CUR_TEMP);
 			curChildMap.put(VALUE, ws.getWeatherCurrentCondition().getTempFahrenheit() + " degrees F");
 			curChildMap = new HashMap<String, String>();
 			weather.add(curChildMap);
-			curChildMap.put(NAME, "WEATHER_CUR_CONDITION");
+			curChildMap.put(NAME, ContextConstants.WEATHER_CUR_CONDITION);
 			curChildMap.put(VALUE, ws.getWeatherCurrentCondition().getCondition());
 			curChildMap = new HashMap<String, String>();
 			weather.add(curChildMap);
-			curChildMap.put(NAME, "WEATHER_CUR_HUMIDITY");
+			curChildMap.put(NAME, ContextConstants.WEATHER_CUR_HUMIDITY);
 			curChildMap.put(VALUE, ws.getWeatherCurrentCondition().getHumidity());
 			curChildMap = new HashMap<String, String>();
 			weather.add(curChildMap);
-			curChildMap.put(NAME, "WEATHER_CUR_WIND");
+			curChildMap.put(NAME, ContextConstants.WEATHER_CUR_WIND);
 			curChildMap.put(VALUE, ws.getWeatherCurrentCondition().getWindCondition());
 
 			childData.add(weather);
@@ -419,19 +423,19 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		List<Map<String, String>> system = new ArrayList<Map<String, String>>();
 		Map<String, String> curChildMap = new HashMap<String, String>();
 		system.add(curChildMap);
-		curChildMap.put(NAME, "SYSTEM_BATTERY_LEVEL");
+		curChildMap.put(NAME, ContextConstants.SYSTEM_BATTERY_LEVEL);
 		curChildMap.put(VALUE,  String.valueOf(SystemBroadcastMonitor.BATTERY_LEVEL));
 		curChildMap = new HashMap<String, String>();
 		system.add(curChildMap);
-		curChildMap.put(NAME, "SYSTEM_BATTERY_LOW");
+		curChildMap.put(NAME, ContextConstants.SYSTEM_BATTERY_LOW);
 		curChildMap.put(VALUE,  String.valueOf(SystemBroadcastMonitor.BATTERY_LEVEL_LOW));
 		curChildMap = new HashMap<String, String>();
 		system.add(curChildMap);
-		curChildMap.put(NAME, "SYSTEM_PLUGGED");
+		curChildMap.put(NAME, ContextConstants.SYSTEM_PLUGGED);
 		curChildMap.put(VALUE,  String.valueOf(SystemBroadcastMonitor.BATTERY_PLUGGED));
 		curChildMap = new HashMap<String, String>();
 		system.add(curChildMap);
-		curChildMap.put(NAME, "SYSTEM_PLUGGED");
+		curChildMap.put(NAME, ContextConstants.SYSTEM_PLUGGED);
 		curChildMap.put(VALUE,  String.valueOf(SystemBroadcastMonitor.BATTERY_LAST_PLUGGED));
 
 		childData.add(system);
@@ -448,35 +452,35 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		List<Map<String, String>> telephony = new ArrayList<Map<String, String>>();
 		Map<String, String> curChildMap = new HashMap<String, String>();
 		telephony.add(curChildMap);
-		curChildMap.put(NAME, "TELEPHONY_PHONE_STATE");
+		curChildMap.put(NAME, ContextConstants.TELEPHONY_PHONE_STATE);
 		curChildMap.put(VALUE, TelephonyService.PHONE_STATE);
 		curChildMap = new HashMap<String, String>();
 		telephony.add(curChildMap);
-		curChildMap.put(NAME, "TELEPHONY_PHONE_LAST_UPDATE");
+		curChildMap.put(NAME, ContextConstants.TELEPHONY_PHONE_LAST_UPDATE);
 		curChildMap.put(VALUE, String.valueOf(TelephonyService.PHONE_STATE_UPDATE));	
 		curChildMap = new HashMap<String, String>();
 		telephony.add(curChildMap);
-		curChildMap.put(NAME, "TELEPHONY_LAST_RECV");
+		curChildMap.put(NAME, ContextConstants.TELEPHONY_LAST_RECV);
 		curChildMap.put(VALUE, String.valueOf(TelephonyService.PHONE_LAST_NUMBER_RECV));	
 		curChildMap = new HashMap<String, String>();
 		telephony.add(curChildMap);
-		curChildMap.put(NAME, "TELEPHONY_LAST_DIAL");
+		curChildMap.put(NAME, ContextConstants.TELEPHONY_LAST_DIAL);
 		curChildMap.put(VALUE, String.valueOf(TelephonyService.PHONE_LAST_NUMBER_DIAL));	
 		curChildMap = new HashMap<String, String>();
 		telephony.add(curChildMap);
-		curChildMap.put(NAME, "TELEPHONY_SMS_STATE");
+		curChildMap.put(NAME, ContextConstants.TELEPHONY_SMS_STATE);
 		curChildMap.put(VALUE, TelephonyService.SMS_STATE);	
 		curChildMap = new HashMap<String, String>();
 		telephony.add(curChildMap);
-		curChildMap.put(NAME, "TELEPHONY_SMS_LAST_SENDER");
+		curChildMap.put(NAME, ContextConstants.TELEPHONY_SMS_LAST_SENDER);
 		curChildMap.put(VALUE, TelephonyService.SMS_LAST_SENDER);	
 		curChildMap = new HashMap<String, String>();
 		telephony.add(curChildMap);
-		curChildMap.put(NAME, "TELEPHONY_SMS_LAST_MESSAGE");
+		curChildMap.put(NAME, ContextConstants.TELEPHONY_SMS_LAST_MESSAGE);
 		curChildMap.put(VALUE, TelephonyService.SMS_LAST_MESSAGE);	
 		curChildMap = new HashMap<String, String>();
 		telephony.add(curChildMap);
-		curChildMap.put(NAME, "TELEPHONY_SMS_LAST_UPDATE");
+		curChildMap.put(NAME, ContextConstants.TELEPHONY_SMS_LAST_UPDATE);
 		curChildMap.put(VALUE, String.valueOf(TelephonyService.SMS_STATE_UPDATE));	
 
 		childData.add(telephony);
@@ -515,11 +519,11 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		List<Map<String, String>> derived = new ArrayList<Map<String, String>>();
 		Map<String, String> curChildMap = new HashMap<String, String>();
 		derived.add(curChildMap);
-		curChildMap.put(NAME, "HEALTH");
+		curChildMap.put(NAME, ContextConstants.DERIVED_HEALTH);
 		curChildMap.put(VALUE, "Well");
 		curChildMap = new HashMap<String, String>();
 		derived.add(curChildMap);
-		curChildMap.put(NAME, "MOOD");
+		curChildMap.put(NAME, ContextConstants.DERIVED_MOOD);
 		curChildMap.put(VALUE, "Happy");	
 
 
@@ -559,13 +563,12 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(Menu.NONE, REFRESH_ID, Menu.NONE, "Refresh").setIcon(R.drawable.add).setAlphabeticShortcut('r');
-
-		menu.add(Menu.NONE, ADD_ID, Menu.NONE, "Add").setIcon(R.drawable.add).setAlphabeticShortcut('a');
-		menu.add(Menu.NONE, GEO_ID, Menu.NONE, "Geo Loc").setIcon(R.drawable.add).setAlphabeticShortcut('g');
-		menu.add(Menu.NONE, WEATHER_ID, Menu.NONE, "Weather").setIcon(R.drawable.add).setAlphabeticShortcut('w');
-		menu.add(Menu.NONE, PHONE_ID, Menu.NONE, "Phone").setIcon(R.drawable.add).setAlphabeticShortcut('p');
-		menu.add(Menu.NONE, SMS_ID, Menu.NONE, "SMS").setIcon(R.drawable.add).setAlphabeticShortcut('s');
+		menu.add(Menu.NONE, REFRESH_ID, Menu.NONE, "Refresh").setIcon(R.drawable.refresh64).setAlphabeticShortcut('r');
+		menu.add(Menu.NONE, ADD_ID, Menu.NONE, "Add").setIcon(R.drawable.add64).setAlphabeticShortcut('a');
+		menu.add(Menu.NONE, GEO_ID, Menu.NONE, "Location").setIcon(R.drawable.location64).setAlphabeticShortcut('l');
+		menu.add(Menu.NONE, WEATHER_ID, Menu.NONE, "Weather").setIcon(R.drawable.weather64).setAlphabeticShortcut('w');
+		menu.add(Menu.NONE, PHONE_ID, Menu.NONE, "System").setIcon(R.drawable.system64).setAlphabeticShortcut('s');
+		menu.add(Menu.NONE, SMS_ID, Menu.NONE, "Telephony").setIcon(R.drawable.telephony64).setAlphabeticShortcut('t');
 
 		return (super.onCreateOptionsMenu(menu));
 	}
@@ -646,7 +649,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-		menu.add(Menu.NONE, DELETE_ID, Menu.NONE, "Delete").setIcon(R.drawable.delete).setAlphabeticShortcut('d');
+		menu.add(Menu.NONE, DELETE_ID, Menu.NONE, "Delete").setIcon(R.drawable.delete64).setAlphabeticShortcut('d');
 	}
 
 	@Override
