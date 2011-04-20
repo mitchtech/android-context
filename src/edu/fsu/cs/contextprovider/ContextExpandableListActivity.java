@@ -265,6 +265,30 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		} else {
 			curChildMap.put(VALUE, quote.getPrettySymbol());
 		}
+		curChildMap = new HashMap<String, String>();
+		finance.add(curChildMap);
+		curChildMap.put(NAME, "CURRENCY");
+		curChildMap.put(VALUE, quote.getCurrency());
+		curChildMap = new HashMap<String, String>();
+		finance.add(curChildMap);
+		curChildMap.put(NAME, "OPEN_PRICE");
+		curChildMap.put(VALUE, String.valueOf(quote.getOpen()));
+		curChildMap = new HashMap<String, String>();
+		finance.add(curChildMap);
+		curChildMap.put(NAME, "CLOSE_PRICE");
+		curChildMap.put(VALUE, String.valueOf(quote.getyClose()));
+		curChildMap = new HashMap<String, String>();
+		finance.add(curChildMap);
+		curChildMap.put(NAME, "LOW_PRICE");
+		curChildMap.put(VALUE, String.valueOf(quote.getLow()));
+		curChildMap = new HashMap<String, String>();
+		finance.add(curChildMap);
+		curChildMap.put(NAME, "HIGH_PRICE");
+		curChildMap.put(VALUE, String.valueOf(quote.getHigh()));
+		curChildMap = new HashMap<String, String>();
+		finance.add(curChildMap);
+		curChildMap.put(NAME, "LAST_PRICE");
+		curChildMap.put(VALUE, String.valueOf(quote.getLast()));
 		childData.add(finance);
 	}
 
