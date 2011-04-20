@@ -74,6 +74,10 @@ public class GPSService extends Service
 		return currentLocation.getBearing();
 	}
 	
+	public static Location getLocation() {
+		return currentLocation;
+	}
+	
 	/**
 	 * Often times the GPS goes in and out of service.  We perform some logic to determine
 	 * if the current GPS reading is reliable or not.

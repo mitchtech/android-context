@@ -81,12 +81,16 @@ public class NetworkService extends Service {
 		manager.requestLocationUpdates(locationType, 0, 0, listener);
 	}
 	
-	public static int getLatitude() {
-		return (int)currentLocation.getLatitude();
+	public static double getLatitude() {
+		return currentLocation.getLatitude();
 	}
 
-	public static int getLongitude() {
-		return (int)currentLocation.getLongitude();
+	public static double getLongitude() {
+		return currentLocation.getLongitude();
+	}
+	
+	public static Location getLocation() {
+		return currentLocation;
 	}
 
 	public static int getAltitude() {

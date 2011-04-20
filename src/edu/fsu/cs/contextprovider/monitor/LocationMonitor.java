@@ -27,6 +27,7 @@ import edu.fsu.cs.contextprovider.sensor.GPSService;
 import edu.fsu.cs.contextprovider.sensor.NetworkService;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.util.Log;
 
 
@@ -43,6 +44,7 @@ public class LocationMonitor extends TimerTask {
 	private static Timer timer = new Timer();
 	private static Address currentAddress = null;
 	private static LocationMonitor locationObj = new LocationMonitor();
+	private static Location currentLocation = new Location(new String());
 	private static Geocoder geocoder = null;
 	
 //	private static HashMap<String, Address> addressBook = new HashMap<String, Address>();
@@ -151,6 +153,7 @@ public class LocationMonitor extends TimerTask {
 		return 0;
 	}
 
+<<<<<<< HEAD
 	public static double getAltitude() {
 		if (GPSService.isReliable() == true) {
 			return GPSService.getAltitude();
@@ -172,6 +175,14 @@ public class LocationMonitor extends TimerTask {
 			return GPSService.getSpeed();
 		} 
 		return 0;
+
+	public static Location getLocation() {
+		if (GPSService.isReliable() == true) {
+			return GPSService.getLocation();
+		} else if (NetworkService.isReliable() == true) {
+			return NetworkService.getLocation();
+		}
+		return null;
 	}
 	
 	private static Address getGeoFromAddress(String str) {
