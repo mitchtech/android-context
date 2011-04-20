@@ -56,7 +56,7 @@ public class ContextProximityActivity extends ListActivity {
 		public void onServiceDisconnected(ComponentName name) {	
 		}
 	};
-	ArrayAdapter<ContextListItem> adapter = null;
+	ArrayAdapter<ContextListItem> addressAdapter = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -91,8 +91,8 @@ public class ContextProximityActivity extends ListActivity {
 		bindService(new Intent(this, ContextProviderService.class), conn, Context.BIND_AUTO_CREATE);
 
 		
-		adapter = new ContextListAdapter(getBaseContext(), R.layout.row);
-		setListAdapter(adapter);
+		addressAdapter = new ContextListAdapter(getBaseContext(), R.layout.row);
+		setListAdapter(addressAdapter);
 	}
 
 	@Override
@@ -104,13 +104,12 @@ public class ContextProximityActivity extends ListActivity {
 	}
 
 
-	private void refresh() {
-		adapter.clear();
+	private void refreshAddress() {
+		addressAdapter.clear();
 		SharedPreferences pref = getSharedPreferences(ContextConstants.PREFS_ADDRESS, 0);
 		Map<String, String> list = (Map<String, String>)pref.getAll();
 		for (Map.Entry<String,String> entry: list.entrySet()) {
 			ContextListItem item = new ContextListItem();
-			//item.setName(entry.getKey());
 			item.setName(entry.getKey());
 			double proximity = 0;
 			try {
@@ -120,16 +119,15 @@ public class ContextProximityActivity extends ListActivity {
 				e.printStackTrace();
 			}
 			item.setValue(String.valueOf(proximity));
-			
-			adapter.add(item);
+			addressAdapter.add(item);
 		}
-		adapter.notifyDataSetChanged();
+		addressAdapter.notifyDataSetChanged();
 	}
 	
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case REFRESH_ID:
-			refresh();
+			refreshAddress();
 			//adapter.notifyDataSetChanged();
 			return true;
 		case ADD_ID:
@@ -143,7 +141,7 @@ public class ContextProximityActivity extends ListActivity {
 			}
 			AddressDialog.add addAddressDialog = new AddressDialog.add(this, address);
 			addAddressDialog.show();
-			this.refresh();
+			this.refreshAddress();
 		}
 		return (super.onOptionsItemSelected(item));
 	}

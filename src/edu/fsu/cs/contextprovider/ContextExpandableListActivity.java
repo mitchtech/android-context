@@ -21,6 +21,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -53,10 +54,12 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import edu.fsu.cs.contextprovider.ContextListActivity.ContextListItem;
+import edu.fsu.cs.contextprovider.dialog.AddressDialog;
 import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
 import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
 import edu.fsu.cs.contextprovider.rpc.ContextProviderService;
 import edu.fsu.cs.contextprovider.rpc.IContextProviderService;
+import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
 import edu.fsu.cs.contextprovider.sensor.TelephonyService;
 import edu.fsu.cs.contextprovider.weather.GoogleWeatherHandler;
 import edu.fsu.cs.contextprovider.weather.WeatherSet;
@@ -90,6 +93,8 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 
 	Vector<ContextListItem> Clist = new Vector<ContextListItem>();
 	// ArrayAdapter<ContextListItem> adapter = null;
+
+	ArrayAdapter<ContextListItem> addressAdapter = null;
 
 	private ServiceConnection conn = new ServiceConnection() {
 		public void onServiceConnected(ComponentName name, IBinder service) {
@@ -158,31 +163,22 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//groupData.remove(0);
+
+		// groupData.remove(0);
 		groupData.clear();
 		childData.clear();
-		
-		
+
 		refreshLocation();
 		refreshMovement();
 		refreshProximity();
-//		refreshWeather();
-//		refreshSystem();
-//		refreshTelephony();
-//		refreshDerived();
-		
-		
-		BaseExpandableListAdapter tester = (BaseExpandableListAdapter) mAdapter;
-		tester.notifyDataSetChanged();
-		// tester.notifyDataSetInvalidated();
+		// refreshWeather();
+		// refreshSystem();
+		// refreshTelephony();
+		// refreshDerived();
 
-		for (Map.Entry<String, String> entry : cntx.entrySet()) {
-			// ContextListItem item = new ContextListItem();
-			// item.setName(entry.getKey());
-			// item.setValue(entry.getValue());
-			// adapter.add(item);
-		}
+		BaseExpandableListAdapter refresh = (BaseExpandableListAdapter) mAdapter;
+		refresh.notifyDataSetChanged();
+		// refresh.notifyDataSetInvalidated();
 	}
 
 	private void refreshLocation() {
@@ -194,72 +190,69 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		locationMap.put(NAME, "Location");
 		locationMap.put(VALUE, "Location");
 		List<Map<String, String>> location = new ArrayList<Map<String, String>>();
-
-			Map<String, String> curChildMap = new HashMap<String, String>();
-			location.add(curChildMap);			
-			curChildMap.put(NAME, "LOCATION_ADDRESS");
-			curChildMap.put(VALUE, LocationMonitor.getAddress());
-			curChildMap = new HashMap<String, String>();
-			location.add(curChildMap);	
-			curChildMap.put(NAME, "LOCATION_HOOD");
-			curChildMap.put(VALUE, LocationMonitor.getNeighborhood());		
-			curChildMap = new HashMap<String, String>();
-			location.add(curChildMap);	
-			curChildMap.put(NAME, "LOCATION_ZIP");		
-			curChildMap.put(VALUE, LocationMonitor.getZip());	
-			curChildMap = new HashMap<String, String>();
-			location.add(curChildMap);	
-			curChildMap.put(NAME, "LOCATION_LATITUDE");
-			curChildMap.put(VALUE, String.valueOf(LocationMonitor.getLatitude()));			
-			curChildMap = new HashMap<String, String>();
-			location.add(curChildMap);	
-			curChildMap.put(NAME, "LOCATION_LONGITUDE");
-			curChildMap.put(VALUE, String.valueOf(LocationMonitor.getLongitude()));		
-			curChildMap = new HashMap<String, String>();
-			location.add(curChildMap);	
-			curChildMap.put(NAME, "LOCATION_ALTITUDE");
-			curChildMap.put(VALUE, String.valueOf(LocationMonitor.getAltitude()));
-			curChildMap = new HashMap<String, String>();
-			location.add(curChildMap);	
-//			curChildMap.put("LOCATION_ADDRESS", LocationMonitor.getAddress());
-//			Map<String, String> curChildMap = new HashMap<String, String>();
-//			location.add(curChildMap);
-//			curChildMap.put("LOCATION_HOOD", LocationMonitor.getNeighborhood());
-//			Map<String, String> curChildMap = new HashMap<String, String>();
-//			location.add(curChildMap);
-//			curChildMap.put("LOCATION_ZIP", LocationMonitor.getZip());		
-//			Map<String, String> curChildMap = new HashMap<String, String>();
-//			location.add(curChildMap);
-//			curChildMap.put("LOCATION_LATITUDE", String.valueOf(LocationMonitor.getLatitude()));
-//			Map<String, String> curChildMap = new HashMap<String, String>();
-//			location.add(curChildMap);
-//			curChildMap.put("LOCATION_LONGITUDE", String.valueOf(LocationMonitor.getLongitude()));
-//			Map<String, String> curChildMap = new HashMap<String, String>();
-//			location.add(curChildMap);
-//			curChildMap.put("LOCATION_ALTITUDE", String.valueOf(LocationMonitor.getAltitude()));
-			
-		childData.add(location);		
+		Map<String, String> curChildMap = new HashMap<String, String>();
+		location.add(curChildMap);
+		curChildMap.put(NAME, "LOCATION_ADDRESS");
+		curChildMap.put(VALUE, LocationMonitor.getAddress());
+		curChildMap = new HashMap<String, String>();
+		location.add(curChildMap);
+		curChildMap.put(NAME, "LOCATION_HOOD");
+		curChildMap.put(VALUE, LocationMonitor.getNeighborhood());
+		curChildMap = new HashMap<String, String>();
+		location.add(curChildMap);
+		curChildMap.put(NAME, "LOCATION_ZIP");
+		curChildMap.put(VALUE, LocationMonitor.getZip());
+		curChildMap = new HashMap<String, String>();
+		location.add(curChildMap);
+		curChildMap.put(NAME, "LOCATION_LATITUDE");
+		curChildMap.put(VALUE, String.valueOf(LocationMonitor.getLatitude()));
+		curChildMap = new HashMap<String, String>();
+		location.add(curChildMap);
+		curChildMap.put(NAME, "LOCATION_LONGITUDE");
+		curChildMap.put(VALUE, String.valueOf(LocationMonitor.getLongitude()));
+		curChildMap = new HashMap<String, String>();
+		location.add(curChildMap);
+		curChildMap.put(NAME, "LOCATION_ALTITUDE");
+		curChildMap.put(VALUE, String.valueOf(LocationMonitor.getAltitude()));
+		curChildMap = new HashMap<String, String>();
+		
+		childData.add(location);
 	}
 
 	private void refreshMovement() {
 		if (mService == null) {
 			return;
 		}
-	Map<String, String> movementMap = new HashMap<String, String>();
-	groupData.add(movementMap);
-	movementMap.put(NAME, "Movement");
-	movementMap.put(VALUE, "Movement");
-	List<Map<String, String>> movement = new ArrayList<Map<String, String>>();
-	for (int j = 0; j < 5; j++) {
+		Map<String, String> movementMap = new HashMap<String, String>();
+		groupData.add(movementMap);
+		movementMap.put(NAME, "Movement");
+		movementMap.put(VALUE, "Movement");
+		List<Map<String, String>> movement = new ArrayList<Map<String, String>>();
 		Map<String, String> curChildMap = new HashMap<String, String>();
 		movement.add(curChildMap);
-		curChildMap.put(NAME, "Child " + j);
-		curChildMap.put(VALUE, "Value");
+		curChildMap.put(NAME, "MOVEMENT_STATE");
+		curChildMap.put(VALUE, MovementMonitor.getMovementState());
+		curChildMap = new HashMap<String, String>();
+		movement.add(curChildMap);
+		curChildMap.put(NAME, "MOVEMENT_SPEED");
+		curChildMap.put(VALUE, String.valueOf(MovementMonitor.getSpeedMph()));
+		curChildMap = new HashMap<String, String>();
+		movement.add(curChildMap);
+		curChildMap.put(NAME, "MOVEMENT_SPEED");
+		curChildMap.put(VALUE, String.valueOf(LocationMonitor.getBearing()));
+		curChildMap = new HashMap<String, String>();
+		movement.add(curChildMap);
+		curChildMap.put(NAME, "MOVEMENT_STEP_COUNT");
+		curChildMap.put(VALUE, String.valueOf(AccelerometerService.getStepCount()));
+		curChildMap = new HashMap<String, String>();
+		movement.add(curChildMap);
+		curChildMap.put(NAME, "MOVEMENT_LAST_STEP");
+		curChildMap.put(VALUE, String.valueOf(AccelerometerService.getStepTimestamp()));
+		curChildMap = new HashMap<String, String>();
+
+		childData.add(movement);
 	}
-	childData.add(movement);
-	}
-	
-	
+
 	private void refreshProximity() {
 		if (mService == null) {
 			return;
@@ -269,15 +262,26 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		proximityMap.put(NAME, "Proximity");
 		proximityMap.put(VALUE, "Proximity");
 		List<Map<String, String>> proximity = new ArrayList<Map<String, String>>();
-		for (int j = 0; j < 5; j++) {
+
+		SharedPreferences pref = getSharedPreferences(ContextConstants.PREFS_ADDRESS, 0);
+		Map<String, String> list = (Map<String, String>) pref.getAll();
+		for (Map.Entry<String, String> entry : list.entrySet()) {
 			Map<String, String> curChildMap = new HashMap<String, String>();
 			proximity.add(curChildMap);
-			curChildMap.put(NAME, "Child " + j);
-			curChildMap.put(VALUE, "Value");
+			curChildMap.put(NAME, entry.getKey());
+			double prox = 0;
+			try {
+				prox = mService.proximityToAddress(entry.getValue());
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			curChildMap.put(VALUE, String.valueOf(prox));
 		}
+		
 		childData.add(proximity);
 	}
-	
+
 	private void refreshWeather() {
 		if (mService == null) {
 			return;
@@ -295,7 +299,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		}
 		childData.add(weather);
 	}
-	
+
 	private void refreshSystem() {
 		if (mService == null) {
 			return;
@@ -313,7 +317,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		}
 		childData.add(system);
 	}
-	
+
 	private void refreshTelephony() {
 		if (mService == null) {
 			return;
@@ -331,7 +335,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		}
 		childData.add(telephony);
 	}
-	
+
 	private void refreshDerived() {
 		if (mService == null) {
 			return;
@@ -349,8 +353,27 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		}
 		childData.add(derived);
 	}
-	
-	
+
+	private void refreshAddress() {
+		addressAdapter.clear();
+		SharedPreferences pref = getSharedPreferences(ContextConstants.PREFS_ADDRESS, 0);
+		Map<String, String> list = (Map<String, String>) pref.getAll();
+		for (Map.Entry<String, String> entry : list.entrySet()) {
+			ContextListItem item = new ContextListItem();
+			item.setName(entry.getKey());
+			double proximity = 0;
+			try {
+				proximity = mService.proximityToAddress(entry.getValue());
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			item.setValue(String.valueOf(proximity));
+			addressAdapter.add(item);
+		}
+		addressAdapter.notifyDataSetChanged();
+	}
+
 	@Override
 	public void onDestroy() {
 		MovementMonitor.StopThread();
@@ -360,7 +383,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(Menu.NONE, REFRESH_ID, Menu.NONE, "Refresh").setIcon(R.drawable.add).setAlphabeticShortcut('a');
+		menu.add(Menu.NONE, REFRESH_ID, Menu.NONE, "Refresh").setIcon(R.drawable.add).setAlphabeticShortcut('r');
 
 		menu.add(Menu.NONE, ADD_ID, Menu.NONE, "Add").setIcon(R.drawable.add).setAlphabeticShortcut('a');
 		menu.add(Menu.NONE, GEO_ID, Menu.NONE, "Geo Loc").setIcon(R.drawable.add).setAlphabeticShortcut('g');
@@ -379,7 +402,17 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 			// adapter.notifyDataSetChanged();
 			return true;
 		case ADD_ID:
-			// add();
+			Context context = getApplicationContext();
+			String address = null;
+			try {
+				address = mService.getCurrentAddress();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			AddressDialog.add addAddressDialog = new AddressDialog.add(this, address);
+			addAddressDialog.show();
+			this.refreshAddress();
 			return (true);
 		case GEO_ID:
 			Toast.makeText(getApplicationContext(), "Trying to get geolocation", Toast.LENGTH_SHORT).show();
@@ -450,6 +483,31 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 
 		}
 		return (super.onOptionsItemSelected(item));
+	}
+
+	private class ContextListItem {
+		private String name;
+		private String value;
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+		public void setValue(String value) {
+			this.value = value;
+		}
+
+		public String toString() {
+			return name + ": " + value;
+		}
 	}
 
 }

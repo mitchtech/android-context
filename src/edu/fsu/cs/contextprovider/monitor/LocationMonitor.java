@@ -160,6 +160,13 @@ public class LocationMonitor extends TimerTask {
 		return 0;
 	}
 	
+	public static float getSpeed() {
+		if (GPSService.isReliable() == true) {
+			return GPSService.getSpeed();
+		} 
+		return 0;
+	}
+	
 	private static Address getGeoFromAddress(String str) {
 		List<Address> addresses = null;
 		Address address = null;
