@@ -5,7 +5,7 @@
 	<string name="cancel">Cancel</string>
 	<string name="add_context">Add Context</string>
 	<string name="delete_context">Delete Context: Are You Sure?</string>
-
 	<string name="expandable_list_sample_action">Sample action</string>
-
+	<string name="google_finance_url">http://www.google.com/ig/api?stock=</string>
+	<string name="google_url">http://www.google.com</string>
 </resources>
