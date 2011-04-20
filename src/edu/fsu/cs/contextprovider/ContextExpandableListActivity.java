@@ -28,6 +28,8 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.speech.tts.TextToSpeech;
 import android.text.ClipboardManager;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -39,6 +41,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ExpandableListView.OnChildClickListener;
 
@@ -289,6 +292,10 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		finance.add(curChildMap);
 		curChildMap.put(NAME, "LAST_PRICE");
 		curChildMap.put(VALUE, String.valueOf(quote.getLast()));
+		curChildMap = new HashMap<String, String>();
+		finance.add(curChildMap);
+		curChildMap.put(NAME, "DISCLAIMER");
+		curChildMap.put(VALUE, "http://www.google.com" + quote.getDisclaimerUrl());
 		childData.add(finance);
 	}
 
