@@ -39,6 +39,8 @@ import android.widget.ExpandableListAdapter;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,10 +49,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import edu.fsu.cs.contextprovider.ContextListActivity.ContextListItem;
@@ -64,11 +68,14 @@ import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
 import edu.fsu.cs.contextprovider.sensor.TelephonyService;
 import edu.fsu.cs.contextprovider.weather.GoogleWeatherHandler;
 import edu.fsu.cs.contextprovider.weather.WeatherSet;
+import edu.fsu.cs.contextprovider.finance.GoogleFinanceQuote;
+import edu.fsu.cs.contextprovider.finance.GoogleFinanceHandler;
 
 /**
  * Demonstrates expandable lists backed by a Simple Map-based adapter
  */
 public class ContextExpandableListActivity extends ExpandableListActivity {
+	private static final String PKG = "edu.fsu.cs.contextprovider";
 	private static final String TAG = "ContextExpandableListActivity";
 
 	private static final String NAME = "NAME";
@@ -138,6 +145,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		/* Start ContextProviderService */
 		bindService(new Intent(this, ContextProviderService.class), conn, Context.BIND_AUTO_CREATE);
 
+		refreshFinance();
 		refreshLocation();
 		refreshMovement();
 		refreshProximity();
@@ -168,6 +176,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		groupData.clear();
 		childData.clear();
 
+		refreshFinance();
 		refreshLocation();
 		refreshMovement();
 		refreshProximity();
@@ -179,6 +188,52 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		BaseExpandableListAdapter refresh = (BaseExpandableListAdapter) mAdapter;
 		refresh.notifyDataSetChanged();
 		// refresh.notifyDataSetInvalidated();
+	}
+	
+	private GoogleFinanceQuote getQuotes(String quotesToFind) {
+		try {
+			URL financeUrl = new URL(
+					this.getString(R.string.google_finance_url) + quotesToFind);
+			XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser()
+					.getXMLReader();
+			GoogleFinanceHandler financeHandler = new GoogleFinanceHandler();
+			xmlReader.setContentHandler(financeHandler);
+			xmlReader.parse(new InputSource(financeUrl.openStream()));
+			return financeHandler.getQuotes().get(0);
+		} catch (MalformedURLException e) {
+			Log.i(PKG, TAG + ": MalformedURLException caught!");
+		} catch (IOException e) {
+			Log.i(PKG, TAG + ": IOException caught!");
+		} catch (SAXException e) {
+			Log.i(PKG, TAG + ": SAXException caught!");
+		} catch (ParserConfigurationException e) {
+			Log.i(PKG, TAG + ": ParserConfigurationException caught!");
+		}
+		return null;
+	}
+	
+	private void refreshFinance() {
+		if (mService == null) {
+			return;
+		}
+		
+		String company = "GOOG";
+		GoogleFinanceQuote quote = getQuotes(company);
+		
+		Map<String, String> financeMap = new HashMap<String, String>();
+		groupData.add(financeMap);
+		financeMap.put(NAME, "Finance");
+		financeMap.put(VALUE, "Finance");
+		List<Map<String, String>> finance = new ArrayList<Map<String, String>>();
+		Map<String, String> curChildMap = new HashMap<String, String>();
+		finance.add(curChildMap);
+		curChildMap.put(NAME, "COMPANY_NAME");
+		curChildMap.put(VALUE, quote.getCompany());
+		curChildMap = new HashMap<String, String>();
+		finance.add(curChildMap);
+		curChildMap.put(NAME, "COMPANY_SYMBOL");
+		curChildMap.put(VALUE, quote.getPrettySymbol());
+		childData.add(finance);
 	}
 
 	private void refreshLocation() {

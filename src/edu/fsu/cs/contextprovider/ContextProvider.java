@@ -63,7 +63,12 @@ public class ContextProvider extends ContentProvider {
 		results.put("MOVEMENT_BEARING", String.valueOf(LocationMonitor.getBearing()));
 		results.put("MOVEMENT_STEP_COUNT", String.valueOf(AccelerometerService.getStepCount()));
 		results.put("MOVEMENT_LAST_STEP", String.valueOf(AccelerometerService.getStepTimestamp()));
-	}		
+	}
+	
+	private static void getFinance(Map<String, String> results) {
+		results.put("COMPANY NAME", "GOOGLE");
+		results.put("COMPANY SYMBOL", "GOOG");
+	}
 	
 	
 	
