@@ -171,7 +171,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		refreshLocation();
 		refreshMovement();
 		refreshProximity();
-		// refreshWeather();
+		refreshWeather();
 		// refreshSystem();
 		// refreshTelephony();
 		// refreshDerived();
@@ -214,7 +214,6 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		location.add(curChildMap);
 		curChildMap.put(NAME, "LOCATION_ALTITUDE");
 		curChildMap.put(VALUE, String.valueOf(LocationMonitor.getAltitude()));
-		curChildMap = new HashMap<String, String>();
 		
 		childData.add(location);
 	}
@@ -248,7 +247,6 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		movement.add(curChildMap);
 		curChildMap.put(NAME, "MOVEMENT_LAST_STEP");
 		curChildMap.put(VALUE, String.valueOf(AccelerometerService.getStepTimestamp()));
-		curChildMap = new HashMap<String, String>();
 
 		childData.add(movement);
 	}
@@ -286,18 +284,61 @@ public class ContextExpandableListActivity extends ExpandableListActivity {
 		if (mService == null) {
 			return;
 		}
-		Map<String, String> weatherMap = new HashMap<String, String>();
-		groupData.add(weatherMap);
-		weatherMap.put(NAME, "Weather");
-		weatherMap.put(VALUE, "Weather");
-		List<Map<String, String>> weather = new ArrayList<Map<String, String>>();
-		for (int j = 0; j < 5; j++) {
+		WeatherSet ws;
+		GoogleWeatherHandler gwh;		
+		String zip = LocationMonitor.getZip();
+		String current = "weather unavailable";
+		URL url;
+
+		try {
+			String cityParamString = zip;
+			Log.d(TAG, "cityParamString: " + cityParamString);
+			String queryString = "http://www.google.com/ig/api?weather=" + cityParamString;
+			url = new URL(queryString.replace(" ", "%20"));
+			SAXParserFactory spf = SAXParserFactory.newInstance();
+			SAXParser sp = spf.newSAXParser();
+			XMLReader xr = sp.getXMLReader();
+			gwh = new GoogleWeatherHandler();
+			xr.setContentHandler(gwh);
+			xr.parse(new InputSource(url.openStream()));
+			ws = gwh.getWeatherSet();
+//			current = ws.getWeatherCurrentCondition().getCondition() + " " + ws.getWeatherCurrentCondition().getTempFahrenheit() + " degrees F" + ws.getWeatherCurrentCondition().getHumidity()
+//					+ " humidity" + ws.getWeatherCurrentCondition().getWindCondition() + " ";
+			
+			// Toast.makeText(getApplicationContext(), "Current Conditions: " + weather, Toast.LENGTH_LONG).show();
+			Map<String, String> weatherMap = new HashMap<String, String>();
+			groupData.add(weatherMap);
+			weatherMap.put(NAME, "Weather");
+			weatherMap.put(VALUE, "Weather");
+			List<Map<String, String>> weather = new ArrayList<Map<String, String>>();
 			Map<String, String> curChildMap = new HashMap<String, String>();
 			weather.add(curChildMap);
-			curChildMap.put(NAME, "Child " + j);
-			curChildMap.put(VALUE, "Value");
+			curChildMap.put(NAME, "WEATHER_CUR_TEMP");
+			curChildMap.put(VALUE, ws.getWeatherCurrentCondition().getTempFahrenheit() + " degrees F");
+			curChildMap = new HashMap<String, String>();
+			weather.add(curChildMap);
+			curChildMap.put(NAME, "WEATHER_CUR_CONDITION");
+			curChildMap.put(VALUE, ws.getWeatherCurrentCondition().getCondition());
+			curChildMap = new HashMap<String, String>();
+			weather.add(curChildMap);
+			curChildMap.put(NAME, "WEATHER_CUR_HUMIDITY");
+			curChildMap.put(VALUE, ws.getWeatherCurrentCondition().getHumidity());
+			curChildMap = new HashMap<String, String>();
+			weather.add(curChildMap);
+			curChildMap.put(NAME, "WEATHER_CUR_WIND");
+			curChildMap.put(VALUE, ws.getWeatherCurrentCondition().getWindCondition());
+			
+			childData.add(weather);
+			
+			
+			
+			
+			
+		} catch (Exception e) {
+			Log.e(TAG, "WeatherQueryError", e);
 		}
-		childData.add(weather);
+		
+
 	}
 
 	private void refreshSystem() {
