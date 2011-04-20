@@ -20,6 +20,12 @@ public class TelephonyService extends Service {
 	private static final boolean DEBUG = true;
 	protected boolean serviceEnabled = false;
 	
+	public static String PHONE_STATE = "NA";
+	public static long PHONE_STATE_UPDATE = 0;	
+	public static long PHONE_LAST_CALL = 0;
+	public static long PHONE_LAST_NUMBER_RECV = 0;
+	public static long PHONE_LAST_NUMBER_DIAL = 0;	
+	
 	public static String SMS_STATE = "NA";
 	public static String SMS_LAST_SENDER = "NA";
 	public static String SMS_LAST_MESSAGE = "NA";
@@ -29,11 +35,6 @@ public class TelephonyService extends Service {
 	private static final int MAX_LENGTH = 30;
 	private static final String ACTION_SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
 	
-	public static String PHONE_STATE = "NA";
-	public static long PHONE_STATE_UPDATE = 0;	
-	public static long PHONE_LAST_CALL = 0;
-	public static long PHONE_LAST_NUMBER_RECV = 0;
-	public static long PHONE_LAST_NUMBER_DIAL = 0;
 
 	TelephonyManager tm;
 	private PhoneStateListener phoneStateListener = new PhoneStateListener() {
