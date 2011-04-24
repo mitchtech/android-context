@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import edu.fsu.cs.contextprovider.ContextBrowserActivity;
+import edu.fsu.cs.contextprovider.ContextExpandableListActivity;
 
 import android.app.Service;
 import android.content.Context;
@@ -104,7 +104,7 @@ public class GPSService extends Service
 				}
 				isreliable = false;
 				if (DEBUG_TTS == true) {
-					ContextBrowserActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
+					ContextExpandableListActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
 				}
 			}
 
@@ -112,7 +112,7 @@ public class GPSService extends Service
 				Log.i(TAG, locationType + ": is reliable");
 				//isreliable = true;
 				if (DEBUG_TTS == true) {
-					ContextBrowserActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
+					ContextExpandableListActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
 				}
 			}
 			
@@ -123,7 +123,7 @@ public class GPSService extends Service
 				case LocationProvider.TEMPORARILY_UNAVAILABLE:
 					isreliable = false;
 					if (DEBUG_TTS == true) {
-						ContextBrowserActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
+						ContextExpandableListActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
 					}
 					if (DEBUG == true) {
 						Log.i(TAG, "GPS Temporarily unavailable");
@@ -132,7 +132,7 @@ public class GPSService extends Service
 				case LocationProvider.AVAILABLE:
 					isreliable = true;
 					if (DEBUG_TTS == true) {
-						ContextBrowserActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
+						ContextExpandableListActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
 					}
 					if (DEBUG == true) {
 						Log.i(TAG, "GPS Available");
@@ -140,7 +140,7 @@ public class GPSService extends Service
 					break;
 				default:
 					if (DEBUG_TTS == true) {
-						ContextBrowserActivity.tts.speak("Other GPS event detected", TextToSpeech.QUEUE_FLUSH, null);
+						ContextExpandableListActivity.tts.speak("Other GPS event detected", TextToSpeech.QUEUE_FLUSH, null);
 					}
 					if (DEBUG == true) {
 						Log.i(TAG, "GPS State unkown");

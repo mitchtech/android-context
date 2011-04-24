@@ -1,6 +1,6 @@
 package edu.fsu.cs.contextprovider.sensor;
 
-import edu.fsu.cs.contextprovider.ContextBrowserActivity;
+import edu.fsu.cs.contextprovider.ContextExpandableListActivity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -39,7 +39,7 @@ public class NetworkService extends Service {
 				//manager.removeUpdates(this);
 				Log.i(TAG, locationType + ": is no longer reliable");
 				if (DEBUG_TTS == true) {
-					ContextBrowserActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
+					ContextExpandableListActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
 				}
 				isreliable = false;
 			}
@@ -47,7 +47,7 @@ public class NetworkService extends Service {
 			public void onProviderEnabled(String provider) {
 				Log.i(TAG, locationType + ": is reliable");
 				if (DEBUG_TTS == true) {
-					ContextBrowserActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
+					ContextExpandableListActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
 				}
 				isreliable = true;
 			}
@@ -58,19 +58,19 @@ public class NetworkService extends Service {
 				case LocationProvider.OUT_OF_SERVICE:
 				case LocationProvider.TEMPORARILY_UNAVAILABLE:
 					if (DEBUG_TTS == true) {
-						ContextBrowserActivity.tts.speak("Network reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
+						ContextExpandableListActivity.tts.speak("Network reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
 					}
 					isreliable = false;
 					break;
 				case LocationProvider.AVAILABLE:
 					if (DEBUG_TTS == true) {
-						ContextBrowserActivity.tts.speak("Network reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
+						ContextExpandableListActivity.tts.speak("Network reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
 					}
 					isreliable = true;
 					break;
 				default:
 					if (DEBUG_TTS == true) {
-						ContextBrowserActivity.tts.speak("Network other event detected", TextToSpeech.QUEUE_FLUSH, null);
+						ContextExpandableListActivity.tts.speak("Network other event detected", TextToSpeech.QUEUE_FLUSH, null);
 					}
 				}
 				// TODO Check the status here to update isreliable

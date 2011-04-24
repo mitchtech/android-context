@@ -82,7 +82,7 @@ import edu.fsu.cs.contextprovider.finance.GoogleFinanceHandler;
 /**
  * Demonstrates expandable lists backed by a Simple Map-based adapter
  */
-public class ContextExpandableListActivity extends ExpandableListActivity implements OnChildClickListener {
+public class ContextExpandableListActivity extends ExpandableListActivity implements OnChildClickListener, TextToSpeech.OnInitListener {
 	private static final String PKG = "edu.fsu.cs.contextprovider";
 	private static final String TAG = "ContextExpandableListActivity";
 
@@ -101,6 +101,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	private static final int SMS_ID = Menu.FIRST + 8;
 
 	public static boolean running = false;
+	public static TextToSpeech tts;
 	
 	ClipboardManager clip = null;
 
@@ -128,7 +129,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	@Override
 	public void onCreate(Bundle savedInstanceState)  {
 		super.onCreate(savedInstanceState);
-
+		tts = new TextToSpeech(this,this);
 		running = true;
 		Intent intent = null;
 		
@@ -186,6 +187,14 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		setListAdapter(mAdapter);
 	}
 
+	public void onInit(int status) {
+		Locale loc = Locale.getDefault();
+		if(tts.isLanguageAvailable(loc) >= TextToSpeech.LANG_AVAILABLE){
+			tts.setLanguage(loc);
+		}
+		tts.speak("Text to Speach Initialized", TextToSpeech.QUEUE_FLUSH, null);
+	}
+	
 	private void refresh() {
 		if (mService == null) {
 			return;
@@ -632,6 +641,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		MovementMonitor.StopThread();
 		running = false;
 		super.onDestroy();
+		tts.shutdown();
 	}
 
 	@Override
@@ -762,7 +772,6 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		}
 	}
 	
-
 	@Override
 	public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 		String copiedString = null;

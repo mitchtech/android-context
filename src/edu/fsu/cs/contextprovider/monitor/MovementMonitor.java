@@ -9,7 +9,7 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.widget.Toast;
 
-import edu.fsu.cs.contextprovider.ContextBrowserActivity;
+import edu.fsu.cs.contextprovider.ContextExpandableListActivity;
 import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
 import edu.fsu.cs.contextprovider.sensor.GPSService;
 
@@ -109,7 +109,7 @@ public class MovementMonitor extends TimerTask {
 				Log.i(TAG, "GPS determined state: " + currentMovementState);
 			}
 			if (DEBUG_TTS == true) {
-				ContextBrowserActivity.tts.speak("GPS Movement " + currentMovementState, TextToSpeech.QUEUE_FLUSH, null);
+				ContextExpandableListActivity.tts.speak("GPS Movement " + currentMovementState, TextToSpeech.QUEUE_FLUSH, null);
 			}
 			// Use the accelerometer 
 		} else {
@@ -118,7 +118,7 @@ public class MovementMonitor extends TimerTask {
 				Log.i(TAG, "Accelerometer determined state: " + currentMovementState);
 			}
 			if (DEBUG_TTS == true) {
-				ContextBrowserActivity.tts.speak("Accelerometer Movement " + currentMovementState, TextToSpeech.QUEUE_FLUSH, null);
+				ContextExpandableListActivity.tts.speak("Accelerometer Movement " + currentMovementState, TextToSpeech.QUEUE_FLUSH, null);
 			}
 
 		}
