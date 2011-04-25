@@ -46,18 +46,18 @@ public class ContextProvider extends ContentProvider {
 		getLocation(results);
 		getMovement(results);
 		getSocial(results);
-	
+
 	}
-	
+
 	private static void getLocation(Map<String, String> results) {
 		results.put("LOCATION_ADDRESS", LocationMonitor.getAddress());
 		results.put("LOCATION_HOOD", LocationMonitor.getNeighborhood());
-		results.put("LOCATION_ZIP", LocationMonitor.getZip());		
+		results.put("LOCATION_ZIP", LocationMonitor.getZip());
 		results.put("LOCATION_LATITUDE", String.valueOf(LocationMonitor.getLatitude()));
 		results.put("LOCATION_LONGITUDE", String.valueOf(LocationMonitor.getLongitude()));
 		results.put("LOCATION_ALTITUDE", String.valueOf(LocationMonitor.getAltitude()));
-	}	
-	
+	}
+
 	private static void getMovement(Map<String, String> results) {
 		results.put("MOVEMENT_STATE", MovementMonitor.getMovementState());
 		results.put("MOVEMENT_SPEED", String.valueOf(MovementMonitor.getSpeedMph()));
@@ -65,34 +65,30 @@ public class ContextProvider extends ContentProvider {
 		results.put("MOVEMENT_STEP_COUNT", String.valueOf(AccelerometerService.getStepCount()));
 		results.put("MOVEMENT_LAST_STEP", String.valueOf(AccelerometerService.getStepTimestamp()));
 	}
-	
+
 	private static void getSocial(Map<String, String> results) {
 		results.put("SOCIAL_TWITTER_LAST", SocialMonitor.getCurrentTwitterStatus());
 	}
-	
+
 	private static void getFinance(Map<String, String> results) {
 		results.put("COMPANY NAME", "GOOGLE");
 		results.put("COMPANY SYMBOL", "GOOG");
 	}
-	
-	
-	
-	
+
 	public static LinkedHashMap<String, String> getAllOrdered() {
 		LinkedHashMap<String, String> results = new LinkedHashMap<String, String>();
 		getAll(results);
 		return results;
 	}
-	
+
 	public static HashMap<String, String> getAllUnordered() {
 		HashMap<String, String> results = new HashMap<String, String>();
 		getAll(results);
 		return results;
 	}
-	
+
 	public static final class Cntxt implements BaseColumns {
-		public static final Uri CONTENT_URI = Uri
-				.parse("content://edu.fsu.cs.contextprovider/cntxt");
+		public static final Uri CONTENT_URI = Uri.parse("content://edu.fsu.cs.contextprovider/cntxt");
 		public static final String DEFAULT_SORT_ORDER = "title";
 		public static final String TITLE = "title";
 		public static final String VALUE = "value";
@@ -105,12 +101,9 @@ public class ContextProvider extends ContentProvider {
 
 		CNTXT_LIST_PROJECTION = new HashMap<String, String>();
 
-		CNTXT_LIST_PROJECTION.put(ContextProvider.Cntxt._ID,
-				ContextProvider.Cntxt._ID);
-		CNTXT_LIST_PROJECTION.put(ContextProvider.Cntxt.TITLE,
-				ContextProvider.Cntxt.TITLE);
-		CNTXT_LIST_PROJECTION.put(ContextProvider.Cntxt.VALUE,
-				ContextProvider.Cntxt.VALUE);
+		CNTXT_LIST_PROJECTION.put(ContextProvider.Cntxt._ID, ContextProvider.Cntxt._ID);
+		CNTXT_LIST_PROJECTION.put(ContextProvider.Cntxt.TITLE, ContextProvider.Cntxt.TITLE);
+		CNTXT_LIST_PROJECTION.put(ContextProvider.Cntxt.VALUE, ContextProvider.Cntxt.VALUE);
 	}
 
 	public String getDbName() {
@@ -128,10 +121,7 @@ public class ContextProvider extends ContentProvider {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			Cursor c = db
-					.rawQuery(
-							"SELECT name FROM sqlite_master WHERE type='table' AND name='cntxt'",
-							null);
+			Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='cntxt'", null);
 
 			try {
 				if (c.getCount() == 0) {
@@ -198,8 +188,7 @@ public class ContextProvider extends ContentProvider {
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			android.util.Log.w("Cntxt",
-					"Upgrading database, which will destroy all old data");
+			android.util.Log.w("Cntxt", "Upgrading database, which will destroy all old data");
 			db.execSQL("DROP TABLE IF EXISTS constants");
 			onCreate(db);
 		}
@@ -215,8 +204,7 @@ public class ContextProvider extends ContentProvider {
 	}
 
 	@Override
-	public Cursor query(Uri url, String[] projection, String selection,
-			String[] selectionArgs, String sort) {
+	public Cursor query(Uri url, String[] projection, String selection, String[] selectionArgs, String sort) {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
 		qb.setTables(getTableName());
@@ -224,8 +212,7 @@ public class ContextProvider extends ContentProvider {
 		if (isCollectionUri(url)) {
 			qb.setProjectionMap(getDefaultProjection());
 		} else {
-			qb.appendWhere(getIdColumnName() + "="
-					+ url.getPathSegments().get(1));
+			qb.appendWhere(getIdColumnName() + "=" + url.getPathSegments().get(1));
 		}
 
 		String orderBy;
@@ -236,8 +223,7 @@ public class ContextProvider extends ContentProvider {
 			orderBy = sort;
 		}
 
-		Cursor c = qb.query(db, projection, selection, selectionArgs, null,
-				null, orderBy);
+		Cursor c = qb.query(db, projection, selection, selectionArgs, null, null, orderBy);
 		c.setNotificationUri(getContext().getContentResolver(), url);
 		return c;
 	}
@@ -294,13 +280,7 @@ public class ContextProvider extends ContentProvider {
 		} else {
 			String segment = url.getPathSegments().get(1);
 			rowId = Long.parseLong(segment);
-			count = db.delete(
-					getTableName(),
-					getIdColumnName()
-							+ "="
-							+ segment
-							+ (!TextUtils.isEmpty(where) ? " AND (" + where
-									+ ')' : ""), whereArgs);
+			count = db.delete(getTableName(), getIdColumnName() + "=" + segment + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 		}
 
 		getContext().getContentResolver().notifyChange(url, null);
@@ -308,22 +288,14 @@ public class ContextProvider extends ContentProvider {
 	}
 
 	@Override
-	public int update(Uri url, ContentValues values, String where,
-			String[] whereArgs) {
+	public int update(Uri url, ContentValues values, String where, String[] whereArgs) {
 		int count;
 
 		if (isCollectionUri(url)) {
 			count = db.update(getTableName(), values, where, whereArgs);
 		} else {
 			String segment = url.getPathSegments().get(1);
-			count = db.update(
-					getTableName(),
-					values,
-					getIdColumnName()
-							+ "="
-							+ segment
-							+ (!TextUtils.isEmpty(where) ? " AND (" + where
-									+ ')' : ""), whereArgs);
+			count = db.update(getTableName(), values, getIdColumnName() + "=" + segment + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 		}
 
 		getContext().getContentResolver().notifyChange(url, null);
@@ -363,8 +335,8 @@ public class ContextProvider extends ContentProvider {
 	}
 
 	private void populateDefaultValues(ContentValues values) {
-//		Long now = Long.valueOf(System.currentTimeMillis());
-//		Resources r = Resources.getSystem();
+		// Long now = Long.valueOf(System.currentTimeMillis());
+		// Resources r = Resources.getSystem();
 
 		if (values.containsKey(ContextProvider.Cntxt.VALUE) == false) {
 			values.put(ContextProvider.Cntxt.VALUE, 0.0f);

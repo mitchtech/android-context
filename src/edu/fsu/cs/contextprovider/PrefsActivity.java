@@ -33,6 +33,12 @@ public class PrefsActivity extends PreferenceActivity {
 	// general
 	public static final String PREFS_DECIMAL_PLACES = "DecimalPlaces";
 	public static final int PREFS_DECIMAL_PLACES_DEFAULT = 2;
+	public static final String PREFS_STARTUP_ENABLED = "StartupStartup";
+	public static final boolean PREFS_STARTUP_ENABLED_DEFAULT = false;
+	public static final String PREFS_SHAKE_ENABLED = "ShakeEnabled";
+	public static final boolean PREFS_SHAKE_ENABLED_DEFAULT = true;
+	public static final String PREFS_TTS_ENABLED = "TtsEnabled";
+	public static final boolean PREFS_TTS_ENABLED_DEFAULT = false;
 
 	// location
 	public static final String PREFS_LOCATION_ENABLED = "LocationEnabled";
@@ -68,9 +74,8 @@ public class PrefsActivity extends PreferenceActivity {
 
 	// derived
 	public static final String PREFS_DERIVED_ENABLED = "DerivedEnabled";
-	public static final boolean PREFS_DERIVED_ENABLED_DEFAULT = true;	
-	
-		
+	public static final boolean PREFS_DERIVED_ENABLED_DEFAULT = true;
+
 	@Override
 	protected void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -98,21 +103,40 @@ public class PrefsActivity extends PreferenceActivity {
 		decimalPlaces.setDefaultValue(new Integer(PREFS_DECIMAL_PLACES_DEFAULT).toString());
 		decimalPlaces.getEditText().setKeyListener(integer);
 		generalPrefs.addPreference(decimalPlaces);
-		
-		
+
+		CheckBoxPreference runStartup = new CheckBoxPreference(this);
+		runStartup.setKey(PREFS_STARTUP_ENABLED);
+		runStartup.setTitle("Run at Start-up");
+		runStartup.setSummary("Enable/Disable ContextProvider Start at System Boot");
+		runStartup.setDefaultValue(new Boolean(PREFS_STARTUP_ENABLED_DEFAULT));
+		generalPrefs.addPreference(runStartup);
+
+		CheckBoxPreference shakeEnabled = new CheckBoxPreference(this);
+		shakeEnabled.setKey(PREFS_SHAKE_ENABLED);
+		shakeEnabled.setTitle("Shake Response");
+		shakeEnabled.setSummary("Enable/Disable ContextProvider Instant-Context on Shake");
+		shakeEnabled.setDefaultValue(new Boolean(PREFS_SHAKE_ENABLED_DEFAULT));
+		generalPrefs.addPreference(shakeEnabled);
+
+		CheckBoxPreference ttsEnabled = new CheckBoxPreference(this);
+		ttsEnabled.setKey(PREFS_TTS_ENABLED);
+		ttsEnabled.setTitle("TTS Context");
+		ttsEnabled.setSummary("Enable/Disable ContextProvider Context Speaking");
+		ttsEnabled.setDefaultValue(new Boolean(PREFS_TTS_ENABLED_DEFAULT));
+		generalPrefs.addPreference(ttsEnabled);
+
 		// location prefs
 		PreferenceCategory locationPrefs = new PreferenceCategory(this);
 		locationPrefs.setTitle("Location Parameters");
 		root.addPreference(locationPrefs);
-		
+
 		CheckBoxPreference locationEnabled = new CheckBoxPreference(this);
 		locationEnabled.setKey(PREFS_LOCATION_ENABLED);
 		locationEnabled.setTitle("Location Context");
 		locationEnabled.setSummary("Enable/Disable ContextProvider Location Tracking");
 		locationEnabled.setDefaultValue(new Boolean(PREFS_LOCATION_ENABLED_DEFAULT));
 		locationPrefs.addPreference(locationEnabled);
-		
-		
+
 		// movement prefs
 		PreferenceCategory movementPrefs = new PreferenceCategory(this);
 		movementPrefs.setTitle("Movement Parameters");
@@ -123,9 +147,8 @@ public class PrefsActivity extends PreferenceActivity {
 		movementEnabled.setTitle("Movement Context");
 		movementEnabled.setSummary("Enable/Disable ContextProvider Movement Tracking");
 		movementEnabled.setDefaultValue(new Boolean(PREFS_MOVEMENT_ENABLED_DEFAULT));
-		movementPrefs.addPreference(movementEnabled);		
-		
-		
+		movementPrefs.addPreference(movementEnabled);
+
 		// proximity prefs
 		PreferenceCategory proximityPrefs = new PreferenceCategory(this);
 		proximityPrefs.setTitle("Address Proximity Parameters");
@@ -136,9 +159,8 @@ public class PrefsActivity extends PreferenceActivity {
 		proximityEnabled.setTitle("Address Proximity Context");
 		proximityEnabled.setSummary("Enable/Disable ContextProvider Address Proximity Tracking");
 		proximityEnabled.setDefaultValue(new Boolean(PREFS_PROXIMITY_ENABLED_DEFAULT));
-		proximityPrefs.addPreference(proximityEnabled);		
-		
-		
+		proximityPrefs.addPreference(proximityEnabled);
+
 		// weather prefs
 		PreferenceCategory weatherPrefs = new PreferenceCategory(this);
 		weatherPrefs.setTitle("Weather Parameters");
@@ -149,9 +171,8 @@ public class PrefsActivity extends PreferenceActivity {
 		weatherEnabled.setTitle("Weather Context");
 		weatherEnabled.setSummary("Enable/Disable ContextProvider Weather Tracking");
 		weatherEnabled.setDefaultValue(new Boolean(PREFS_WEATHER_ENABLED_DEFAULT));
-		weatherPrefs.addPreference(weatherEnabled);		
-		
-		
+		weatherPrefs.addPreference(weatherEnabled);
+
 		// system prefs
 		PreferenceCategory systemPrefs = new PreferenceCategory(this);
 		systemPrefs.setTitle("System Broadcast Parameters");
@@ -162,9 +183,8 @@ public class PrefsActivity extends PreferenceActivity {
 		systemEnabled.setTitle("System Broadcast Context");
 		systemEnabled.setSummary("Enable/Disable ContextProvider System Broadcast Tracking");
 		systemEnabled.setDefaultValue(new Boolean(PREFS_SYSTEM_ENABLED_DEFAULT));
-		systemPrefs.addPreference(systemEnabled);		
-		
-		
+		systemPrefs.addPreference(systemEnabled);
+
 		// telephony prefs
 		PreferenceCategory telephonyPrefs = new PreferenceCategory(this);
 		telephonyPrefs.setTitle("Telephony Parameters");
@@ -176,8 +196,7 @@ public class PrefsActivity extends PreferenceActivity {
 		telephonyEnabled.setSummary("Enable/Disable ContextProvider Phone/SMS Tracking");
 		telephonyEnabled.setDefaultValue(new Boolean(PREFS_TELEPHONY_ENABLED_DEFAULT));
 		telephonyPrefs.addPreference(telephonyEnabled);
-		
-		
+
 		// social prefs
 		PreferenceCategory socialPrefs = new PreferenceCategory(this);
 		socialPrefs.setTitle("Social Parameters");
@@ -188,9 +207,8 @@ public class PrefsActivity extends PreferenceActivity {
 		socialEnabled.setTitle("Social Network Context");
 		socialEnabled.setSummary("Enable/Disable ContextProvider Social Network Tracking");
 		socialEnabled.setDefaultValue(new Boolean(PREFS_SOCIAL_ENABLED_DEFAULT));
-		socialPrefs.addPreference(socialEnabled);		
-		
-		
+		socialPrefs.addPreference(socialEnabled);
+
 		// finance prefs
 		PreferenceCategory financePrefs = new PreferenceCategory(this);
 		financePrefs.setTitle("Finance Parameters");
@@ -201,9 +219,8 @@ public class PrefsActivity extends PreferenceActivity {
 		financeEnabled.setTitle("Finance Context");
 		financeEnabled.setSummary("Enable/Disable ContextProvider Finance Tracking");
 		financeEnabled.setDefaultValue(new Boolean(PREFS_FINANCE_ENABLED_DEFAULT));
-		financePrefs.addPreference(financeEnabled);		
-		
-		
+		financePrefs.addPreference(financeEnabled);
+
 		// derived prefs
 		PreferenceCategory derivedPrefs = new PreferenceCategory(this);
 		derivedPrefs.setTitle("Derived Parameters");
@@ -214,8 +231,8 @@ public class PrefsActivity extends PreferenceActivity {
 		derivedEnabled.setTitle("Derived Context");
 		derivedEnabled.setSummary("Enable/Disable ContextProvider Derived Context Tracking");
 		derivedEnabled.setDefaultValue(new Boolean(PREFS_DERIVED_ENABLED_DEFAULT));
-		derivedPrefs.addPreference(derivedEnabled);		
-		
+		derivedPrefs.addPreference(derivedEnabled);
+
 		return root;
 	}
 
@@ -268,13 +285,6 @@ public class PrefsActivity extends PreferenceActivity {
 		return version;
 	}
 
-		
-	
-	public static boolean getLocationEnabled(Context ctx) {
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-		return settings.getBoolean(PREFS_LOCATION_ENABLED, new Boolean(PREFS_LOCATION_ENABLED_DEFAULT));
-	}
-
 	public static int getDecimalPlaces(Context ctx) {
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
 		String s = settings.getString(PREFS_DECIMAL_PLACES, new Integer(PREFS_DECIMAL_PLACES_DEFAULT).toString());
@@ -285,6 +295,66 @@ public class PrefsActivity extends PreferenceActivity {
 			i = PREFS_DECIMAL_PLACES_DEFAULT;
 		}
 		return i;
+	}
+
+	public static boolean getStartupEnabled(Context ctx) {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+		return settings.getBoolean(PREFS_STARTUP_ENABLED, new Boolean(PREFS_STARTUP_ENABLED_DEFAULT));
+	}
+
+	public static boolean getShakeEnabled(Context ctx) {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+		return settings.getBoolean(PREFS_SHAKE_ENABLED, new Boolean(PREFS_SHAKE_ENABLED_DEFAULT));
+	}
+
+	public static boolean getTtsEnabled(Context ctx) {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+		return settings.getBoolean(PREFS_TTS_ENABLED, new Boolean(PREFS_TTS_ENABLED_DEFAULT));
+	}
+
+	public static boolean getLocationEnabled(Context ctx) {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+		return settings.getBoolean(PREFS_LOCATION_ENABLED, new Boolean(PREFS_LOCATION_ENABLED_DEFAULT));
+	}
+
+	public static boolean getMovementEnabled(Context ctx) {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+		return settings.getBoolean(PREFS_MOVEMENT_ENABLED, new Boolean(PREFS_MOVEMENT_ENABLED_DEFAULT));
+	}
+
+	public static boolean getProximityEnabled(Context ctx) {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+		return settings.getBoolean(PREFS_PROXIMITY_ENABLED, new Boolean(PREFS_PROXIMITY_ENABLED_DEFAULT));
+	}
+
+	public static boolean getWeatherEnabled(Context ctx) {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+		return settings.getBoolean(PREFS_WEATHER_ENABLED, new Boolean(PREFS_WEATHER_ENABLED_DEFAULT));
+	}
+
+	public static boolean getSystemEnabled(Context ctx) {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+		return settings.getBoolean(PREFS_SYSTEM_ENABLED, new Boolean(PREFS_SYSTEM_ENABLED_DEFAULT));
+	}
+
+	public static boolean getTelephonyEnabled(Context ctx) {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+		return settings.getBoolean(PREFS_TELEPHONY_ENABLED, new Boolean(PREFS_TELEPHONY_ENABLED_DEFAULT));
+	}
+
+	public static boolean getSocialEnabled(Context ctx) {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+		return settings.getBoolean(PREFS_SOCIAL_ENABLED, new Boolean(PREFS_SOCIAL_ENABLED_DEFAULT));
+	}
+
+	public static boolean getFinanceEnabled(Context ctx) {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+		return settings.getBoolean(PREFS_FINANCE_ENABLED, new Boolean(PREFS_FINANCE_ENABLED_DEFAULT));
+	}
+
+	public static boolean getDerivedEnabled(Context ctx) {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+		return settings.getBoolean(PREFS_DERIVED_ENABLED, new Boolean(PREFS_DERIVED_ENABLED_DEFAULT));
 	}
 
 }

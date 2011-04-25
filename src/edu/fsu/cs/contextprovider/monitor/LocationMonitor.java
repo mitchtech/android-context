@@ -191,7 +191,7 @@ public class LocationMonitor extends TimerTask {
 		try {
 			addresses = geocoder.getFromLocationName(str, 1);
 			if (addresses == null) {
-				Log.i(ContextConstants.TAG_GEO, "getGeoFromAddress(): getFromLocationName() returned null");
+				Log.i(TAG, "getGeoFromAddress(): getFromLocationName() returned null");
 				return null;
 			}
 			if (addresses.size() > 0) {
@@ -210,7 +210,7 @@ public class LocationMonitor extends TimerTask {
 		try {
 			addresses = geocoder.getFromLocation(latitude, longitude,1);
 			if (addresses == null) {
-				Log.i(ContextConstants.TAG_GEO, "getAddressFromGeo(): getFromLocation() returned null");
+				Log.i(TAG, "getAddressFromGeo(): getFromLocation() returned null");
 				return null;
 			}
 			if (addresses.size() > 0) {
