@@ -16,44 +16,16 @@
 
 package edu.fsu.cs.contextprovider;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ExpandableListActivity;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.location.Geocoder;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.os.RemoteException;
-import android.speech.tts.TextToSpeech;
-import android.text.ClipboardManager;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
-import android.widget.SimpleExpandableListAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ExpandableListView.OnChildClickListener;
-
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -67,7 +39,40 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ExpandableListActivity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.location.Geocoder;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.IBinder;
+import android.os.RemoteException;
+import android.speech.tts.TextToSpeech;
+import android.text.ClipboardManager;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.SimpleExpandableListAdapter;
+import android.widget.Toast;
 import edu.fsu.cs.contextprovider.dialog.AddressDialog;
+import edu.fsu.cs.contextprovider.finance.GoogleFinanceHandler;
+import edu.fsu.cs.contextprovider.finance.GoogleFinanceQuote;
 import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
 import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
 import edu.fsu.cs.contextprovider.monitor.SocialMonitor;
@@ -80,8 +85,7 @@ import edu.fsu.cs.contextprovider.sensor.TelephonyService;
 import edu.fsu.cs.contextprovider.weather.GoogleWeatherHandler;
 import edu.fsu.cs.contextprovider.weather.WeatherCurrentCondition;
 import edu.fsu.cs.contextprovider.weather.WeatherSet;
-import edu.fsu.cs.contextprovider.finance.GoogleFinanceQuote;
-import edu.fsu.cs.contextprovider.finance.GoogleFinanceHandler;
+
 
 public class ContextExpandableListActivity extends ExpandableListActivity implements OnChildClickListener, TextToSpeech.OnInitListener {
 	private static final String PKG = "edu.fsu.cs.contextprovider";
@@ -94,8 +98,9 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 
 	private static final int MENU_REFRESH_ID = Menu.FIRST + 1;
 	private static final int MENU_ADD_ID = Menu.FIRST + 2;
-	private static final int MENU_PREFS_ID = Menu.FIRST + 3;
-	private static final int MENU_ABOUT_ID = Menu.FIRST + 4;
+	private static final int MENU_SHARE_ID = Menu.FIRST + 3;
+	private static final int MENU_PREFS_ID = Menu.FIRST + 4;
+	private static final int MENU_ABOUT_ID = Menu.FIRST + 5;
 
 	// private static final int MENU_EDIT_ID = Menu.FIRST + 3;
 	// private static final int MENU_DELETE_ID = Menu.FIRST + 4;
@@ -109,6 +114,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	private static final int PREFS_EDIT = 0;
 
 	private static final int DIALOG_ABOUT = 0;
+	private static final String CSV_FILENAME = "Context.csv";
 
 	// preferences
 	private boolean locationEnabled;
@@ -122,7 +128,6 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	private boolean derivedEnabled;
 
 	private boolean startupEnabled;
-	private boolean shakeEnabled;
 	private boolean ttsEnabled;
 
 	public static boolean running = false;
@@ -137,8 +142,6 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 
 	Vector<ContextListItem> Clist = new Vector<ContextListItem>();
 	// ArrayAdapter<ContextListItem> adapter = null;
-
-	private Context mCtx;
 
 	ArrayAdapter<ContextListItem> addressAdapter = null;
 	private CopyState copyState = new CopyState();
@@ -156,8 +159,6 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mCtx = this;
-
 		getPrefs();
 
 		tts = new TextToSpeech(this, this);
@@ -244,20 +245,19 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 
 	private void getPrefs() {
 		// general
-		startupEnabled = PrefsActivity.getStartupEnabled(getCtx());
-		shakeEnabled = PrefsActivity.getShakeEnabled(getCtx());
-		ttsEnabled = PrefsActivity.getTtsEnabled(getCtx());
+		startupEnabled = PrefsActivity.getStartupEnabled(getApplicationContext());
+		ttsEnabled = PrefsActivity.getTtsEnabled(getApplicationContext());
 
 		// categories
-		locationEnabled = PrefsActivity.getLocationEnabled(getCtx());
-		movementEnabled = PrefsActivity.getLocationEnabled(getCtx());
-		proximityEnabled = PrefsActivity.getProximityEnabled(getCtx());
-		weatherEnabled = PrefsActivity.getWeatherEnabled(getCtx());
-		systemEnabled = PrefsActivity.getSystemEnabled(getCtx());
-		telephonyEnabled = PrefsActivity.getTelephonyEnabled(getCtx());
-		socialEnabled = PrefsActivity.getSocialEnabled(getCtx());
-		financeEnabled = PrefsActivity.getFinanceEnabled(getCtx());
-		derivedEnabled = PrefsActivity.getDerivedEnabled(getCtx());
+		locationEnabled = PrefsActivity.getLocationEnabled(getApplicationContext());
+		movementEnabled = PrefsActivity.getLocationEnabled(getApplicationContext());
+		proximityEnabled = PrefsActivity.getProximityEnabled(getApplicationContext());
+		weatherEnabled = PrefsActivity.getWeatherEnabled(getApplicationContext());
+		systemEnabled = PrefsActivity.getSystemEnabled(getApplicationContext());
+		telephonyEnabled = PrefsActivity.getTelephonyEnabled(getApplicationContext());
+		socialEnabled = PrefsActivity.getSocialEnabled(getApplicationContext());
+		financeEnabled = PrefsActivity.getFinanceEnabled(getApplicationContext());
+		derivedEnabled = PrefsActivity.getDerivedEnabled(getApplicationContext());
 	}
 
 	private void refresh() {
@@ -274,16 +274,6 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 
 		groupData.clear();
 		childData.clear();
-
-		// refreshLocation();
-		// refreshMovement();
-		// refreshProximity();
-		// refreshWeather();
-		// refreshSystem();
-		// refreshTelephony();
-		// refreshSocial();
-		// refreshFinance();
-		// refreshDerived();
 
 		if (locationEnabled)
 			refreshLocation();
@@ -699,6 +689,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(Menu.NONE, MENU_REFRESH_ID, Menu.NONE, "Refresh").setIcon(android.R.drawable.ic_menu_rotate).setAlphabeticShortcut('r');
 		menu.add(Menu.NONE, MENU_ADD_ID, Menu.NONE, "Add").setIcon(android.R.drawable.ic_menu_add).setAlphabeticShortcut('a');
+		menu.add(Menu.NONE, MENU_SHARE_ID, Menu.NONE, "Share").setIcon(android.R.drawable.ic_menu_share).setAlphabeticShortcut('s');
 		menu.add(Menu.NONE, MENU_PREFS_ID, Menu.NONE, "Prefs").setIcon(android.R.drawable.ic_menu_preferences).setAlphabeticShortcut('p');
 		menu.add(Menu.NONE, MENU_ABOUT_ID, Menu.NONE, "About").setIcon(android.R.drawable.ic_menu_info_details).setAlphabeticShortcut('i');
 
@@ -726,6 +717,15 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 			addAddressDialog.show();
 			this.refreshProximity();
 			return (true);
+		case MENU_SHARE_ID:
+			try {
+				exportToFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			// adapter.notifyDataSetChanged();
+			return true;
 		case MENU_PREFS_ID:
 			editPrefs();
 			return true;
@@ -777,6 +777,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		public String toString() {
 			return name + ": " + value;
 		}
+
 	}
 
 	@Override
@@ -875,9 +876,50 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		}
 		return version;
 	}
+	
+	public void exportToFile() throws IOException {
+		String path = Environment.getExternalStorageDirectory() + "/" + CSV_FILENAME;
+		
+		
+		File file = new File(path);
+		file.createNewFile();
+		
+		if (!file.isFile()) {
+			throw new IllegalArgumentException("Should not be a directory: "
+					+ file);
+		}
+		if (!file.canWrite()) {
+			throw new IllegalArgumentException("File cannot be written: "
+					+ file);
+		}
 
-	public Context getCtx() {
-		return mCtx;
+		Writer output = new BufferedWriter(new FileWriter(file));
+
+		HashMap<String, String> cntx = null;
+
+		String line;
+		// ContextProvider.getAll(cntx);
+		
+		cntx = ContextProvider.getAllUnordered();
+		for (LinkedHashMap.Entry<String,String> entry: cntx.entrySet()) {
+			ContextListItem item = new ContextListItem();
+			item.setName(entry.getKey());
+			item.setValue(entry.getValue());
+			// Clist.add(item);
+			line = item.toString();
+			output.write(line + "\n");			
+		}
+
+		output.close();
+		
+		
+		Toast.makeText(this, String.format("Saved", path), Toast.LENGTH_LONG).show();
+
+		
+		Intent shareIntent = new Intent(Intent.ACTION_SEND);
+		shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + path));
+		shareIntent.setType("text/plain");
+		startActivity(Intent.createChooser(shareIntent, "Share Context Using..."));
 	}
-
+	
 }

@@ -42,7 +42,7 @@ public class ContextProvider extends ContentProvider {
 	private static final UriMatcher MATCHER;
 	private static HashMap<String, String> CNTXT_LIST_PROJECTION;
 
-	private static void getAll(Map<String, String> results) {
+	static void getAll(Map<String, String> results) {
 		getLocation(results);
 		getMovement(results);
 		getSocial(results);
