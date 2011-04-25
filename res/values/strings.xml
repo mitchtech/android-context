@@ -8,6 +8,25 @@
 	<string name="expandable_list_sample_action">Sample action</string>
 	<string name="google_finance_url">http://www.google.com/ig/api?stock=</string>
 	<string name="google_url">http://www.google.com</string>
+	
+	<string name="about_msg">ContextProvider - a unified, query-able interface to all contextual data on the device.
+	\n\n\u00A9 2011 by Michael Mitchell and Chris Meyers
+	\n\nhttp://github.com/mitchtech/android-context
+	</string>
+	
+	<string name="about_changelog"><b>Release Notes</b>
+	\n0.10
+	\n - merged all changed into ContextExpandableList; moved obsolete files to defunct folder
+	\n\n0.09
+	\n - Added more finance outputs; Added more finance displays.
+	\n\n0.8
+	\n - Merge branch \'adwhirl\'; Fixed problems with previous (adwhirl) merge.
+	\n\n0.7
+	\n - Changed lux (light sensor value) to float instead of int.  Still need to tweak it to detect pocket
+	\n\n0.6
+	\n - Added cliboard.  Added shelter and pocket to context.  Fixed weather
+	</string>
+	
 	<drawable name="white">#ffffff</drawable>
     <drawable name="blue">#2554C7</drawable>
     <drawable name="green">#347C2C</drawable>
@@ -16,4 +35,5 @@
     <drawable name="violet">#a020f0</drawable>
     <drawable name="gray">#778899</drawable>
     <drawable name="red">#C11B17</drawable>
+    
 </resources>
