@@ -21,9 +21,9 @@
 		along with the EventPowerLog source code. If not, see: http://www.gnu.org/licenses
 -->
 
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@android:id/list"
-	android:layout_width="fill_parent" 
-	android:layout_height="fill_parent"
-	android:drawSelectorOnTop="false"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/title"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	style="?android:attr/listSeparatorTextViewStyle"
 />

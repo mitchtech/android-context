@@ -20,6 +20,14 @@ public class SystemBroadcastMonitor extends BroadcastReceiver {
 
 	private static final String TAG = "SystemBroadcastMonitor";
 	
+	// system monitor status
+	private static long userLastPresent = 0;
+	private static boolean batteryPlugged = false;
+	private static boolean batteryLow = false;
+	private static int batteryLevel = 0;
+	private static long batteryLastPlugged = 0;
+	
+	
 	// direct user/device interaction
 	private static String SCREEN_OFF = "android.intent.action.SCREEN_OFF";
 	private static String SCREEN_ON = "android.intent.action.SCREEN_ON";
@@ -35,9 +43,6 @@ public class SystemBroadcastMonitor extends BroadcastReceiver {
 	private static String CONFIGURATION_CHANGED = "android.intent.action.CONFIGURATION_CHANGED";
 	private static String LOCALE_CHANGED = "android.intent.action.LOCALE_CHANGED";
 	private static String ALARM_CHANGED = "android.intent.action.ALARM_CHANGED";
-	private static long USER_LAST_PRESENT = 0;
-	
-	
 	
 	// date/time intents
 	private static String TIME_TICK = "android.intent.action.TIME_TICK";
@@ -45,7 +50,6 @@ public class SystemBroadcastMonitor extends BroadcastReceiver {
 	private static String DATE_CHANGED = "android.intent.action.DATE_CHANGED";
 	private static String TIMEZONE_CHANGED = "android.intent.action.TIMEZONE_CHANGED";
 
-	
 	// power intents/connections
 	private static String BATTERY_CHANGED = "android.intent.action.BATTERY_CHANGED";
 	private static String BATTERY_LOW = "android.intent.action.BATTERY_LOW";
@@ -54,19 +58,13 @@ public class SystemBroadcastMonitor extends BroadcastReceiver {
 	private static String ACTION_POWER_DISCONNECTED = "android.intent.action.ACTION_POWER_DISCONNECTED";
 	private static String UMS_CONNECTED = "android.intent.action.UMS_CONNECTED";
 	private static String UMS_DISCONNECTED = "android.intent.action.UMS_DISCONNECTED";
-	public static boolean BATTERY_PLUGGED = false;
-	public static boolean BATTERY_LEVEL_LOW = false;
-	public static int BATTERY_LEVEL = 0;
-	public static long BATTERY_LAST_PLUGGED = 0;
-	
-	
+
 	// services
 	private static String SYNC_STATE_CHANGED = "android.intent.action.SYNC_STATE_CHANGED";
 	private static String GTALK_CONNECTED = "android.intent.action.GTALK_CONNECTED";
 	private static String GTALK_DISCONNECTED = "android.intent.action.GTALK_DISCONNECTED";
 	private static String PROVIDER_CHANGED = "android.intent.action.PROVIDER_CHANGED";
 	private static String NEW_OUTGOING_CALL = "android.intent.action.NEW_OUTGOING_CALL";
-	
 	
 	// actual system intents
 	private static String BOOT_COMPLETED = "android.intent.action.BOOT_COMPLETED";
@@ -120,41 +118,35 @@ public class SystemBroadcastMonitor extends BroadcastReceiver {
 		String intentName = intent.getAction();
 		Bundle extras = intent.getExtras();
 		
-		
 		if (intentName == USER_PRESENT || intentName == SCREEN_ON || intentName == SCREEN_OFF)
 		{
-			USER_LAST_PRESENT = System.currentTimeMillis();
+			userLastPresent = System.currentTimeMillis();
 		}
-		
-		
 		
 		else if (intentName == ACTION_POWER_CONNECTED || intentName == UMS_CONNECTED)
 		{
-			BATTERY_PLUGGED = true;
+			batteryPlugged = true;
 		}
 		else if (intentName == ACTION_POWER_DISCONNECTED || intentName == UMS_DISCONNECTED)
 		{
-			BATTERY_PLUGGED = false;
-			BATTERY_LAST_PLUGGED = System.currentTimeMillis();
+			batteryPlugged = false;
+			batteryLastPlugged = System.currentTimeMillis();
 		}
 		else if (intentName == BATTERY_CHANGED)
 		{
-			BATTERY_LEVEL = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+			batteryLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
 		}
 		else if (intentName == BATTERY_LOW)
 		{
-			BATTERY_LEVEL_LOW = true;
+			batteryLow = true;
 		}
 		else if (intentName == BATTERY_OKAY)
 		{
-			BATTERY_LEVEL_LOW = false;
+			batteryLow = false;
 		}
 
 	}
 
-	
-	
-	
 	
 	
 	private static final String extrasToString(Bundle extras) {
@@ -170,6 +162,65 @@ public class SystemBroadcastMonitor extends BroadcastReceiver {
 	}
 
 
+
+	public static long getUserLastPresent() {
+		return userLastPresent;
+	}
+
+
+
+	public static void setUserLastPresent(long userLastPresent) {
+		SystemBroadcastMonitor.userLastPresent = userLastPresent;
+	}
+
+
+
+	public static boolean isBatteryPlugged() {
+		return batteryPlugged;
+	}
+
+
+
+	public static void setBatteryPlugged(boolean batteryPlugged) {
+		SystemBroadcastMonitor.batteryPlugged = batteryPlugged;
+	}
+
+
+
+	public static boolean isBatteryLow() {
+		return batteryLow;
+	}
+
+
+
+	public static void setBatteryLow(boolean batteryLow) {
+		SystemBroadcastMonitor.batteryLow = batteryLow;
+	}
+
+
+
+	public static int getBatteryLevel() {
+		return batteryLevel;
+	}
+
+
+
+	public static void setBatteryLevel(int batteryLevel) {
+		SystemBroadcastMonitor.batteryLevel = batteryLevel;
+	}
+
+
+
+	public static long getBatteryLastPlugged() {
+		return batteryLastPlugged;
+	}
+
+
+
+	public static void setBatteryLastPlugged(long batteryLastPlugged) {
+		SystemBroadcastMonitor.batteryLastPlugged = batteryLastPlugged;
+	}
 	
+
 
 }

@@ -33,6 +33,8 @@ import java.util.Map;
 import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
 import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
 import edu.fsu.cs.contextprovider.monitor.SocialMonitor;
+import edu.fsu.cs.contextprovider.monitor.SystemBroadcastMonitor;
+import edu.fsu.cs.contextprovider.monitor.WeatherMonitor;
 import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
 
 public class ContextProvider extends ContentProvider {
@@ -45,29 +47,59 @@ public class ContextProvider extends ContentProvider {
 	static void getAll(Map<String, String> results) {
 		getLocation(results);
 		getMovement(results);
+		getProximity(results);
+		getWeather(results);
+		getSystem(results);
+		getTelephony(results);
 		getSocial(results);
-
+		getFinance(results);
+		getDerived(results);
 	}
 
 	private static void getLocation(Map<String, String> results) {
-		results.put("LOCATION_ADDRESS", LocationMonitor.getAddress());
-		results.put("LOCATION_HOOD", LocationMonitor.getNeighborhood());
-		results.put("LOCATION_ZIP", LocationMonitor.getZip());
-		results.put("LOCATION_LATITUDE", String.valueOf(LocationMonitor.getLatitude()));
-		results.put("LOCATION_LONGITUDE", String.valueOf(LocationMonitor.getLongitude()));
-		results.put("LOCATION_ALTITUDE", String.valueOf(LocationMonitor.getAltitude()));
+		results.put(ContextConstants.LOCATION_ADDRESS, LocationMonitor.getAddress());
+		results.put(ContextConstants.LOCATION_HOOD, LocationMonitor.getNeighborhood());
+		results.put(ContextConstants.LOCATION_ZIP, LocationMonitor.getZip());
+		results.put(ContextConstants.LOCATION_LATITUDE, String.valueOf(LocationMonitor.getLatitude()));
+		results.put(ContextConstants.LOCATION_LONGITUDE, String.valueOf(LocationMonitor.getLongitude()));
+		results.put(ContextConstants.LOCATION_ALTITUDE, String.valueOf(LocationMonitor.getAltitude()));
 	}
 
 	private static void getMovement(Map<String, String> results) {
-		results.put("MOVEMENT_STATE", MovementMonitor.getMovementState());
-		results.put("MOVEMENT_SPEED", String.valueOf(MovementMonitor.getSpeedMph()));
-		results.put("MOVEMENT_BEARING", String.valueOf(LocationMonitor.getBearing()));
-		results.put("MOVEMENT_STEP_COUNT", String.valueOf(AccelerometerService.getStepCount()));
-		results.put("MOVEMENT_LAST_STEP", String.valueOf(AccelerometerService.getStepTimestamp()));
+		results.put(ContextConstants.MOVEMENT_STATE, MovementMonitor.getMovementState());
+		results.put(ContextConstants.MOVEMENT_SPEED, String.valueOf(MovementMonitor.getSpeedMph()));
+		results.put(ContextConstants.MOVEMENT_BEARING, String.valueOf(LocationMonitor.getBearing()));
+		results.put(ContextConstants.MOVEMENT_STEP_COUNT, String.valueOf(AccelerometerService.getStepCount()));
+		results.put(ContextConstants.MOVEMENT_LAST_STEP, String.valueOf(AccelerometerService.getStepTimestamp()));
 	}
 
+	private static void getProximity(Map<String, String> results) {
+
+	}
+	
+	private static void getWeather(Map<String, String> results) {
+		results.put(ContextConstants.WEATHER_CUR_TEMP, WeatherMonitor.getWeatherTemp());
+		results.put(ContextConstants.WEATHER_CUR_CONDITION, WeatherMonitor.getWeatherCond());
+		results.put(ContextConstants.WEATHER_CUR_HUMIDITY, WeatherMonitor.getWeatherHumid());
+		results.put(ContextConstants.WEATHER_CUR_WIND, WeatherMonitor.getWeatherWindCond());
+	}
+	
+	private static void getSystem(Map<String, String> results) {
+		results.put(ContextConstants.SYSTEM_BATTERY_LEVEL, String.valueOf(SystemBroadcastMonitor.getBatteryLevel()));
+		results.put(ContextConstants.SYSTEM_BATTERY_LOW, String.valueOf(SystemBroadcastMonitor.isBatteryLow()));
+		results.put(ContextConstants.SYSTEM_PLUGGED, String.valueOf(SystemBroadcastMonitor.isBatteryPlugged()));
+		results.put(ContextConstants.SYSTEM_LAST_PLUGGED, String.valueOf(SystemBroadcastMonitor.getBatteryLastPlugged()));
+		results.put(ContextConstants.SYSTEM_USER_LAST_PRESENT, String.valueOf(SystemBroadcastMonitor.getUserLastPresent()));
+	}
+	
+	private static void getTelephony(Map<String, String> results) {
+
+	}
+		
+	
 	private static void getSocial(Map<String, String> results) {
-		results.put("SOCIAL_TWITTER_LAST", SocialMonitor.getCurrentTwitterStatus());
+		results.put(ContextConstants.SOCIAL_TWITTER_LAST_MESSAGE, SocialMonitor.getCurrentTwitterStatus());
+		results.put(ContextConstants.SOCIAL_TWITTER_LAST_TIME, SocialMonitor.getCurrentTwitterStatus());
 	}
 
 	private static void getFinance(Map<String, String> results) {
@@ -75,6 +107,12 @@ public class ContextProvider extends ContentProvider {
 		results.put("COMPANY SYMBOL", "GOOG");
 	}
 
+	private static void getDerived(Map<String, String> results) {
+
+	}
+	
+	
+	
 	public static LinkedHashMap<String, String> getAllOrdered() {
 		LinkedHashMap<String, String> results = new LinkedHashMap<String, String>();
 		getAll(results);

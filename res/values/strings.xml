@@ -3,37 +3,85 @@
 	<string name="app_name">ContextProvider</string>
 	<string name="ok">OK</string>
 	<string name="cancel">Cancel</string>
+	<string name="close">Close</string>
 	<string name="add_context">Add Context</string>
 	<string name="delete_context">Delete Context: Are You Sure?</string>
 	<string name="expandable_list_sample_action">Sample action</string>
 	<string name="google_finance_url">http://www.google.com/ig/api?stock=</string>
 	<string name="google_url">http://www.google.com</string>
-	
-	<string name="about_msg">ContextProvider - a unified, query-able interface to all contextual data on the device.
-	\n\n\u00A9 2011 by Michael Mitchell and Chris Meyers
-	\n\nhttp://github.com/mitchtech/android-context
+	<string name="welcome">Welcome to ContextProvider</string>
+		<string name="welcome_msg">This application is not a game!\n\nIt is a tool for
+		research and application profiling. You may wish to start by
+		configuring ContextProvider in the preferences screen.</string>
+
+	<string name="about_msg">ContextProvider - a unified, query-able interface
+		to all contextual data on the device.
+		\n\n\u00A9 2011 by Michael Mitchell and Chris Meyers
+		\n\nhttp://github.com/mitchtech/android-context
 	</string>
 	
-	<string name="about_changelog"><b>Release Notes</b>
-	\n0.10
-	\n - merged all changed into ContextExpandableList; moved obsolete files to defunct folder
-	\n\n0.09
-	\n - Added more finance outputs; Added more finance displays.
-	\n\n0.8
-	\n - Merge branch \'adwhirl\'; Fixed problems with previous (adwhirl) merge.
-	\n\n0.7
-	\n - Changed lux (light sensor value) to float instead of int.  Still need to tweak it to detect pocket
-	\n\n0.6
-	\n - Added cliboard.  Added shelter and pocket to context.  Fixed weather
-	</string>
 	
+		<!-- Preferences -->
+	<string name="preferences">Preferences</string>
+	<string name="application">Application</string>
+	<string name="app_help">Bills Books Help</string>
+	<string name="help_description">and frequently asked questions (FAQ)</string>
+	<string name="contact_developer">Contact developer</string>
+	<string name="send_email_msg">Send an email to info@mitchtech.com</string>
+	<string name="error_email">Couldn\'t find an email client in your device.
+		You\'ll have to send the email manually.</string>
+
+	<!-- About -->
+	<string name="about">About</string>
+	<string name="version">Version</string>
+	<string name="license">License</string>
+	<string name="development">Development</string>
+	<string name="acknowledgements">Acknowledgements</string>
+	<string name="more_info">More info</string>
+	<string name="project_webpage">Project webpage</string>
+	<string name="changelog_title">Change log</string>
+	<string name="about_changelog">
+		<b>Release Notes</b>
+		\n0.10
+		\n - merged all changed into ContextExpandableList; moved obsolete files
+		to defunct folder
+		\n\n0.09
+		\n - Added more finance outputs; Added more finance displays.
+		\n\n0.8
+		\n - Merge branch \'adwhirl\'; Fixed problems with previous (adwhirl)
+		merge.
+		\n\n0.7
+		\n - Changed lux (light sensor value) to float instead of int. Still
+		need to tweak it to detect pocket
+		\n\n0.6
+		\n - Added cliboard. Added shelter and pocket to context. Fixed weather
+	</string>
+
 	<drawable name="white">#ffffff</drawable>
-    <drawable name="blue">#2554C7</drawable>
-    <drawable name="green">#347C2C</drawable>
-    <drawable name="orange">#ff9900</drawable>
-    <drawable name="pink">#FF00FF</drawable>
-    <drawable name="violet">#a020f0</drawable>
-    <drawable name="gray">#778899</drawable>
-    <drawable name="red">#C11B17</drawable>
+	<drawable name="blue">#2554C7</drawable>
+	<drawable name="green">#347C2C</drawable>
+	<drawable name="orange">#ff9900</drawable>
+	<drawable name="pink">#FF00FF</drawable>
+	<drawable name="violet">#a020f0</drawable>
+	<drawable name="gray">#778899</drawable>
+	<drawable name="red">#C11B17</drawable>
+
+
+	<string name="enable_dialog_msg">Context Enabled</string>
+	<string name="disable_dialog_msg">Context Disabled</string>
+	<string name="yes">Yes</string>
+	<string name="no">No</string>
+
+    <string-array name="prefs_polling_freq">
+        <item>Low</item>
+        <item>Medium</item>
+        <item>High</item>
+    </string-array>
     
+    <string-array name="prefs_polling_freq_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
 </resources>

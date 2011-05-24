@@ -8,41 +8,6 @@
 
 		<provider android:name="ContextProvider" android:authorities="edu.fsu.cs.contextprovider" />
 
-		<!-- 		<activity android:name="ContextBrowserActivity" -->
-		<!--
-			android:label="@string/app_name"
-			android:screenOrientation="portrait">
-		-->
-		<!-- 			<intent-filter> -->
-		<!-- 				<action android:name="android.intent.action.MAIN" /> -->
-		<!--
-			<category android:name="android.intent.category.LAUNCHER" />
-		-->
-		<!-- 			</intent-filter> -->
-		<!-- 		</activity> -->
-
-		<!-- <activity android:name="ContextListActivity" -->
-		<!--
-			android:label="@string/app_name"
-			android:screenOrientation="portrait">
-		-->
-		<!-- <intent-filter> -->
-		<!-- <action android:name="android.intent.action.MAIN" /> -->
-		<!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-		<!-- </intent-filter> -->
-		<!-- </activity> -->
-
-		<!--		<activity android:name="ContextProximityActivity"-->
-		<!--
-			android:label="@string/app_name"
-			android:screenOrientation="portrait">
-		-->
-		<!--			<intent-filter>-->
-		<!--				<action android:name="android.intent.action.MAIN" />-->
-		<!--				<category android:name="android.intent.category.LAUNCHER" />-->
-		<!--			</intent-filter>-->
-		<!--		</activity>-->
-
 		<activity android:name="ContextExpandableListActivity"
 			android:label="@string/app_name" android:screenOrientation="portrait">
 			<intent-filter>
@@ -61,10 +26,10 @@
 		<service android:name="edu.fsu.cs.contextprovider.rpc.ContextProviderService"></service>
 		<service android:name="edu.fsu.cs.contextprovider.sensor.LightService"></service>
 		<service android:name="edu.fsu.cs.contextprovider.sensor.TelephonyService"></service>
-		<service android:name="edu.fsu.cs.contextprovider.sensor.ProximityService"></service>
+		<service android:name="sensor.ProximityService"></service>
 
 
-		<receiver android:name="edu.fsu.cs.contextprovider.monitor.SystemBroadcastMonitor">
+		<receiver android:name="monitor.SystemBroadcastMonitor">
 			<intent-filter>
 				<action android:name="android.intent.action.SCREEN_OFF" />
 				<action android:name="android.intent.action.SCREEN_ON" />

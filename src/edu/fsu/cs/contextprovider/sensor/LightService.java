@@ -22,13 +22,12 @@ public class LightService extends Service implements SensorEventListener {
 	protected boolean serviceEnabled = false;
 	private SensorManager sm;
 	private Sensor lightSensor;
-	private static float lux=0;
+	private static float lux = 0;
 
 	public void init() {
 		if (!serviceEnabled) {
 
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-			// pluginId = prefs.getInt(LightEditActivity.KEY_PLUGIN_ID, -1);
 
 			// make sure not to call it twice
 			sm = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -64,11 +63,9 @@ public class LightService extends Service implements SensorEventListener {
 
 			if (DEBUG)
 				Log.d(TAG, "send: " + lux);
-			// Amarino.sendDataFromPlugin(this, pluginId, lux);
-
 		}
 	}
-	
+
 	public static boolean isInPocket() {
 		if (lux < .5) {
 			return true;
@@ -76,7 +73,6 @@ public class LightService extends Service implements SensorEventListener {
 		return false;
 	}
 
-	
 	public String getTAG() {
 		return TAG;
 	}

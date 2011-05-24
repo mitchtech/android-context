@@ -21,9 +21,33 @@
 		along with the EventPowerLog source code. If not, see: http://www.gnu.org/licenses
 -->
 
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@android:id/list"
-	android:layout_width="fill_parent" 
-	android:layout_height="fill_parent"
-	android:drawSelectorOnTop="false"
-/>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="?android:attr/listPreferredItemHeight"
+	android:paddingLeft="12dip"
+	android:paddingRight="12dip"
+	android:paddingTop="6dip"
+	android:paddingBottom="10dip" >
+
+	<TextView android:id="@+id/title"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentLeft="true"
+		android:textAppearance="?android:attr/textAppearanceLarge" />
+	
+	<TextView android:id="@+id/details"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/title"
+		android:textAppearance="?android:attr/textAppearanceSmall" />
+		
+	<ImageView android:id="@+id/icon"
+		android:layout_width="wrap_content"
+		android:layout_height="40sp"
+		android:layout_centerVertical="true"
+		android:layout_alignParentRight="true"
+		android:scaleType="fitCenter" />
+
+</RelativeLayout>
+

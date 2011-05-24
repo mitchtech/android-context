@@ -41,7 +41,8 @@ public class ContextConstants {
 	public static final String SYSTEM_BATTERY_LOW = "Battery Low";
 	public static final String SYSTEM_PLUGGED = "System Plugged";
 	public static final String SYSTEM_LAST_PLUGGED = "Last Plugged";
-
+	public static final String SYSTEM_USER_LAST_PRESENT = "User Last Present";
+	
 	public static final String TELEPHONY_ALL = "TELEPHONY_ALL";
 	public static final String TELEPHONY_PHONE_STATE = "Phone State";
 	public static final String TELEPHONY_PHONE_LAST_UPDATE = "Last Call";
@@ -52,12 +53,19 @@ public class ContextConstants {
 	public static final String TELEPHONY_SMS_LAST_MESSAGE = "Last SMS Message";
 	public static final String TELEPHONY_SMS_LAST_UPDATE = "Last SMS Received";
 
+	public static final String SOCIAL_ALL = "SOCIAL_ALL";
+	public static final String SOCIAL_TWITTER_LAST_MESSAGE = "Last Tweet Message";
+	public static final String SOCIAL_TWITTER_LAST_TIME = "Last Tweet Time";
+	
+	public static final String DERIVED_ALL = "DERIVED_ALL";
 	public static final String DERIVED_HEALTH = "Health";
 	public static final String DERIVED_MOOD = "Mood";
 	public static final String DERIVED_SHELTER = "Shelter";
 	public static final String DERIVED_POCKET = "Pocket";
 	public static final String DERIVED_DENSITY = "Density";
 	public static final String DERIVED_BIOME = "Biome";
+
+
 
 	public static float getMaxSensorRange(Context context, int sensorType, float defaultValue) {
 		float max = defaultValue;

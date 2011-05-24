@@ -55,6 +55,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.text.ClipboardManager;
 import android.util.Log;
@@ -77,6 +78,7 @@ import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
 import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
 import edu.fsu.cs.contextprovider.monitor.SocialMonitor;
 import edu.fsu.cs.contextprovider.monitor.SystemBroadcastMonitor;
+import edu.fsu.cs.contextprovider.monitor.WeatherMonitor;
 import edu.fsu.cs.contextprovider.rpc.ContextProviderService;
 import edu.fsu.cs.contextprovider.rpc.IContextProviderService;
 import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
@@ -85,7 +87,6 @@ import edu.fsu.cs.contextprovider.sensor.TelephonyService;
 import edu.fsu.cs.contextprovider.weather.GoogleWeatherHandler;
 import edu.fsu.cs.contextprovider.weather.WeatherCurrentCondition;
 import edu.fsu.cs.contextprovider.weather.WeatherSet;
-
 
 public class ContextExpandableListActivity extends ExpandableListActivity implements OnChildClickListener, TextToSpeech.OnInitListener {
 	private static final String PKG = "edu.fsu.cs.contextprovider";
@@ -101,13 +102,6 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	private static final int MENU_SHARE_ID = Menu.FIRST + 3;
 	private static final int MENU_PREFS_ID = Menu.FIRST + 4;
 	private static final int MENU_ABOUT_ID = Menu.FIRST + 5;
-
-	// private static final int MENU_EDIT_ID = Menu.FIRST + 3;
-	// private static final int MENU_DELETE_ID = Menu.FIRST + 4;
-	// private static final int MENU_GEO_ID = Menu.FIRST + 5;
-	// private static final int MENU_WEATHER_ID = Menu.FIRST + 6;
-	// private static final int MENU_PHONE_ID = Menu.FIRST + 7;
-	// private static final int MENU_SMS_ID = Menu.FIRST + 8;
 
 	private static final int CONTEXT_DELETE_ID = 0;
 
@@ -171,53 +165,66 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 			clip = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 		}
 
-		/* Start GPS Service */
-		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.GPSService.class);
-		startService(intent);
-
-		/* Start Network Service */
-		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.NetworkService.class);
-		startService(intent);
-
-		/* Start Accelerometer Service */
-		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.AccelerometerService.class);
-		startService(intent);
-
-		/* Start movement context */
-		MovementMonitor.StartThread(5);
-
-		/* Start LocationMonitor */
-		Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-		LocationMonitor.StartThread(5, geocoder);
-
-		/* Start System/Phone/SMS State Monitor Services */
-		intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.TelephonyService.class);
-		startService(intent);
-
-		/* Start social monitor */
-		SocialMonitor.StartThread(60);
-
 		/* Start ContextProviderService */
 		bindService(new Intent(this, ContextProviderService.class), conn, Context.BIND_AUTO_CREATE);
 
-		if (locationEnabled)
+		if (locationEnabled) {
+			/* Start GPS Service */
+			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.GPSService.class);
+			startService(intent);
+
+			/* Start Network Service */
+			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.NetworkService.class);
+			startService(intent);
+
+			/* Start LocationMonitor */
+			Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+			LocationMonitor.StartThread(5, geocoder);
+
 			refreshLocation();
-		if (movementEnabled)
+		}
+		if (movementEnabled) {
+
+			/* Start Accelerometer Service */
+			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.AccelerometerService.class);
+			startService(intent);
+
+			/* Start movement context */
+			MovementMonitor.StartThread(5);
+
 			refreshMovement();
-		if (proximityEnabled)
+		}
+		if (proximityEnabled) {
 			refreshProximity();
-		if (weatherEnabled)
+		}
+		if (weatherEnabled) {
+			/* Start weather monitor */
+			WeatherMonitor.StartThread(60);
+
 			refreshWeather();
-		if (systemEnabled)
+		}
+		if (systemEnabled) {
 			refreshSystem();
-		if (telephonyEnabled)
+		}
+		if (telephonyEnabled) {
+			/* Start Phone/SMS State Monitor Services */
+			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.TelephonyService.class);
+			startService(intent);
+
 			refreshTelephony();
-		if (socialEnabled)
-			refreshSocial();
-		if (financeEnabled)
-			refreshFinance();
-		if (derivedEnabled)
+		}
+//		if (socialEnabled) {
+//			/* Start social monitor */
+//			SocialMonitor.StartThread(60);
+//
+//			refreshSocial();
+//		}
+//		if (financeEnabled) {
+//			refreshFinance();
+//		}
+		if (derivedEnabled) {
 			refreshDerived();
+		}
 
 		// Set up our adapter
 		mAdapter = new SimpleExpandableListAdapter(this, groupData, android.R.layout.simple_expandable_list_item_1, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 },
@@ -244,20 +251,24 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	}
 
 	private void getPrefs() {
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		
 		// general
-		startupEnabled = PrefsActivity.getStartupEnabled(getApplicationContext());
-		ttsEnabled = PrefsActivity.getTtsEnabled(getApplicationContext());
-
+		startupEnabled = prefs.getBoolean("PREFS_STARTUP_ENABLED", true);
+		ttsEnabled = prefs.getBoolean("PREFS_TTS_ENABLED", true);
+		
 		// categories
-		locationEnabled = PrefsActivity.getLocationEnabled(getApplicationContext());
-		movementEnabled = PrefsActivity.getLocationEnabled(getApplicationContext());
-		proximityEnabled = PrefsActivity.getProximityEnabled(getApplicationContext());
-		weatherEnabled = PrefsActivity.getWeatherEnabled(getApplicationContext());
-		systemEnabled = PrefsActivity.getSystemEnabled(getApplicationContext());
-		telephonyEnabled = PrefsActivity.getTelephonyEnabled(getApplicationContext());
-		socialEnabled = PrefsActivity.getSocialEnabled(getApplicationContext());
-		financeEnabled = PrefsActivity.getFinanceEnabled(getApplicationContext());
-		derivedEnabled = PrefsActivity.getDerivedEnabled(getApplicationContext());
+		locationEnabled = prefs.getBoolean("PREFS_LOCATION_ENABLED", true);
+		movementEnabled = prefs.getBoolean("PREFS_MOVEMENT_ENABLED", true);
+//		proximityEnabled = PrefsActivity.getProximityEnabled(getApplicationContext());
+//		weatherEnabled = PrefsActivity.getWeatherEnabled(getApplicationContext());
+//		systemEnabled = PrefsActivity.getSystemEnabled(getApplicationContext());
+//		telephonyEnabled = PrefsActivity.getTelephonyEnabled(getApplicationContext());
+//		socialEnabled = PrefsActivity.getSocialEnabled(getApplicationContext());
+//		financeEnabled = PrefsActivity.getFinanceEnabled(getApplicationContext());
+//		derivedEnabled = PrefsActivity.getDerivedEnabled(getApplicationContext());
+		
 	}
 
 	private void refresh() {
@@ -403,73 +414,30 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		if (mService == null) {
 			return;
 		}
-		WeatherSet ws;
-		GoogleWeatherHandler gwh;
-		String zip = LocationMonitor.getZip();
-		String current = "weather unavailable";
-		URL url;
 
-		try {
-			String tmpStr = null;
-			String cityParamString = zip;
-			Log.d(TAG, "cityParamString: " + cityParamString);
-			String queryString = "http://www.google.com/ig/api?weather=" + cityParamString;
-			url = new URL(queryString.replace(" ", "%20"));
-			SAXParserFactory spf = SAXParserFactory.newInstance();
-			SAXParser sp = spf.newSAXParser();
-			XMLReader xr = sp.getXMLReader();
-			gwh = new GoogleWeatherHandler();
-			xr.setContentHandler(gwh);
-			xr.parse(new InputSource(url.openStream()));
-			ws = gwh.getWeatherSet();
-			if (ws == null)
-				return;
-			WeatherCurrentCondition wcc = ws.getWeatherCurrentCondition();
+		Map<String, String> weatherMap = new HashMap<String, String>();
+		groupData.add(weatherMap);
+		weatherMap.put(NAME, "Weather");
+		weatherMap.put(VALUE, "Weather");
+		List<Map<String, String>> weather = new ArrayList<Map<String, String>>();
+		Map<String, String> curChildMap = new HashMap<String, String>();
+		weather.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.WEATHER_CUR_TEMP);
+		curChildMap.put(VALUE, WeatherMonitor.getWeatherTemp() + " degrees F");
+		curChildMap = new HashMap<String, String>();
+		weather.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.WEATHER_CUR_CONDITION);
+		curChildMap.put(VALUE, WeatherMonitor.getWeatherCond());
+		curChildMap = new HashMap<String, String>();
+		weather.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.WEATHER_CUR_HUMIDITY);
+		curChildMap.put(VALUE, WeatherMonitor.getWeatherHumid());
+		curChildMap = new HashMap<String, String>();
+		weather.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.WEATHER_CUR_WIND);
+		curChildMap.put(VALUE, WeatherMonitor.getWeatherWindCond());
 
-			String weatherTemp = "NA";
-			String weatherCond = "NA";
-			String weatherHumid = "NA";
-			String weatherWindCond = "NA";
-
-			if (wcc != null) {
-				weatherTemp = null;
-				Integer weatherTempInt = wcc.getTempFahrenheit();
-				if (weatherTempInt != null) {
-					weatherTemp = String.valueOf(weatherTempInt);
-				}
-				weatherCond = wcc.getCondition();
-				weatherHumid = wcc.getHumidity();
-				weatherWindCond = wcc.getWindCondition();
-			}
-
-			Map<String, String> weatherMap = new HashMap<String, String>();
-			groupData.add(weatherMap);
-			weatherMap.put(NAME, "Weather");
-			weatherMap.put(VALUE, "Weather");
-			List<Map<String, String>> weather = new ArrayList<Map<String, String>>();
-			Map<String, String> curChildMap = new HashMap<String, String>();
-			weather.add(curChildMap);
-			curChildMap.put(NAME, ContextConstants.WEATHER_CUR_TEMP);
-			curChildMap.put(VALUE, weatherTemp + " degrees F");
-			curChildMap = new HashMap<String, String>();
-			weather.add(curChildMap);
-			curChildMap.put(NAME, ContextConstants.WEATHER_CUR_CONDITION);
-			curChildMap.put(VALUE, weatherCond);
-			curChildMap = new HashMap<String, String>();
-			weather.add(curChildMap);
-			curChildMap.put(NAME, ContextConstants.WEATHER_CUR_HUMIDITY);
-			curChildMap.put(VALUE, weatherHumid);
-			curChildMap = new HashMap<String, String>();
-			weather.add(curChildMap);
-			curChildMap.put(NAME, ContextConstants.WEATHER_CUR_WIND);
-			curChildMap.put(VALUE, weatherWindCond);
-
-			childData.add(weather);
-
-		} catch (Exception e) {
-			Log.e(TAG, "WeatherQueryError", e);
-		}
-
+		childData.add(weather);
 	}
 
 	private void refreshSystem() {
@@ -484,19 +452,23 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		Map<String, String> curChildMap = new HashMap<String, String>();
 		system.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.SYSTEM_BATTERY_LEVEL);
-		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.BATTERY_LEVEL));
+		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.getBatteryLevel()));
 		curChildMap = new HashMap<String, String>();
 		system.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.SYSTEM_BATTERY_LOW);
-		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.BATTERY_LEVEL_LOW));
+		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.isBatteryLow()));
 		curChildMap = new HashMap<String, String>();
 		system.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.SYSTEM_PLUGGED);
-		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.BATTERY_PLUGGED));
+		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.isBatteryPlugged()));
 		curChildMap = new HashMap<String, String>();
 		system.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.SYSTEM_PLUGGED);
-		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.BATTERY_LAST_PLUGGED));
+		curChildMap.put(NAME, ContextConstants.SYSTEM_LAST_PLUGGED);
+		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.getBatteryLastPlugged()));
+		curChildMap = new HashMap<String, String>();
+		system.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.SYSTEM_USER_LAST_PRESENT);
+		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.getUserLastPresent()));
 
 		childData.add(system);
 	}
@@ -876,21 +848,18 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		}
 		return version;
 	}
-	
+
 	public void exportToFile() throws IOException {
 		String path = Environment.getExternalStorageDirectory() + "/" + CSV_FILENAME;
-		
-		
+
 		File file = new File(path);
 		file.createNewFile();
-		
+
 		if (!file.isFile()) {
-			throw new IllegalArgumentException("Should not be a directory: "
-					+ file);
+			throw new IllegalArgumentException("Should not be a directory: " + file);
 		}
 		if (!file.canWrite()) {
-			throw new IllegalArgumentException("File cannot be written: "
-					+ file);
+			throw new IllegalArgumentException("File cannot be written: " + file);
 		}
 
 		Writer output = new BufferedWriter(new FileWriter(file));
@@ -899,27 +868,25 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 
 		String line;
 		// ContextProvider.getAll(cntx);
-		
+
 		cntx = ContextProvider.getAllUnordered();
-		for (LinkedHashMap.Entry<String,String> entry: cntx.entrySet()) {
+		for (LinkedHashMap.Entry<String, String> entry : cntx.entrySet()) {
 			ContextListItem item = new ContextListItem();
 			item.setName(entry.getKey());
 			item.setValue(entry.getValue());
 			// Clist.add(item);
 			line = item.toString();
-			output.write(line + "\n");			
+			output.write(line + "\n");
 		}
 
 		output.close();
-		
-		
+
 		Toast.makeText(this, String.format("Saved", path), Toast.LENGTH_LONG).show();
 
-		
 		Intent shareIntent = new Intent(Intent.ACTION_SEND);
 		shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + path));
 		shareIntent.setType("text/plain");
 		startActivity(Intent.createChooser(shareIntent, "Share Context Using..."));
 	}
-	
+
 }

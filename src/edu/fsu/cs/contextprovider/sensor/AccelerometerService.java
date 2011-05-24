@@ -110,9 +110,9 @@ public class AccelerometerService extends Service implements SensorEventListener
 		}
 	}
 
-	private void getPrefs() {
-		shakeEnabled = PrefsActivity.getShakeEnabled(getApplicationContext());
-	}
+//	private void getPrefs() {
+//		shakeEnabled = PrefsActivity.getShakeEnabled(getApplicationContext());
+//	}
 
 	@Override
 	public void onDestroy() {
