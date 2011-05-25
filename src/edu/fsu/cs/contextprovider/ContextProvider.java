@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import edu.fsu.cs.contextprovider.monitor.DerivedMonitor;
 import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
 import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
 import edu.fsu.cs.contextprovider.monitor.SocialMonitor;
@@ -47,12 +48,9 @@ public class ContextProvider extends ContentProvider {
 	static void getAll(Map<String, String> results) {
 		getLocation(results);
 		getMovement(results);
-		getProximity(results);
 		getWeather(results);
-		getSystem(results);
-		getTelephony(results);
 		getSocial(results);
-		getFinance(results);
+		getSystem(results);
 		getDerived(results);
 	}
 
@@ -63,6 +61,7 @@ public class ContextProvider extends ContentProvider {
 		results.put(ContextConstants.LOCATION_LATITUDE, String.valueOf(LocationMonitor.getLatitude()));
 		results.put(ContextConstants.LOCATION_LONGITUDE, String.valueOf(LocationMonitor.getLongitude()));
 		results.put(ContextConstants.LOCATION_ALTITUDE, String.valueOf(LocationMonitor.getAltitude()));
+		
 	}
 
 	private static void getMovement(Map<String, String> results) {
@@ -72,46 +71,41 @@ public class ContextProvider extends ContentProvider {
 		results.put(ContextConstants.MOVEMENT_STEP_COUNT, String.valueOf(AccelerometerService.getStepCount()));
 		results.put(ContextConstants.MOVEMENT_LAST_STEP, String.valueOf(AccelerometerService.getStepTimestamp()));
 	}
-
-	private static void getProximity(Map<String, String> results) {
-
-	}
 	
 	private static void getWeather(Map<String, String> results) {
-		results.put(ContextConstants.WEATHER_CUR_TEMP, WeatherMonitor.getWeatherTemp());
-		results.put(ContextConstants.WEATHER_CUR_CONDITION, WeatherMonitor.getWeatherCond());
-		results.put(ContextConstants.WEATHER_CUR_HUMIDITY, WeatherMonitor.getWeatherHumid());
-		results.put(ContextConstants.WEATHER_CUR_WIND, WeatherMonitor.getWeatherWindCond());
+		results.put(ContextConstants.WEATHER_TEMPERATURE, String.valueOf(WeatherMonitor.getWeatherTemp()));
+		results.put(ContextConstants.WEATHER_CONDITION, WeatherMonitor.getWeatherCond());
+		results.put(ContextConstants.WEATHER_HUMIDITY, WeatherMonitor.getWeatherHumid());
+		results.put(ContextConstants.WEATHER_WIND, WeatherMonitor.getWeatherWindCond());
+		results.put(ContextConstants.WEATHER_HAZARD, WeatherMonitor.getWeatherHazard());
+	}
+	
+	private static void getSocial(Map<String, String> results) {
+		results.put(ContextConstants.SOCIAL_CONTACT, SocialMonitor.getContact());
+		results.put(ContextConstants.SOCIAL_COMMUNICATION, SocialMonitor.getCommunication());
+		results.put(ContextConstants.SOCIAL_MESSAGE, SocialMonitor.getMessage());
+		results.put(ContextConstants.SOCIAL_LAST_IN, SocialMonitor.getLastIn());
+		results.put(ContextConstants.SOCIAL_LAST_OUT, SocialMonitor.getLastOut());
 	}
 	
 	private static void getSystem(Map<String, String> results) {
+		results.put(ContextConstants.SYSTEM_STATE, String.valueOf(SystemBroadcastMonitor.getState()));
 		results.put(ContextConstants.SYSTEM_BATTERY_LEVEL, String.valueOf(SystemBroadcastMonitor.getBatteryLevel()));
-		results.put(ContextConstants.SYSTEM_BATTERY_LOW, String.valueOf(SystemBroadcastMonitor.isBatteryLow()));
 		results.put(ContextConstants.SYSTEM_PLUGGED, String.valueOf(SystemBroadcastMonitor.isBatteryPlugged()));
 		results.put(ContextConstants.SYSTEM_LAST_PLUGGED, String.valueOf(SystemBroadcastMonitor.getBatteryLastPlugged()));
-		results.put(ContextConstants.SYSTEM_USER_LAST_PRESENT, String.valueOf(SystemBroadcastMonitor.getUserLastPresent()));
+		results.put(ContextConstants.SYSTEM_LAST_PRESENT, String.valueOf(SystemBroadcastMonitor.getUserLastPresent()));
+		results.put(ContextConstants.SYSTEM_WIFI_SSID, String.valueOf(SystemBroadcastMonitor.getSSID()));
+		results.put(ContextConstants.SYSTEM_WIFI_SIGNAL, String.valueOf(SystemBroadcastMonitor.getSignal()));
 	}
 	
-	private static void getTelephony(Map<String, String> results) {
-
-	}
-		
-	
-	private static void getSocial(Map<String, String> results) {
-		results.put(ContextConstants.SOCIAL_TWITTER_LAST_MESSAGE, SocialMonitor.getCurrentTwitterStatus());
-		results.put(ContextConstants.SOCIAL_TWITTER_LAST_TIME, SocialMonitor.getCurrentTwitterStatus());
+	private static void getDerived(Map<String, String> results) {		
+		results.put(ContextConstants.DERIVED_PLACE, DerivedMonitor.getPlace());
+		results.put(ContextConstants.DERIVED_ACTIVITY, DerivedMonitor.getActivity());
+		results.put(ContextConstants.DERIVED_SHELTER, DerivedMonitor.getShelter());
+		results.put(ContextConstants.DERIVED_POCKET, DerivedMonitor.getPocket());
+		results.put(ContextConstants.DERIVED_MOOD, DerivedMonitor.getMood());
 	}
 
-	private static void getFinance(Map<String, String> results) {
-		results.put("COMPANY NAME", "GOOGLE");
-		results.put("COMPANY SYMBOL", "GOOG");
-	}
-
-	private static void getDerived(Map<String, String> results) {
-
-	}
-	
-	
 	
 	public static LinkedHashMap<String, String> getAllOrdered() {
 		LinkedHashMap<String, String> results = new LinkedHashMap<String, String>();
@@ -175,49 +169,6 @@ public class ContextProvider extends ContentProvider {
 					cv.put(Cntxt.VALUE, SensorManager.GRAVITY_EARTH);
 					db.insert("cntxt", getNullColumnHack(), cv);
 
-					cv.put(Cntxt.TITLE, "Gravity, Jupiter");
-					cv.put(Cntxt.VALUE, SensorManager.GRAVITY_JUPITER);
-					db.insert("cntxt", getNullColumnHack(), cv);
-
-					cv.put(Cntxt.TITLE, "Gravity, Mars");
-					cv.put(Cntxt.VALUE, SensorManager.GRAVITY_MARS);
-					db.insert("cntxt", getNullColumnHack(), cv);
-
-					cv.put(Cntxt.TITLE, "Gravity, Mercury");
-					cv.put(Cntxt.VALUE, SensorManager.GRAVITY_MERCURY);
-					db.insert("cntxt", getNullColumnHack(), cv);
-
-					cv.put(Cntxt.TITLE, "Gravity, Moon");
-					cv.put(Cntxt.VALUE, SensorManager.GRAVITY_MOON);
-					db.insert("cntxt", getNullColumnHack(), cv);
-
-					cv.put(Cntxt.TITLE, "Gravity, Neptune");
-					cv.put(Cntxt.VALUE, SensorManager.GRAVITY_NEPTUNE);
-					db.insert("cntxt", getNullColumnHack(), cv);
-
-					cv.put(Cntxt.TITLE, "Gravity, Pluto");
-					cv.put(Cntxt.VALUE, SensorManager.GRAVITY_PLUTO);
-					db.insert("cntxt", getNullColumnHack(), cv);
-
-					cv.put(Cntxt.TITLE, "Gravity, Saturn");
-					cv.put(Cntxt.VALUE, SensorManager.GRAVITY_SATURN);
-					db.insert("cntxt", getNullColumnHack(), cv);
-
-					cv.put(Cntxt.TITLE, "Gravity, Sun");
-					cv.put(Cntxt.VALUE, SensorManager.GRAVITY_SUN);
-					db.insert("cntxt", getNullColumnHack(), cv);
-
-					cv.put(Cntxt.TITLE, "Gravity, The Island");
-					cv.put(Cntxt.VALUE, SensorManager.GRAVITY_THE_ISLAND);
-					db.insert("cntxt", getNullColumnHack(), cv);
-
-					cv.put(Cntxt.TITLE, "Gravity, Uranus");
-					cv.put(Cntxt.VALUE, SensorManager.GRAVITY_URANUS);
-					db.insert("cntxt", getNullColumnHack(), cv);
-
-					cv.put(Cntxt.TITLE, "Gravity, Venus");
-					cv.put(Cntxt.VALUE, SensorManager.GRAVITY_VENUS);
-					db.insert("cntxt", getNullColumnHack(), cv);
 				}
 			} finally {
 				c.close();

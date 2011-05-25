@@ -35,10 +35,12 @@ public class WeatherMonitor extends TimerTask {
 	GoogleWeatherHandler gwh;
 	
 	private static String weatherZip = "NA";
-	private static String weatherTemp = "NA";
 	private static String weatherCond = "NA";
+
+	private static Integer weatherTemp = -1;
 	private static String weatherHumid = "NA";
 	private static String weatherWindCond = "NA";
+	private static String weatherHazard = "NA";
 
 	/**
 	 * Create a timer/thread to continuous run and keep the state up to date
@@ -51,11 +53,7 @@ public class WeatherMonitor extends TimerTask {
 		}
 		Log.i(TAG, "Start()");
 		timer.schedule(weatherObj, 100, interval*1000);
-		
 		running = true;
-		if (twitter == null) {
-			twitter = new Twitter("crm04d@fsu.edu","android");
-		}
 	}
 
 	/**
@@ -72,7 +70,6 @@ public class WeatherMonitor extends TimerTask {
 	public void run() {
 		
 		weatherZip = LocationMonitor.getZip();
-		//String current = "weather unavailable";
 		URL url;
 
 		try {
@@ -92,19 +89,34 @@ public class WeatherMonitor extends TimerTask {
 				return;
 			WeatherCurrentCondition wcc = ws.getWeatherCurrentCondition();
 			
-			
 			if (wcc != null) {
 				weatherTemp = null;
 				Integer weatherTempInt = wcc.getTempFahrenheit();
 				if (weatherTempInt != null) {
-					weatherTemp = String.valueOf(weatherTempInt);
+					weatherTemp = weatherTempInt;
 				}
 				weatherCond = wcc.getCondition();
 				weatherHumid = wcc.getHumidity();
 				weatherWindCond = wcc.getWindCondition();
+				weatherHazard = calcHazard();
 			}
 		} catch (Exception e) {
 			Log.e(TAG, "WeatherQueryError", e);
+		}
+	}
+
+	private String calcHazard() {
+		if (weatherTemp > 80 || weatherTemp < 40)
+		{
+			return "HIGH";
+		}
+		else if (weatherTemp > 80 || weatherTemp < 40)
+		{
+			return "MEDIUM";
+		}
+		else
+		{
+			return "LOW";
 		}
 	}
 
@@ -124,11 +136,11 @@ public class WeatherMonitor extends TimerTask {
 		WeatherMonitor.weatherZip = weatherZip;
 	}
 
-	public static String getWeatherTemp() {
+	public static Integer getWeatherTemp() {
 		return weatherTemp;
 	}
 
-	public static void setWeatherTemp(String weatherTemp) {
+	public static void setWeatherTemp(Integer weatherTemp) {
 		WeatherMonitor.weatherTemp = weatherTemp;
 	}
 
@@ -155,7 +167,14 @@ public class WeatherMonitor extends TimerTask {
 	public static void setWeatherWindCond(String weatherWindCond) {
 		WeatherMonitor.weatherWindCond = weatherWindCond;
 	}
+	
+	public static String getWeatherHazard() {
+		return weatherWindCond;
+	}
 
+	public static void setWeatherHazard(String weatherHazard) {
+		WeatherMonitor.weatherHazard  = weatherHazard;
+	}
 
 
 }

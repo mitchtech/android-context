@@ -74,4 +74,29 @@ public class SocialMonitor extends TimerTask {
 	public static String getCurrentTwitterStatus() {
 		return currentTwitterStatus;
 	}
+
+	public static String getCommunication() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static String getContact() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static String getMessage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static String getLastOut() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static String getLastIn() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

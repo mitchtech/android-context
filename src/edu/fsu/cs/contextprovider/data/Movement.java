@@ -1,5 +1,6 @@
 package edu.fsu.cs.contextprovider.data;
 
+import edu.fsu.cs.contextprovider.ContextConstants;
 import net.smart_entity.AbstractEntity;
 import net.smart_entity.AbstractField;
 import net.smart_entity.BelongsTo;
@@ -12,11 +13,12 @@ import net.smart_entity.TextField;
 
 public class Movement extends AbstractEntity {
 	
-    public final DateField Timestamp = new DateField("Timestamp");
-    public final TextField State = new TextField("State");
-    public final DoubleField Speed = new DoubleField("Speed");
-    public final IntegerField Steps = new IntegerField("Steps");
-    public final DateField LastStep = new DateField("LastStep");
+    public final DateField Timestamp = new DateField(ContextConstants.CONTEXT_TIMESTAMP);
+    public final TextField State = new TextField(ContextConstants.MOVEMENT_STATE);
+    public final DoubleField Speed = new DoubleField(ContextConstants.MOVEMENT_SPEED);
+    public final TextField Bearing = new TextField(ContextConstants.MOVEMENT_BEARING);
+    public final IntegerField Steps = new IntegerField(ContextConstants.MOVEMENT_STEP_COUNT);
+    public final DateField LastStep = new DateField(ContextConstants.MOVEMENT_LAST_STEP);
 
 	@Override
 	public AbstractEntity createNewInstance() {

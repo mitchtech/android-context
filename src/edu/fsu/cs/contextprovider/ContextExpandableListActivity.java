@@ -72,8 +72,7 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.Toast;
 import edu.fsu.cs.contextprovider.dialog.AddressDialog;
-import edu.fsu.cs.contextprovider.finance.GoogleFinanceHandler;
-import edu.fsu.cs.contextprovider.finance.GoogleFinanceQuote;
+import edu.fsu.cs.contextprovider.monitor.DerivedMonitor;
 import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
 import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
 import edu.fsu.cs.contextprovider.monitor.SocialMonitor;
@@ -104,7 +103,6 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	private static final int MENU_ABOUT_ID = Menu.FIRST + 5;
 
 	private static final int CONTEXT_DELETE_ID = 0;
-
 	private static final int PREFS_EDIT = 0;
 
 	private static final int DIALOG_ABOUT = 0;
@@ -113,12 +111,9 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	// preferences
 	private boolean locationEnabled;
 	private boolean movementEnabled;
-	private boolean proximityEnabled;
 	private boolean weatherEnabled;
-	private boolean systemEnabled;
-	private boolean telephonyEnabled;
 	private boolean socialEnabled;
-	private boolean financeEnabled;
+	private boolean systemEnabled;
 	private boolean derivedEnabled;
 
 	private boolean startupEnabled;
@@ -180,61 +175,42 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 			/* Start LocationMonitor */
 			Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 			LocationMonitor.StartThread(5, geocoder);
-
 			refreshLocation();
 		}
 		if (movementEnabled) {
-
 			/* Start Accelerometer Service */
 			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.AccelerometerService.class);
 			startService(intent);
 
 			/* Start movement context */
 			MovementMonitor.StartThread(5);
-
 			refreshMovement();
-		}
-		if (proximityEnabled) {
-			refreshProximity();
 		}
 		if (weatherEnabled) {
 			/* Start weather monitor */
 			WeatherMonitor.StartThread(60);
-
 			refreshWeather();
 		}
 		if (systemEnabled) {
-			refreshSystem();
-		}
-		if (telephonyEnabled) {
 			/* Start Phone/SMS State Monitor Services */
 			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.TelephonyService.class);
 			startService(intent);
-
-			refreshTelephony();
+			refreshSystem();
 		}
-//		if (socialEnabled) {
-//			/* Start social monitor */
-//			SocialMonitor.StartThread(60);
-//
-//			refreshSocial();
-//		}
-//		if (financeEnabled) {
-//			refreshFinance();
-//		}
+		if (socialEnabled) {
+			/* Start social monitor */
+			SocialMonitor.StartThread(60);
+			refreshSocial();
+		}
 		if (derivedEnabled) {
+			/* Start derived monitor */
+			DerivedMonitor.StartThread(60);
 			refreshDerived();
 		}
 
 		// Set up our adapter
 		mAdapter = new SimpleExpandableListAdapter(this, groupData, android.R.layout.simple_expandable_list_item_1, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 },
 				childData, android.R.layout.simple_expandable_list_item_2, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 });
-
-		// mAdapter = new SimpleExpandableListAdapter(this, groupData,
-		// R.layout.group_row, new String[] { NAME, VALUE }, new int[] {
-		// android.R.id.text1, android.R.id.text2 },
-		// childData, R.layout.child_row, new String[] { NAME, VALUE }, new
-		// int[] { android.R.id.text1, android.R.id.text2 });
 
 		setListAdapter(mAdapter);
 
@@ -261,14 +237,10 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		// categories
 		locationEnabled = prefs.getBoolean("PREFS_LOCATION_ENABLED", true);
 		movementEnabled = prefs.getBoolean("PREFS_MOVEMENT_ENABLED", true);
-//		proximityEnabled = PrefsActivity.getProximityEnabled(getApplicationContext());
-//		weatherEnabled = PrefsActivity.getWeatherEnabled(getApplicationContext());
-//		systemEnabled = PrefsActivity.getSystemEnabled(getApplicationContext());
-//		telephonyEnabled = PrefsActivity.getTelephonyEnabled(getApplicationContext());
-//		socialEnabled = PrefsActivity.getSocialEnabled(getApplicationContext());
-//		financeEnabled = PrefsActivity.getFinanceEnabled(getApplicationContext());
-//		derivedEnabled = PrefsActivity.getDerivedEnabled(getApplicationContext());
-		
+		weatherEnabled = prefs.getBoolean("PREFS_WEATHER_ENABLED", true);
+		socialEnabled = prefs.getBoolean("PREFS_SOCIAL_ENABLED", true);
+		systemEnabled = prefs.getBoolean("PREFS_SYSTEM_ENABLED", true);
+		derivedEnabled = prefs.getBoolean("PREFS_DERIVED_ENABLED", true);
 	}
 
 	private void refresh() {
@@ -290,25 +262,18 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 			refreshLocation();
 		if (movementEnabled)
 			refreshMovement();
-		if (proximityEnabled)
-			refreshProximity();
 		if (weatherEnabled)
 			refreshWeather();
 		if (systemEnabled)
 			refreshSystem();
-		if (telephonyEnabled)
-			refreshTelephony();
 		if (socialEnabled)
 			refreshSocial();
-		if (financeEnabled)
-			refreshFinance();
 		if (derivedEnabled)
 			refreshDerived();
 
 		BaseExpandableListAdapter refresh = (BaseExpandableListAdapter) mAdapter;
 		refresh.notifyDataSetChanged();
 		copyState.reset();
-		// refresh.notifyDataSetInvalidated();
 	}
 
 	private void refreshLocation() {
@@ -367,7 +332,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		curChildMap.put(VALUE, String.valueOf(MovementMonitor.getSpeedMph()));
 		curChildMap = new HashMap<String, String>();
 		movement.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.MOVEMENT_SPEED);
+		curChildMap.put(NAME, ContextConstants.MOVEMENT_BEARING);
 		curChildMap.put(VALUE, String.valueOf(LocationMonitor.getBearing()));
 		curChildMap = new HashMap<String, String>();
 		movement.add(curChildMap);
@@ -422,100 +387,26 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		List<Map<String, String>> weather = new ArrayList<Map<String, String>>();
 		Map<String, String> curChildMap = new HashMap<String, String>();
 		weather.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.WEATHER_CUR_TEMP);
+		curChildMap.put(NAME, ContextConstants.WEATHER_TEMPERATURE);
 		curChildMap.put(VALUE, WeatherMonitor.getWeatherTemp() + " degrees F");
 		curChildMap = new HashMap<String, String>();
 		weather.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.WEATHER_CUR_CONDITION);
+		curChildMap.put(NAME, ContextConstants.WEATHER_CONDITION);
 		curChildMap.put(VALUE, WeatherMonitor.getWeatherCond());
 		curChildMap = new HashMap<String, String>();
 		weather.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.WEATHER_CUR_HUMIDITY);
+		curChildMap.put(NAME, ContextConstants.WEATHER_HUMIDITY);
 		curChildMap.put(VALUE, WeatherMonitor.getWeatherHumid());
 		curChildMap = new HashMap<String, String>();
 		weather.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.WEATHER_CUR_WIND);
+		curChildMap.put(NAME, ContextConstants.WEATHER_WIND);
 		curChildMap.put(VALUE, WeatherMonitor.getWeatherWindCond());
+		curChildMap = new HashMap<String, String>();
+		weather.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.WEATHER_HAZARD);
+		curChildMap.put(VALUE, WeatherMonitor.getWeatherHazard());
 
 		childData.add(weather);
-	}
-
-	private void refreshSystem() {
-		if (mService == null) {
-			return;
-		}
-		Map<String, String> systemMap = new HashMap<String, String>();
-		groupData.add(systemMap);
-		systemMap.put(NAME, "System");
-		systemMap.put(VALUE, "System");
-		List<Map<String, String>> system = new ArrayList<Map<String, String>>();
-		Map<String, String> curChildMap = new HashMap<String, String>();
-		system.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.SYSTEM_BATTERY_LEVEL);
-		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.getBatteryLevel()));
-		curChildMap = new HashMap<String, String>();
-		system.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.SYSTEM_BATTERY_LOW);
-		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.isBatteryLow()));
-		curChildMap = new HashMap<String, String>();
-		system.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.SYSTEM_PLUGGED);
-		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.isBatteryPlugged()));
-		curChildMap = new HashMap<String, String>();
-		system.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.SYSTEM_LAST_PLUGGED);
-		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.getBatteryLastPlugged()));
-		curChildMap = new HashMap<String, String>();
-		system.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.SYSTEM_USER_LAST_PRESENT);
-		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.getUserLastPresent()));
-
-		childData.add(system);
-	}
-
-	private void refreshTelephony() {
-		if (mService == null) {
-			return;
-		}
-		Map<String, String> telephonyMap = new HashMap<String, String>();
-		groupData.add(telephonyMap);
-		telephonyMap.put(NAME, "Telephony");
-		telephonyMap.put(VALUE, "Telephony");
-		List<Map<String, String>> telephony = new ArrayList<Map<String, String>>();
-		Map<String, String> curChildMap = new HashMap<String, String>();
-		telephony.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.TELEPHONY_PHONE_STATE);
-		curChildMap.put(VALUE, TelephonyService.PHONE_STATE);
-		curChildMap = new HashMap<String, String>();
-		telephony.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.TELEPHONY_PHONE_LAST_UPDATE);
-		curChildMap.put(VALUE, String.valueOf(TelephonyService.PHONE_STATE_UPDATE));
-		curChildMap = new HashMap<String, String>();
-		telephony.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.TELEPHONY_LAST_RECV);
-		curChildMap.put(VALUE, String.valueOf(TelephonyService.PHONE_LAST_NUMBER_RECV));
-		curChildMap = new HashMap<String, String>();
-		telephony.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.TELEPHONY_LAST_DIAL);
-		curChildMap.put(VALUE, String.valueOf(TelephonyService.PHONE_LAST_NUMBER_DIAL));
-		curChildMap = new HashMap<String, String>();
-		telephony.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.TELEPHONY_SMS_STATE);
-		curChildMap.put(VALUE, TelephonyService.SMS_STATE);
-		curChildMap = new HashMap<String, String>();
-		telephony.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.TELEPHONY_SMS_LAST_SENDER);
-		curChildMap.put(VALUE, TelephonyService.SMS_LAST_SENDER);
-		curChildMap = new HashMap<String, String>();
-		telephony.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.TELEPHONY_SMS_LAST_MESSAGE);
-		curChildMap.put(VALUE, TelephonyService.SMS_LAST_MESSAGE);
-		curChildMap = new HashMap<String, String>();
-		telephony.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.TELEPHONY_SMS_LAST_UPDATE);
-		curChildMap.put(VALUE, String.valueOf(TelephonyService.SMS_STATE_UPDATE));
-
-		childData.add(telephony);
 	}
 
 	private void refreshSocial() {
@@ -529,95 +420,74 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		List<Map<String, String>> social = new ArrayList<Map<String, String>>();
 		Map<String, String> curChildMap = new HashMap<String, String>();
 		social.add(curChildMap);
-		curChildMap.put(NAME, "SOCIAL_TWITTER_LAST");
-		String status = SocialMonitor.getCurrentTwitterStatus();
-		if (status == null) {
-			curChildMap.put(VALUE, "NA");
-		} else {
-			curChildMap.put(VALUE, SocialMonitor.getCurrentTwitterStatus());
-		}
+		curChildMap.put(NAME, ContextConstants.SOCIAL_CONTACT);
+		String status = SocialMonitor.getContact();
+		curChildMap = new HashMap<String, String>();
+		social.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.SOCIAL_COMMUNICATION);
+		curChildMap.put(VALUE, SocialMonitor.getCommunication());
+		curChildMap = new HashMap<String, String>();
+		social.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.SOCIAL_MESSAGE);
+		curChildMap.put(VALUE, SocialMonitor.getMessage());
+		curChildMap = new HashMap<String, String>();
+		social.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.SOCIAL_LAST_IN);
+		curChildMap.put(VALUE, SocialMonitor.getLastIn());
+		curChildMap = new HashMap<String, String>();
+		social.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.SOCIAL_LAST_OUT);
+		curChildMap.put(VALUE, SocialMonitor.getLastOut());
+		
+		
+//		if (status == null) {
+//			curChildMap.put(VALUE, "NA");
+//		} else {
+//			curChildMap.put(VALUE, SocialMonitor.getCurrentTwitterStatus());
+//		}
 
 		childData.add(social);
 	}
-
-	private GoogleFinanceQuote getQuotes(String quotesToFind) {
-		try {
-			URL financeUrl = new URL(this.getString(R.string.google_finance_url) + quotesToFind);
-			XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
-			GoogleFinanceHandler financeHandler = new GoogleFinanceHandler();
-			xmlReader.setContentHandler(financeHandler);
-			xmlReader.parse(new InputSource(financeUrl.openStream()));
-			return financeHandler.getQuotes().get(0);
-		} catch (MalformedURLException e) {
-			Log.i(PKG, TAG + ": MalformedURLException caught!");
-		} catch (IOException e) {
-			Log.i(PKG, TAG + ": IOException caught!");
-		} catch (SAXException e) {
-			Log.i(PKG, TAG + ": SAXException caught!");
-		} catch (ParserConfigurationException e) {
-			Log.i(PKG, TAG + ": ParserConfigurationException caught!");
-		}
-		return null;
-	}
-
-	private void refreshFinance() {
+	
+	private void refreshSystem() {
 		if (mService == null) {
 			return;
 		}
-
-		String company = "GOOG";
-		GoogleFinanceQuote quote = getQuotes(company);
-
-		Map<String, String> financeMap = new HashMap<String, String>();
-		groupData.add(financeMap);
-		financeMap.put(NAME, "Finance");
-		financeMap.put(VALUE, "Finance");
-		List<Map<String, String>> finance = new ArrayList<Map<String, String>>();
+		Map<String, String> systemMap = new HashMap<String, String>();
+		groupData.add(systemMap);
+		systemMap.put(NAME, "System");
+		systemMap.put(VALUE, "System");
+		List<Map<String, String>> system = new ArrayList<Map<String, String>>();
 		Map<String, String> curChildMap = new HashMap<String, String>();
-		finance.add(curChildMap);
-		curChildMap.put(NAME, "COMPANY_NAME");
-		if (quote == null) {
-			curChildMap.put(VALUE, "NA");
-		} else {
-			curChildMap.put(VALUE, quote.getCompany());
-		}
+		system.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.SYSTEM_STATE);
+		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.getState()));		
 		curChildMap = new HashMap<String, String>();
-		finance.add(curChildMap);
-		curChildMap.put(NAME, "COMPANY_SYMBOL");
-		if (quote == null) {
-			curChildMap.put(VALUE, "NA");
-		} else {
-			curChildMap.put(VALUE, quote.getPrettySymbol());
-		}
+		system.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.SYSTEM_BATTERY_LEVEL);
+		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.getBatteryLevel()));
 		curChildMap = new HashMap<String, String>();
-		finance.add(curChildMap);
-		curChildMap.put(NAME, "CURRENCY");
-		curChildMap.put(VALUE, quote.getCurrency());
+		system.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.SYSTEM_PLUGGED);
+		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.isBatteryPlugged()));
 		curChildMap = new HashMap<String, String>();
-		finance.add(curChildMap);
-		curChildMap.put(NAME, "OPEN_PRICE");
-		curChildMap.put(VALUE, String.valueOf(quote.getOpen()));
+		system.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.SYSTEM_LAST_PLUGGED);
+		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.getBatteryLastPlugged()));
 		curChildMap = new HashMap<String, String>();
-		finance.add(curChildMap);
-		curChildMap.put(NAME, "CLOSE_PRICE");
-		curChildMap.put(VALUE, String.valueOf(quote.getyClose()));
+		system.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.SYSTEM_LAST_PRESENT);
+		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.getUserLastPresent()));
 		curChildMap = new HashMap<String, String>();
-		finance.add(curChildMap);
-		curChildMap.put(NAME, "LOW_PRICE");
-		curChildMap.put(VALUE, String.valueOf(quote.getLow()));
+		system.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.SYSTEM_WIFI_SSID);
+		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.getSSID()));
 		curChildMap = new HashMap<String, String>();
-		finance.add(curChildMap);
-		curChildMap.put(NAME, "HIGH_PRICE");
-		curChildMap.put(VALUE, String.valueOf(quote.getHigh()));
-		curChildMap = new HashMap<String, String>();
-		finance.add(curChildMap);
-		curChildMap.put(NAME, "LAST_PRICE");
-		curChildMap.put(VALUE, String.valueOf(quote.getLast()));
-		curChildMap = new HashMap<String, String>();
-		finance.add(curChildMap);
-		curChildMap.put(NAME, "DISCLAIMER");
-		curChildMap.put(VALUE, "http://www.google.com" + quote.getDisclaimerUrl());
-		childData.add(finance);
+		system.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.SYSTEM_WIFI_SIGNAL);
+		curChildMap.put(VALUE, String.valueOf(SystemBroadcastMonitor.getSignal()));
+
+		childData.add(system);
 	}
 
 	private void refreshDerived() {
@@ -631,12 +501,12 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		List<Map<String, String>> derived = new ArrayList<Map<String, String>>();
 		Map<String, String> curChildMap = new HashMap<String, String>();
 		derived.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.DERIVED_HEALTH);
-		curChildMap.put(VALUE, "Well");
+		curChildMap.put(NAME, ContextConstants.DERIVED_PLACE);
+		curChildMap.put(VALUE, "Home");
 		curChildMap = new HashMap<String, String>();
 		derived.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.DERIVED_MOOD);
-		curChildMap.put(VALUE, "Happy");
+		curChildMap.put(NAME, ContextConstants.DERIVED_ACTIVITY);
+		curChildMap.put(VALUE, "Sleeping");		
 		curChildMap = new HashMap<String, String>();
 		derived.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.DERIVED_POCKET);
@@ -645,7 +515,11 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		derived.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.DERIVED_SHELTER);
 		curChildMap.put(VALUE, String.valueOf(LocationMonitor.isInside()));
-
+		curChildMap = new HashMap<String, String>();
+		derived.add(curChildMap);
+		curChildMap.put(NAME, ContextConstants.DERIVED_MOOD);
+		curChildMap.put(VALUE, "Happy");
+		
 		childData.add(derived);
 	}
 

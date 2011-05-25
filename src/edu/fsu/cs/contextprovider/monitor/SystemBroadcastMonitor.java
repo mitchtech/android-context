@@ -27,7 +27,6 @@ public class SystemBroadcastMonitor extends BroadcastReceiver {
 	private static int batteryLevel = 0;
 	private static long batteryLastPlugged = 0;
 	
-	
 	// direct user/device interaction
 	private static String SCREEN_OFF = "android.intent.action.SCREEN_OFF";
 	private static String SCREEN_ON = "android.intent.action.SCREEN_ON";
@@ -107,6 +106,11 @@ public class SystemBroadcastMonitor extends BroadcastReceiver {
 	private static String BT_STATE_CHANGED = "android.bluetooth.adapter.action.STATE_CHANGED";
 	private static String RINGER_MODE_CHANGED = "android.media.RINGER_MODE_CHANGED";
 	private static String SYNC_CONN_STATUS_CHANGED = "com.android.sync.SYNC_CONN_STATUS_CHANGED";
+
+	private static String state;
+	private static String SSID;
+	private static String signal;
+
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -219,6 +223,24 @@ public class SystemBroadcastMonitor extends BroadcastReceiver {
 
 	public static void setBatteryLastPlugged(long batteryLastPlugged) {
 		SystemBroadcastMonitor.batteryLastPlugged = batteryLastPlugged;
+	}
+
+
+
+	public static String getState() {
+		return state;
+	}
+
+
+
+	public static String getSSID() {
+		return SSID;
+	}
+
+
+
+	public static String getSignal() {
+		return signal;
 	}
 	
 
