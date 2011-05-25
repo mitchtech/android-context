@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EntityConfiguration> 
+	<Database name="EntityMap.db" version="1" upgradeClass=""></Database>
+	<Entities>
+		<Entity class="edu.fsu.cs.contextprovider.BaseContext"></Entity>
+	</Entities>
+</EntityConfiguration>
