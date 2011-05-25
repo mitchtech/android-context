@@ -19,6 +19,14 @@ public class SocialMonitor extends TimerTask {
 	private static boolean running = false;
 	private static Twitter twitter = null;
 	private static String currentTwitterStatus = new String();
+	
+	public static String contact = "Contact Name";
+	public static String communication = "CommType";
+	public static String message = "Message";
+	public static Long lastIn = (long) 0.0;
+	public static Long lastOut = (long) 0.0;
+	
+	Long now = Long.valueOf(System.currentTimeMillis());	
 
 	/**
 	 * Create a timer/thread to continuous run and keep the getMovement() state up to date
@@ -70,33 +78,27 @@ public class SocialMonitor extends TimerTask {
 		SocialMonitor.currentTwitterStatus = currentTwitterStatus;
 	}
 
-
 	public static String getCurrentTwitterStatus() {
 		return currentTwitterStatus;
 	}
 
-	public static String getCommunication() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public static String getContact() {
-		// TODO Auto-generated method stub
-		return null;
+		return contact;
+	}
+	
+	public static String getCommunication() {
+		return communication;
 	}
 
 	public static String getMessage() {
-		// TODO Auto-generated method stub
-		return null;
+		return message;
 	}
 
-	public static String getLastOut() {
-		// TODO Auto-generated method stub
-		return null;
+	public static Long getLastOut() {
+		return lastOut;
 	}
 
-	public static String getLastIn() {
-		// TODO Auto-generated method stub
-		return null;
+	public static Long getLastIn() {
+		return lastIn;
 	}
 }

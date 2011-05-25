@@ -120,10 +120,7 @@ public class MovementMonitor extends TimerTask {
 			if (DEBUG_TTS == true) {
 				ContextExpandableListActivity.tts.speak("Accelerometer Movement " + currentMovementState, TextToSpeech.QUEUE_FLUSH, null);
 			}
-
 		}
-
-
 	}
 
 	/**

@@ -151,8 +151,6 @@ public class SystemBroadcastMonitor extends BroadcastReceiver {
 
 	}
 
-	
-	
 	private static final String extrasToString(Bundle extras) {
 		if (extras == null)
 			return "";
@@ -165,84 +163,57 @@ public class SystemBroadcastMonitor extends BroadcastReceiver {
 		return val;
 	}
 
-
-
 	public static long getUserLastPresent() {
 		return userLastPresent;
 	}
-
-
 
 	public static void setUserLastPresent(long userLastPresent) {
 		SystemBroadcastMonitor.userLastPresent = userLastPresent;
 	}
 
-
-
 	public static boolean isBatteryPlugged() {
 		return batteryPlugged;
 	}
-
-
 
 	public static void setBatteryPlugged(boolean batteryPlugged) {
 		SystemBroadcastMonitor.batteryPlugged = batteryPlugged;
 	}
 
-
-
 	public static boolean isBatteryLow() {
 		return batteryLow;
 	}
-
-
 
 	public static void setBatteryLow(boolean batteryLow) {
 		SystemBroadcastMonitor.batteryLow = batteryLow;
 	}
 
-
-
 	public static int getBatteryLevel() {
 		return batteryLevel;
 	}
-
-
 
 	public static void setBatteryLevel(int batteryLevel) {
 		SystemBroadcastMonitor.batteryLevel = batteryLevel;
 	}
 
-
-
 	public static long getBatteryLastPlugged() {
 		return batteryLastPlugged;
 	}
-
-
 
 	public static void setBatteryLastPlugged(long batteryLastPlugged) {
 		SystemBroadcastMonitor.batteryLastPlugged = batteryLastPlugged;
 	}
 
-
-
 	public static String getState() {
 		return state;
 	}
-
-
 
 	public static String getSSID() {
 		return SSID;
 	}
 
-
-
 	public static String getSignal() {
 		return signal;
 	}
 	
-
 
 }

@@ -82,10 +82,6 @@ import edu.fsu.cs.contextprovider.rpc.ContextProviderService;
 import edu.fsu.cs.contextprovider.rpc.IContextProviderService;
 import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
 import edu.fsu.cs.contextprovider.sensor.LightService;
-import edu.fsu.cs.contextprovider.sensor.TelephonyService;
-import edu.fsu.cs.contextprovider.weather.GoogleWeatherHandler;
-import edu.fsu.cs.contextprovider.weather.WeatherCurrentCondition;
-import edu.fsu.cs.contextprovider.weather.WeatherSet;
 
 public class ContextExpandableListActivity extends ExpandableListActivity implements OnChildClickListener, TextToSpeech.OnInitListener {
 	private static final String PKG = "edu.fsu.cs.contextprovider";
@@ -433,11 +429,11 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		curChildMap = new HashMap<String, String>();
 		social.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.SOCIAL_LAST_IN);
-		curChildMap.put(VALUE, SocialMonitor.getLastIn());
+		curChildMap.put(VALUE, String.valueOf(SocialMonitor.getLastIn()));
 		curChildMap = new HashMap<String, String>();
 		social.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.SOCIAL_LAST_OUT);
-		curChildMap.put(VALUE, SocialMonitor.getLastOut());
+		curChildMap.put(VALUE, String.valueOf(SocialMonitor.getLastOut()));
 		
 		
 //		if (status == null) {

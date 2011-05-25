@@ -71,8 +71,6 @@ public class LocationMonitor extends TimerTask {
 		running = false;
 	}
 
-
-
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
@@ -228,12 +226,11 @@ public class LocationMonitor extends TimerTask {
 		if (address != null) {
 			currentAddress = address;
 		}
-
 	}
+	
 	public static double milesPerHourToMetersPerSecond(double milesPerHour) {
 		return 0.44704 * milesPerHour;
 	}
-
 
 	public static double distanceMeters(double aLat, double aLon, double bLat, double bLon) {
 		// Haversine formula, from http://mathforum.org/library/drmath/view/51879.html

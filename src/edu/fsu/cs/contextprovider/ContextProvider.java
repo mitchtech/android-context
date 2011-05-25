@@ -61,7 +61,6 @@ public class ContextProvider extends ContentProvider {
 		results.put(ContextConstants.LOCATION_LATITUDE, String.valueOf(LocationMonitor.getLatitude()));
 		results.put(ContextConstants.LOCATION_LONGITUDE, String.valueOf(LocationMonitor.getLongitude()));
 		results.put(ContextConstants.LOCATION_ALTITUDE, String.valueOf(LocationMonitor.getAltitude()));
-		
 	}
 
 	private static void getMovement(Map<String, String> results) {
@@ -84,8 +83,8 @@ public class ContextProvider extends ContentProvider {
 		results.put(ContextConstants.SOCIAL_CONTACT, SocialMonitor.getContact());
 		results.put(ContextConstants.SOCIAL_COMMUNICATION, SocialMonitor.getCommunication());
 		results.put(ContextConstants.SOCIAL_MESSAGE, SocialMonitor.getMessage());
-		results.put(ContextConstants.SOCIAL_LAST_IN, SocialMonitor.getLastIn());
-		results.put(ContextConstants.SOCIAL_LAST_OUT, SocialMonitor.getLastOut());
+		results.put(ContextConstants.SOCIAL_LAST_IN, String.valueOf(SocialMonitor.getLastIn()));
+		results.put(ContextConstants.SOCIAL_LAST_OUT, String.valueOf(SocialMonitor.getLastOut()));
 	}
 	
 	private static void getSystem(Map<String, String> results) {
@@ -101,11 +100,10 @@ public class ContextProvider extends ContentProvider {
 	private static void getDerived(Map<String, String> results) {		
 		results.put(ContextConstants.DERIVED_PLACE, DerivedMonitor.getPlace());
 		results.put(ContextConstants.DERIVED_ACTIVITY, DerivedMonitor.getActivity());
-		results.put(ContextConstants.DERIVED_SHELTER, DerivedMonitor.getShelter());
-		results.put(ContextConstants.DERIVED_POCKET, DerivedMonitor.getPocket());
+		results.put(ContextConstants.DERIVED_SHELTER, String.valueOf(DerivedMonitor.getShelter()));
+		results.put(ContextConstants.DERIVED_POCKET, String.valueOf(DerivedMonitor.getPocket()));
 		results.put(ContextConstants.DERIVED_MOOD, DerivedMonitor.getMood());
 	}
-
 	
 	public static LinkedHashMap<String, String> getAllOrdered() {
 		LinkedHashMap<String, String> results = new LinkedHashMap<String, String>();

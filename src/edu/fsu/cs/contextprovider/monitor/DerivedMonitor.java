@@ -18,13 +18,13 @@ public class DerivedMonitor extends TimerTask {
 	private static DerivedMonitor derivedObj = new DerivedMonitor();
 	private static boolean running = false;
 	
+	public static String place = "Place";
+	public static String activity = "Activity";
+	public static boolean shelter = true;
+	public static boolean pocket = true;
+	public static String mood = "Mood";
 	
-	public static final String DERIVED_ALL = "DERIVED_ALL";
-	public static final String DERIVED_HEALTH = "Health";
-	public static final String DERIVED_MOOD = "Mood";
-	public static final String DERIVED_SHELTER = "Shelter";
-	public static final String DERIVED_POCKET = "Pocket";
-
+	
 	/**
 	 * Create a timer/thread to continuous run and keep the getMovement() state up to date
 	 * 
@@ -55,28 +55,23 @@ public class DerivedMonitor extends TimerTask {
 	}
 
 	public static String getPlace() {
-		// TODO Auto-generated method stub
-		return null;
+		return place;
 	}
 
 	public static String getActivity() {
-		// TODO Auto-generated method stub
-		return null;
+		return activity;
 	}
 
-	public static String getShelter() {
-		// TODO Auto-generated method stub
-		return null;
+	public static boolean getShelter() {
+		return shelter;
 	}
 
-	public static String getPocket() {
-		// TODO Auto-generated method stub
-		return null;
+	public static boolean getPocket() {
+		return pocket;
 	}
 
 	public static String getMood() {
-		// TODO Auto-generated method stub
-		return null;
+		return mood;
 	}
 
 }

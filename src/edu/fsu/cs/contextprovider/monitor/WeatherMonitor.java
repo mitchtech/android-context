@@ -33,10 +33,9 @@ public class WeatherMonitor extends TimerTask {
 	
 	WeatherSet ws;
 	GoogleWeatherHandler gwh;
-	
 	private static String weatherZip = "NA";
+	
 	private static String weatherCond = "NA";
-
 	private static Integer weatherTemp = -1;
 	private static String weatherHumid = "NA";
 	private static String weatherWindCond = "NA";
@@ -175,6 +174,5 @@ public class WeatherMonitor extends TimerTask {
 	public static void setWeatherHazard(String weatherHazard) {
 		WeatherMonitor.weatherHazard  = weatherHazard;
 	}
-
 
 }
