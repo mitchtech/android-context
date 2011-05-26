@@ -1,5 +1,6 @@
 package edu.fsu.cs.contextprovider.data;
 
+import edu.fsu.cs.contextprovider.ContextConstants;
 import net.smart_entity.AbstractEntity;
 import net.smart_entity.AbstractField;
 import net.smart_entity.BelongsTo;
@@ -10,14 +11,15 @@ import net.smart_entity.IntegerField;
 import net.smart_entity.StringField;
 import net.smart_entity.TextField;
 
-public class Derived extends AbstractEntity {
+public class Location extends AbstractEntity {
 	
     public final DateField Timestamp = new DateField(ContextConstants.CONTEXT_TIMESTAMP);
-    public final TextField Place = new TextField(ContextConstants.DERIVED_PLACE);
-    public final TextField Activity = new TextField(ContextConstants.DERIVED_ACTIVITY);
-    public final TextField Shelter = new TextField(ContextConstants.DERIVED_SHELTER);
-    public final TextField Pocket = new TextField(ContextConstants.DERIVED_POCKET);
-    public final TextField Mood = new TextField(ContextConstants.DERIVED_MOOD);
+    public final StringField Address = new StringField(ContextConstants.LOCATION_ADDRESS);
+    public final StringField Neighborhood = new StringField(ContextConstants.LOCATION_HOOD);
+    public final IntegerField Zip = new IntegerField(ContextConstants.LOCATION_ZIP);
+    public final DoubleField Latitude = new DoubleField(ContextConstants.LOCATION_LATITUDE);
+    public final DoubleField Longitude = new DoubleField(ContextConstants.LOCATION_LONGITUDE);
+    public final DoubleField Altitude = new DoubleField(ContextConstants.LOCATION_ALTITUDE);
 
 	@Override
 	public AbstractEntity createNewInstance() {

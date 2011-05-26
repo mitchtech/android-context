@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import edu.fsu.cs.contextprovider.data.ContextConstants;
 import edu.fsu.cs.contextprovider.monitor.DerivedMonitor;
 import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
 import edu.fsu.cs.contextprovider.monitor.MovementMonitor;

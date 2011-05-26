@@ -22,7 +22,7 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import edu.fsu.cs.contextprovider.data.ContextConstants;
+import edu.fsu.cs.contextprovider.ContextConstants;
 import edu.fsu.cs.contextprovider.sensor.GPSService;
 import edu.fsu.cs.contextprovider.sensor.NetworkService;
 import android.location.Address;

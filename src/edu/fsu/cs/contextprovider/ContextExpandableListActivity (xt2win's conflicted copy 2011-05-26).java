@@ -71,7 +71,6 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.Toast;
-import edu.fsu.cs.contextprovider.data.ContextConstants;
 import edu.fsu.cs.contextprovider.dialog.AddressDialog;
 import edu.fsu.cs.contextprovider.monitor.DerivedMonitor;
 import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
@@ -146,10 +145,6 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getPrefs();
-		
-		// startup the primary context service (if just installed)
-		startService(new Intent(this, ContextService.class));
-		
 
 		tts = new TextToSpeech(this, this);
 

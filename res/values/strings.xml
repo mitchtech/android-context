@@ -71,6 +71,7 @@
 	<string name="disable_dialog_msg">Context Disabled</string>
 	<string name="yes">Yes</string>
 	<string name="no">No</string>
+	<string name="dialog_activity_text">Please select the accuracy of each Context below. Message will auto-dismiss in 30 seconds</string>
 
     <string-array name="prefs_polling_freq">
         <item>Low</item>

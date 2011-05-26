@@ -1,7 +1,7 @@
 package edu.fsu.cs.contextprovider.dialog;
 
-import edu.fsu.cs.contextprovider.ContextConstants;
 import edu.fsu.cs.contextprovider.R;
+import edu.fsu.cs.contextprovider.data.ContextConstants;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;

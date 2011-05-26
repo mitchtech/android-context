@@ -1,5 +1,6 @@
 package edu.fsu.cs.contextprovider.data;
 
+import edu.fsu.cs.contextprovider.ContextConstants;
 import net.smart_entity.AbstractEntity;
 import net.smart_entity.AbstractField;
 import net.smart_entity.BelongsTo;
