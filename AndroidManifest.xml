@@ -29,6 +29,8 @@
 					android:name="android.intent.action.BOOT_COMPLETED" />
 			</intent-filter>
 		</receiver>
+		
+		<activity android:name="DialogActivity" />
 			
 		<service android:name="edu.fsu.cs.contextprovider.ContextService"></service>
 
