@@ -10,14 +10,16 @@ import net.smart_entity.IntegerField;
 import net.smart_entity.StringField;
 import net.smart_entity.TextField;
 
-public class Derived extends AbstractEntity {
+public class LocationEntity extends AbstractEntity {
 	
     public final DateField Timestamp = new DateField(ContextConstants.CONTEXT_TIMESTAMP);
-    public final TextField Place = new TextField(ContextConstants.DERIVED_PLACE);
-    public final TextField Activity = new TextField(ContextConstants.DERIVED_ACTIVITY);
-    public final TextField Shelter = new TextField(ContextConstants.DERIVED_SHELTER);
-    public final TextField Pocket = new TextField(ContextConstants.DERIVED_POCKET);
-    public final TextField Mood = new TextField(ContextConstants.DERIVED_MOOD);
+    public final StringField Address = new StringField(ContextConstants.LOCATION_ADDRESS);
+    public final StringField Neighborhood = new StringField(ContextConstants.LOCATION_HOOD);
+    public final StringField Zip = new StringField(ContextConstants.LOCATION_ZIP);
+    public final DoubleField Latitude = new DoubleField(ContextConstants.LOCATION_LATITUDE);
+    public final DoubleField Longitude = new DoubleField(ContextConstants.LOCATION_LONGITUDE);
+    public final DoubleField Altitude = new DoubleField(ContextConstants.LOCATION_ALTITUDE);
+    public final TextField Accuracy = new TextField(ContextConstants.CONTEXT_ACCURACY);
 
 	@Override
 	public AbstractEntity createNewInstance() {

@@ -11,7 +11,7 @@ public class ContextConstants {
 	public static final String PREFS_ADDRESS = "PREFS_ADDRESS";
 	
 	public static final String CONTEXT_TIMESTAMP = "Timestamp";
-	public static final String CONTEXT_ACCURATE = "Accurate";
+	public static final String CONTEXT_ACCURACY = "Accuracy";
 
 	public static final String LOCATION_ALL = "LOCATION_ALL";
 	public static final String LOCATION_ADDRESS = "Address";

@@ -66,8 +66,16 @@ public class DerivedMonitor extends TimerTask {
 		return shelter;
 	}
 
+	public static String getShelterString() {
+		return String.valueOf(shelter);
+	}
+	
 	public static boolean getPocket() {
 		return pocket;
+	}
+	
+	public static String getPocketString() {
+		return String.valueOf(pocket);
 	}
 
 	public static String getMood() {

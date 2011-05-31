@@ -42,23 +42,23 @@ public class PrefsActivity extends PreferenceActivity {
 	}
 
 
-	private void enabled(final boolean enable) {
-		String dialogTitle;
-		if (enable) {
-			dialogTitle = getString(R.string.enable_dialog_msg);
-		} else {
-			dialogTitle = getString(R.string.disable_dialog_msg);
-		}
-		new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(dialogTitle).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				// enable monitor here
-			}
-		}).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				// Do nothing
-			}
-		}).show();
-	}
+//	private void enabled(final boolean enable) {
+//		String dialogTitle;
+//		if (enable) {
+//			dialogTitle = getString(R.string.enable_dialog_msg);
+//		} else {
+//			dialogTitle = getString(R.string.disable_dialog_msg);
+//		}
+//		new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(dialogTitle).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+//			public void onClick(DialogInterface dialog, int whichButton) {
+//				// enable monitor here
+//			}
+//		}).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+//			public void onClick(DialogInterface dialog, int whichButton) {
+//				// Do nothing
+//			}
+//		}).show();
+//	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

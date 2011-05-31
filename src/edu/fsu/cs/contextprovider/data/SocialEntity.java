@@ -10,7 +10,7 @@ import net.smart_entity.IntegerField;
 import net.smart_entity.StringField;
 import net.smart_entity.TextField;
 
-public class Social extends AbstractEntity {
+public class SocialEntity extends AbstractEntity {
 	
     public final DateField Timestamp = new DateField(ContextConstants.CONTEXT_TIMESTAMP);
     public final TextField Contact = new TextField(ContextConstants.SOCIAL_CONTACT);
@@ -18,6 +18,7 @@ public class Social extends AbstractEntity {
     public final StringField Message = new StringField(ContextConstants.SOCIAL_MESSAGE);
     public final DateField LastIncoming = new DateField(ContextConstants.SOCIAL_LAST_OUT);
     public final DateField LastOutgoing = new DateField(ContextConstants.SOCIAL_LAST_IN);
+    public final TextField Accuracy = new TextField(ContextConstants.CONTEXT_ACCURACY);
 
 	@Override
 	public AbstractEntity createNewInstance() {

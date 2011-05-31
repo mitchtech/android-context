@@ -10,15 +10,15 @@ import net.smart_entity.IntegerField;
 import net.smart_entity.StringField;
 import net.smart_entity.TextField;
 
-public class Location extends AbstractEntity {
+public class MovementEntity extends AbstractEntity {
 	
     public final DateField Timestamp = new DateField(ContextConstants.CONTEXT_TIMESTAMP);
-    public final StringField Address = new StringField(ContextConstants.LOCATION_ADDRESS);
-    public final StringField Neighborhood = new StringField(ContextConstants.LOCATION_HOOD);
-    public final IntegerField Zip = new IntegerField(ContextConstants.LOCATION_ZIP);
-    public final DoubleField Latitude = new DoubleField(ContextConstants.LOCATION_LATITUDE);
-    public final DoubleField Longitude = new DoubleField(ContextConstants.LOCATION_LONGITUDE);
-    public final DoubleField Altitude = new DoubleField(ContextConstants.LOCATION_ALTITUDE);
+    public final TextField State = new TextField(ContextConstants.MOVEMENT_STATE);
+    public final DoubleField Speed = new DoubleField(ContextConstants.MOVEMENT_SPEED);
+    public final DoubleField Bearing = new DoubleField(ContextConstants.MOVEMENT_BEARING);
+    public final IntegerField Steps = new IntegerField(ContextConstants.MOVEMENT_STEP_COUNT);
+    public final DateField LastStep = new DateField(ContextConstants.MOVEMENT_LAST_STEP);
+    public final TextField Accuracy = new TextField(ContextConstants.CONTEXT_ACCURACY);
 
 	@Override
 	public AbstractEntity createNewInstance() {

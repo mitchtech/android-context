@@ -2,11 +2,11 @@
 <EntityConfiguration> 
 	<Database name="EntityMap.db" version="1" upgradeClass=""></Database>
 	<Entities>
-		<Entity class="edu.fsu.cs.contextprovider.data.Location"></Entity>
-		<Entity class="edu.fsu.cs.contextprovider.data.Movement"></Entity>
-		<Entity class="edu.fsu.cs.contextprovider.data.Weather"></Entity>
-		<Entity class="edu.fsu.cs.contextprovider.data.Social"></Entity>
-		<Entity class="edu.fsu.cs.contextprovider.data.System"></Entity>
-		<Entity class="edu.fsu.cs.contextprovider.data.Derived"></Entity>
+		<Entity class="edu.fsu.cs.contextprovider.data.LocationEntity"></Entity>
+		<Entity class="edu.fsu.cs.contextprovider.data.MovementEntity"></Entity>
+		<Entity class="edu.fsu.cs.contextprovider.data.WeatherEntity"></Entity>
+		<Entity class="edu.fsu.cs.contextprovider.data.SocialEntity"></Entity>
+		<Entity class="edu.fsu.cs.contextprovider.data.SystemEntity"></Entity>
+		<Entity class="edu.fsu.cs.contextprovider.data.DerivedEntity"></Entity>
 	</Entities>
 </EntityConfiguration>

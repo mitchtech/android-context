@@ -10,7 +10,7 @@ import net.smart_entity.IntegerField;
 import net.smart_entity.StringField;
 import net.smart_entity.TextField;
 
-public class System extends AbstractEntity {
+public class SystemEntity extends AbstractEntity {
 	
     public final DateField Timestamp = new DateField(ContextConstants.CONTEXT_TIMESTAMP);    
     public final StringField State = new StringField(ContextConstants.SYSTEM_STATE);
@@ -20,6 +20,7 @@ public class System extends AbstractEntity {
     public final DateField LastPresent = new DateField(ContextConstants.SYSTEM_LAST_PRESENT);
     public final TextField SSID = new TextField(ContextConstants.SYSTEM_WIFI_SSID);
     public final IntegerField Signal = new IntegerField(ContextConstants.SYSTEM_WIFI_SIGNAL);
+    public final TextField Accuracy = new TextField(ContextConstants.CONTEXT_ACCURACY);
 
     @Override
 	public AbstractEntity createNewInstance() {

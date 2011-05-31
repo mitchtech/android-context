@@ -40,10 +40,16 @@ import java.util.TimerTask;
 
 import edu.fsu.cs.contextprovider.data.ContextConstants;
 import edu.fsu.cs.contextprovider.dialog.*;
+import edu.fsu.cs.contextprovider.monitor.DerivedMonitor;
+import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
+import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
+import edu.fsu.cs.contextprovider.monitor.SocialMonitor;
+import edu.fsu.cs.contextprovider.monitor.SystemMonitor;
+import edu.fsu.cs.contextprovider.monitor.WeatherMonitor;
 
 public class ContextAccuracyActivity extends ListActivity {
-	private static final String[] items = { "Location", "Movement", "Weather",
-			"Social", "System", "Derived" };
+//	private static final String[] items = { "Location", "Movement", "Weather",
+//			"Social", "System", "Derived" };
 
 	private PowerManager.WakeLock wakelock;
     private static Timer timer = new Timer(); 
@@ -52,17 +58,31 @@ public class ContextAccuracyActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-//		getWindow().setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, android.R.drawable.ic_dialog_alert);
+
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		wakelock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "ContextAccuracyActivity");
 
 		ArrayList<ContextRowModel> list = new ArrayList<ContextRowModel>();
 
-		for (String string : items) {
-			list.add(new ContextRowModel(string));
-		}
+//		for (String string : items) {
+//			list.add(new ContextRowModel(string));
+//		}
+		
+		ContextRowModel locationModel = new ContextRowModel("Location", LocationMonitor.getAddress());
+		list.add(locationModel);
+		ContextRowModel movementModel = new ContextRowModel("Movement", MovementMonitor.getMovementState());
+		list.add(movementModel);
+		ContextRowModel weatherModel = new ContextRowModel("Weather", WeatherMonitor.getWeatherCond());
+		list.add(weatherModel);
+		ContextRowModel socialModel = new ContextRowModel("Social", SocialMonitor.getContact());
+		list.add(socialModel);
+		ContextRowModel systemModel = new ContextRowModel("System", String.valueOf(SystemMonitor.isBatteryPlugged()));
+		list.add(systemModel);
+		ContextRowModel derivedModel = new ContextRowModel("Derived", DerivedMonitor.getActivity());
+		list.add(derivedModel);	
 
 		setListAdapter(new ContextAdapter(list));
+		
         timer.schedule(new ContextDismissTask(), (DISMISS_TIMEOUT*1000));
 	}
 
@@ -89,33 +109,21 @@ public class ContextAccuracyActivity extends ListActivity {
 
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View row = super.getView(position, convertView, parent);
-			ContextViewHolder holder = (ContextViewHolder) row.getTag();
-
-			if (holder == null) {
-				holder = new ContextViewHolder(row);
-				row.setTag(holder);
-
-				// RatingBar.OnRatingBarChangeListener l = new
-				// RatingBar.OnRatingBarChangeListener() {
-				// public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromTouch) {
-				// Integer myPosition = (Integer) ratingBar.getTag();
-				// RowModel model = getModel(myPosition);
-				// model.rating = rating;
-				// holder.rate.setOnRatingBarChangeListener(l);
-
-				RadioButton.OnClickListener myOptionOnClickListener = new RadioButton.OnClickListener() {
-
-					public void onClick(View v) {
-
-						Integer myPosition = (Integer) v.getTag();
-						ContextRowModel model = getModel(myPosition);
-						Toast.makeText(ContextAccuracyActivity.this, "Option 1 : " + "\n", Toast.LENGTH_LONG).show();
-					}
-				};
-			}
-
-			ContextRowModel model = getModel(position);
-
+//			ContextViewHolder holder = (ContextViewHolder) row.getTag();
+//			if (holder == null) {
+//				holder = new ContextViewHolder(row);
+//				row.setTag(holder);			
+//
+//				RadioButton.OnClickListener myOptionOnClickListener = new RadioButton.OnClickListener() {
+//
+//					public void onClick(View v) {
+//						Integer myPosition = (Integer) v.getTag();
+//						ContextRowModel model = getModel(myPosition);
+//						Toast.makeText(ContextAccuracyActivity.this, "Option 1 : " + "\n", Toast.LENGTH_LONG).show();
+//					}
+//				};
+//			}
+//			ContextRowModel model = getModel(position);
 			return (row);
 		}
 
@@ -124,11 +132,28 @@ public class ContextAccuracyActivity extends ListActivity {
 	
 	class ContextRowModel {
 		String label;
+		String context;
 		Boolean accurate = true;
-
-		ContextRowModel(String label) {
+		RadioButton rb1;
+		RadioButton rb2;
+		TextView contextText;
+		
+		ContextRowModel(String label, String context) {
 			this.label = label;
+			this.context = context;
 		}
+						
+//		public ContextRowModel(View base) {
+//			this.rb1 = (RadioButton) base.findViewById(R.id.radioYes);
+//			this.rb2 = (RadioButton) base.findViewById(R.id.radioNo);
+//			this.contextText = (TextView) base.findViewById(R.id.currentContext);
+//			
+//			if(rb1.isChecked() == true) {
+//				accurate = true;
+//			} else if(rb2.isChecked() == true) {
+//				accurate = false;
+//			}
+//		}
 	}
 	
 	

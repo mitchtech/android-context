@@ -7,6 +7,8 @@ import java.util.TimerTask;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import net.smart_entity.EntityManager;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -40,6 +42,9 @@ public class WeatherMonitor extends TimerTask {
 	private static String weatherHumid = "NA";
 	private static String weatherWindCond = "NA";
 	private static String weatherHazard = "NA";
+	
+	EntityManager entityManager;
+
 
 	/**
 	 * Create a timer/thread to continuous run and keep the state up to date

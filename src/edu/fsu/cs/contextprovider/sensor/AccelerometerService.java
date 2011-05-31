@@ -1,5 +1,6 @@
 package edu.fsu.cs.contextprovider.sensor;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Stack;
 
@@ -48,6 +49,7 @@ public class AccelerometerService extends Service implements SensorEventListener
 	private static long step_count = 0;
 	private static long step_timestamp = 0;
 	private static int shakeCount = 0;
+	private Date lastStep = new Date();
 
 	/* Accelerometer -> walking calculation variables */
 	private static float mLimit = 10;
@@ -81,6 +83,10 @@ public class AccelerometerService extends Service implements SensorEventListener
 
 	static public long getStepTimestamp() {
 		return step_timestamp;
+	}
+	
+	static public Date getLastStepTimestamp() {
+		return new Date(step_timestamp);
 	}
 
 	@Override

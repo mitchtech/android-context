@@ -10,14 +10,15 @@ import net.smart_entity.IntegerField;
 import net.smart_entity.StringField;
 import net.smart_entity.TextField;
 
-public class Movement extends AbstractEntity {
+public class DerivedEntity extends AbstractEntity {
 	
     public final DateField Timestamp = new DateField(ContextConstants.CONTEXT_TIMESTAMP);
-    public final TextField State = new TextField(ContextConstants.MOVEMENT_STATE);
-    public final DoubleField Speed = new DoubleField(ContextConstants.MOVEMENT_SPEED);
-    public final TextField Bearing = new TextField(ContextConstants.MOVEMENT_BEARING);
-    public final IntegerField Steps = new IntegerField(ContextConstants.MOVEMENT_STEP_COUNT);
-    public final DateField LastStep = new DateField(ContextConstants.MOVEMENT_LAST_STEP);
+    public final TextField Place = new TextField(ContextConstants.DERIVED_PLACE);
+    public final TextField Activity = new TextField(ContextConstants.DERIVED_ACTIVITY);
+    public final TextField Shelter = new TextField(ContextConstants.DERIVED_SHELTER);
+    public final TextField Pocket = new TextField(ContextConstants.DERIVED_POCKET);
+    public final TextField Mood = new TextField(ContextConstants.DERIVED_MOOD);
+    public final TextField Accuracy = new TextField(ContextConstants.CONTEXT_ACCURACY);
 
 	@Override
 	public AbstractEntity createNewInstance() {

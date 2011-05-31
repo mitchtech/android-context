@@ -3,6 +3,8 @@ package edu.fsu.cs.contextprovider.monitor;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.smart_entity.EntityManager;
+
 import android.content.Context;
 import android.content.Intent;
 import android.speech.tts.TextToSpeech;
@@ -33,6 +35,8 @@ public class MovementMonitor extends TimerTask {
 	private static MovementMonitor movementObj = new MovementMonitor();
 	private static boolean running = false;
 
+	EntityManager entityManager;
+	
 	private static MovementState currentMovementState = MovementState.STILL;
 
 	public enum MovementState {

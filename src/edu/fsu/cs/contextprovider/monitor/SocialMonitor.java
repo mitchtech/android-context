@@ -1,7 +1,10 @@
 package edu.fsu.cs.contextprovider.monitor;
 
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import net.smart_entity.EntityManager;
 
 import winterwell.jtwitter.Twitter;
 import winterwell.jtwitter.TwitterException;
@@ -27,6 +30,9 @@ public class SocialMonitor extends TimerTask {
 	public static Long lastOut = (long) 0.0;
 	
 	Long now = Long.valueOf(System.currentTimeMillis());	
+	
+	EntityManager entityManager;
+
 
 	/**
 	 * Create a timer/thread to continuous run and keep the getMovement() state up to date
@@ -100,5 +106,13 @@ public class SocialMonitor extends TimerTask {
 
 	public static Long getLastIn() {
 		return lastIn;
+	}
+	
+	public static Date getLastInDate() {
+		return new Date(lastIn);
+	}
+	
+	public static Date getLastOutDate() {
+		return new Date(lastOut);
 	}
 }

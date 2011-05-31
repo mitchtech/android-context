@@ -1,6 +1,9 @@
 package edu.fsu.cs.contextprovider.monitor;
 
+import java.util.Date;
 import java.util.Set;
+
+import net.smart_entity.EntityManager;
 
 
 import android.content.BroadcastReceiver;
@@ -16,7 +19,7 @@ import android.util.Log;
  * A BroadcastReceiver that listens for relevantedu.fsu.cs.contextprovider. system updates and saves them
  * to the content provider.
  */
-public class SystemBroadcastMonitor extends BroadcastReceiver {
+public class SystemMonitor extends BroadcastReceiver {
 
 	private static final String TAG = "SystemBroadcastMonitor";
 	
@@ -26,6 +29,10 @@ public class SystemBroadcastMonitor extends BroadcastReceiver {
 	private static boolean batteryLow = false;
 	private static int batteryLevel = 0;
 	private static long batteryLastPlugged = 0;
+	private static int signalLevel = 0;
+
+	EntityManager entityManager;
+
 	
 	// direct user/device interaction
 	private static String SCREEN_OFF = "android.intent.action.SCREEN_OFF";
@@ -166,17 +173,25 @@ public class SystemBroadcastMonitor extends BroadcastReceiver {
 	public static long getUserLastPresent() {
 		return userLastPresent;
 	}
+	
+	public static Date getUserLastPresentDate() {
+		return new Date(userLastPresent);
+	}
 
 	public static void setUserLastPresent(long userLastPresent) {
-		SystemBroadcastMonitor.userLastPresent = userLastPresent;
+		SystemMonitor.userLastPresent = userLastPresent;
 	}
 
 	public static boolean isBatteryPlugged() {
 		return batteryPlugged;
 	}
+	
+	public static String isBatteryPluggedString() {
+		return String.valueOf(batteryPlugged);
+	}
 
 	public static void setBatteryPlugged(boolean batteryPlugged) {
-		SystemBroadcastMonitor.batteryPlugged = batteryPlugged;
+		SystemMonitor.batteryPlugged = batteryPlugged;
 	}
 
 	public static boolean isBatteryLow() {
@@ -184,7 +199,7 @@ public class SystemBroadcastMonitor extends BroadcastReceiver {
 	}
 
 	public static void setBatteryLow(boolean batteryLow) {
-		SystemBroadcastMonitor.batteryLow = batteryLow;
+		SystemMonitor.batteryLow = batteryLow;
 	}
 
 	public static int getBatteryLevel() {
@@ -192,15 +207,19 @@ public class SystemBroadcastMonitor extends BroadcastReceiver {
 	}
 
 	public static void setBatteryLevel(int batteryLevel) {
-		SystemBroadcastMonitor.batteryLevel = batteryLevel;
+		SystemMonitor.batteryLevel = batteryLevel;
 	}
 
 	public static long getBatteryLastPlugged() {
 		return batteryLastPlugged;
 	}
+	
+	public static Date getBatteryLastPluggedDate() {
+		return new Date(batteryLastPlugged);
+	}
 
 	public static void setBatteryLastPlugged(long batteryLastPlugged) {
-		SystemBroadcastMonitor.batteryLastPlugged = batteryLastPlugged;
+		SystemMonitor.batteryLastPlugged = batteryLastPlugged;
 	}
 
 	public static String getState() {
@@ -211,8 +230,8 @@ public class SystemBroadcastMonitor extends BroadcastReceiver {
 		return SSID;
 	}
 
-	public static String getSignal() {
-		return signal;
+	public static Integer getSignal() {
+		return signalLevel;
 	}
 	
 

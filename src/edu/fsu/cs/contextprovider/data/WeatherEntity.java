@@ -10,14 +10,15 @@ import net.smart_entity.IntegerField;
 import net.smart_entity.StringField;
 import net.smart_entity.TextField;
 
-public class Weather extends AbstractEntity {
+public class WeatherEntity extends AbstractEntity {
 	
     public final DateField Timestamp = new DateField(ContextConstants.CONTEXT_TIMESTAMP);
     public final StringField Condition = new StringField(ContextConstants.WEATHER_CONDITION);
     public final IntegerField Temperature = new IntegerField(ContextConstants.WEATHER_TEMPERATURE);
-    public final IntegerField Humidity = new IntegerField(ContextConstants.WEATHER_HUMIDITY);
-    public final IntegerField Wind = new IntegerField(ContextConstants.WEATHER_WIND);
+    public final StringField Humidity = new StringField(ContextConstants.WEATHER_HUMIDITY);
+    public final StringField Wind = new StringField(ContextConstants.WEATHER_WIND);
     public final StringField HazardLevel = new StringField(ContextConstants.WEATHER_HAZARD);
+    public final TextField Accuracy = new TextField(ContextConstants.CONTEXT_ACCURACY);
 
 	@Override
 	public AbstractEntity createNewInstance() {

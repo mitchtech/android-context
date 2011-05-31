@@ -16,13 +16,17 @@
 package edu.fsu.cs.contextprovider.monitor;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.smart_entity.EntityManager;
+
 import edu.fsu.cs.contextprovider.data.ContextConstants;
+import edu.fsu.cs.contextprovider.data.LocationEntity;
 import edu.fsu.cs.contextprovider.sensor.GPSService;
 import edu.fsu.cs.contextprovider.sensor.NetworkService;
 import android.location.Address;
@@ -46,6 +50,8 @@ public class LocationMonitor extends TimerTask {
 	private static LocationMonitor locationObj = new LocationMonitor();
 	private static Location currentLocation = new Location(new String());
 	private static Geocoder geocoder = null;
+	
+	EntityManager entityManager;
 	
 //	private static HashMap<String, Address> addressBook = new HashMap<String, Address>();
 //	private static HashMap<String, String> nicknameToAddress = new HashMap<String, String>();
@@ -243,6 +249,5 @@ public class LocationMonitor extends TimerTask {
 		double greatCircleDistance = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
 		return radiusOfEarthMeters * greatCircleDistance;
 	}
-
-
+	
 }

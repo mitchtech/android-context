@@ -19,19 +19,23 @@ import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RatingBar;
+import android.widget.TextView;
 
 public class ContextViewHolder {
 	RadioButton rb1;
 	RadioButton rb2;
+	TextView contextText;
+	
 	Boolean accurate;
 	
 	public ContextViewHolder(View base) {
 		this.rb1 = (RadioButton) base.findViewById(R.id.radioYes);
 		this.rb2 = (RadioButton) base.findViewById(R.id.radioNo);
+		this.contextText = (TextView) base.findViewById(R.id.currentContext);
+		
 		if(rb1.isChecked() == true) {
 			accurate = true;
-		}
-		if(rb2.isChecked() == true) {
+		} else if(rb2.isChecked() == true) {
 			accurate = false;
 		}
 	}

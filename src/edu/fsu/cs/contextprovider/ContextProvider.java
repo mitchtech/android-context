@@ -35,7 +35,7 @@ import edu.fsu.cs.contextprovider.monitor.DerivedMonitor;
 import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
 import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
 import edu.fsu.cs.contextprovider.monitor.SocialMonitor;
-import edu.fsu.cs.contextprovider.monitor.SystemBroadcastMonitor;
+import edu.fsu.cs.contextprovider.monitor.SystemMonitor;
 import edu.fsu.cs.contextprovider.monitor.WeatherMonitor;
 import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
 
@@ -89,13 +89,13 @@ public class ContextProvider extends ContentProvider {
 	}
 	
 	private static void getSystem(Map<String, String> results) {
-		results.put(ContextConstants.SYSTEM_STATE, String.valueOf(SystemBroadcastMonitor.getState()));
-		results.put(ContextConstants.SYSTEM_BATTERY_LEVEL, String.valueOf(SystemBroadcastMonitor.getBatteryLevel()));
-		results.put(ContextConstants.SYSTEM_PLUGGED, String.valueOf(SystemBroadcastMonitor.isBatteryPlugged()));
-		results.put(ContextConstants.SYSTEM_LAST_PLUGGED, String.valueOf(SystemBroadcastMonitor.getBatteryLastPlugged()));
-		results.put(ContextConstants.SYSTEM_LAST_PRESENT, String.valueOf(SystemBroadcastMonitor.getUserLastPresent()));
-		results.put(ContextConstants.SYSTEM_WIFI_SSID, String.valueOf(SystemBroadcastMonitor.getSSID()));
-		results.put(ContextConstants.SYSTEM_WIFI_SIGNAL, String.valueOf(SystemBroadcastMonitor.getSignal()));
+		results.put(ContextConstants.SYSTEM_STATE, String.valueOf(SystemMonitor.getState()));
+		results.put(ContextConstants.SYSTEM_BATTERY_LEVEL, String.valueOf(SystemMonitor.getBatteryLevel()));
+		results.put(ContextConstants.SYSTEM_PLUGGED, String.valueOf(SystemMonitor.isBatteryPlugged()));
+		results.put(ContextConstants.SYSTEM_LAST_PLUGGED, String.valueOf(SystemMonitor.getBatteryLastPlugged()));
+		results.put(ContextConstants.SYSTEM_LAST_PRESENT, String.valueOf(SystemMonitor.getUserLastPresent()));
+		results.put(ContextConstants.SYSTEM_WIFI_SSID, String.valueOf(SystemMonitor.getSSID()));
+		results.put(ContextConstants.SYSTEM_WIFI_SIGNAL, String.valueOf(SystemMonitor.getSignal()));
 	}
 	
 	private static void getDerived(Map<String, String> results) {		
