@@ -58,6 +58,20 @@ public class ContextConstants {
 	public static final String DERIVED_POCKET = "Pocket";
 	public static final String DERIVED_MOOD = "Mood";
 	
+	
+	// for accuracy checking screen
+	public static String LOCATION_ACCURATE = "LOCATION_ACCURATE";
+	public static String MOVEMENT_ACCURATE = "MOVEMENT_ACCURATE";
+	public static String WEATHER_ACCURATE = "WEATHER_ACCURATE";
+	public static String SOCIAL_ACCURATE = "SOCIAL_ACCURATE";
+	public static String SYSTEM_ACCURATE = "SYSTEM_ACCURATE";
+	public static String DERIVED_ACCURATE = "DERIVED_ACCURATE";
+	
+	public static String CONTEXT_STORE_INTENT = "edu.fsu.cs.contextprovider.store";
+
+	
+	
+	
 //	public static final String DERIVED_DENSITY = "Density";
 //	public static final String DERIVED_BIOME = "Biome";
 //	public static final String PROXIMITY_ALL = "PROXIMITY_ALL";

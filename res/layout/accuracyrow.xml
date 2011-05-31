@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content" android:orientation="vertical">
+    <TextView android:layout_gravity="left|center_vertical" android:id="@+id/label" android:text="TextView" android:padding="2dip" android:layout_width="fill_parent" android:textSize="18sp" android:layout_height="wrap_content"></TextView>
+    <RadioGroup android:layout_height="wrap_content" android:orientation="horizontal" android:layout_width="wrap_content" android:id="@+id/radioGroup1">
+        <TextView android:layout_width="wrap_content" android:id="@+id/currentContext" android:text="TextView" android:layout_height="wrap_content"></TextView>
+        <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:text="@string/yes" android:id="@+id/radioYes"></RadioButton>
+        <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/no" android:id="@+id/radioNo"></RadioButton>
+    </RadioGroup>
+</LinearLayout>
