@@ -146,10 +146,9 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getPrefs();
-		
+
 		// startup the primary context service (if just installed)
 		startService(new Intent(this, ContextService.class));
-		
 
 		tts = new TextToSpeech(this, this);
 
@@ -210,8 +209,9 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		}
 
 		// Set up our adapter
-		mAdapter = new SimpleExpandableListAdapter(this, groupData, android.R.layout.simple_expandable_list_item_1, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 },
-				childData, android.R.layout.simple_expandable_list_item_2, new String[] { NAME, VALUE }, new int[] { android.R.id.text1, android.R.id.text2 });
+		mAdapter = new SimpleExpandableListAdapter(this, groupData, android.R.layout.simple_expandable_list_item_1, new String[] { NAME, VALUE }, new int[] {
+				android.R.id.text1, android.R.id.text2 }, childData, android.R.layout.simple_expandable_list_item_2, new String[] { NAME, VALUE }, new int[] {
+				android.R.id.text1, android.R.id.text2 });
 
 		setListAdapter(mAdapter);
 
@@ -228,13 +228,13 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	}
 
 	private void getPrefs() {
-		
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		
+
 		// general
 		startupEnabled = prefs.getBoolean("PREFS_STARTUP_ENABLED", true);
 		ttsEnabled = prefs.getBoolean("PREFS_TTS_ENABLED", true);
-		
+
 		// categories
 		locationEnabled = prefs.getBoolean("PREFS_LOCATION_ENABLED", true);
 		movementEnabled = prefs.getBoolean("PREFS_MOVEMENT_ENABLED", true);
@@ -439,17 +439,10 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		social.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.SOCIAL_LAST_OUT);
 		curChildMap.put(VALUE, String.valueOf(SocialMonitor.getLastOut()));
-		
-		
-//		if (status == null) {
-//			curChildMap.put(VALUE, "NA");
-//		} else {
-//			curChildMap.put(VALUE, SocialMonitor.getCurrentTwitterStatus());
-//		}
 
 		childData.add(social);
 	}
-	
+
 	private void refreshSystem() {
 		if (mService == null) {
 			return;
@@ -462,7 +455,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		Map<String, String> curChildMap = new HashMap<String, String>();
 		system.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.SYSTEM_STATE);
-		curChildMap.put(VALUE, String.valueOf(SystemMonitor.getState()));		
+		curChildMap.put(VALUE, String.valueOf(SystemMonitor.getState()));
 		curChildMap = new HashMap<String, String>();
 		system.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.SYSTEM_BATTERY_LEVEL);
@@ -507,7 +500,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		curChildMap = new HashMap<String, String>();
 		derived.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.DERIVED_ACTIVITY);
-		curChildMap.put(VALUE, "Sleeping");		
+		curChildMap.put(VALUE, "Sleeping");
 		curChildMap = new HashMap<String, String>();
 		derived.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.DERIVED_POCKET);
@@ -520,14 +513,13 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		derived.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.DERIVED_MOOD);
 		curChildMap.put(VALUE, "Happy");
-		
+
 		childData.add(derived);
 	}
 
 	@Override
 	public void onDestroy() {
-		MovementMonitor.StopThread();
-		running = false;
+		// MovementMonitor.StopThread();
 		super.onDestroy();
 		tts.shutdown();
 	}
@@ -548,7 +540,6 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		switch (item.getItemId()) {
 		case MENU_REFRESH_ID:
 			refresh();
-			// adapter.notifyDataSetChanged();
 			return true;
 		case MENU_ADD_ID:
 			refresh();
@@ -571,7 +562,6 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// adapter.notifyDataSetChanged();
 			return true;
 		case MENU_PREFS_ID:
 			editPrefs();
@@ -594,7 +584,6 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		switch (item.getItemId()) {
 		case CONTEXT_DELETE_ID:
 			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-			// delete(info.id);
 			return true;
 
 		}
@@ -708,8 +697,8 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	private AlertDialog getAboutBox() {
 		String title = getString(R.string.app_name) + " build " + getVersion(this);
 
-		return new AlertDialog.Builder(ContextExpandableListActivity.this).setTitle(title).setView(View.inflate(this, R.layout.about, null)).setIcon(R.drawable.context64)
-				.setPositiveButton("OK", null).create();
+		return new AlertDialog.Builder(ContextExpandableListActivity.this).setTitle(title).setView(View.inflate(this, R.layout.about, null))
+				.setIcon(R.drawable.context64).setPositiveButton("OK", null).create();
 
 	}
 

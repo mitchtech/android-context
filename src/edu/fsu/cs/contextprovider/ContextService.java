@@ -52,6 +52,8 @@ public class ContextService extends Service {
 	// 15 min = 900 sec
 	private long POPUP_FREQ = 45;
 
+//	SharedPreferences prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
+
 	EntityManager entityManager;
 
 	public IBinder onBind(Intent arg0) {
@@ -65,14 +67,15 @@ public class ContextService extends Service {
 	}
 
 	private void startService() {
-		IntentFilter eventFilter = new IntentFilter();
-		// eventFilter.addAction(android.content.Intent.ACTION_BATTERY_CHANGED);
-		eventFilter.addAction(ContextConstants.CONTEXT_STORE_INTENT);
-		registerReceiver(contextIntentReceiver, eventFilter);
+		IntentFilter storeFilter = new IntentFilter();
+		storeFilter.addAction(ContextConstants.CONTEXT_STORE_INTENT);
+		registerReceiver(contextIntentReceiver, storeFilter);
 
-		timer.schedule(new ContextPopupTask(), (POPUP_FREQ * 1000)); // seconds
-																		// *
-																		// 1000
+		IntentFilter restartFilter = new IntentFilter();
+		restartFilter.addAction(ContextConstants.CONTEXT_STORE_INTENT);
+		registerReceiver(restartIntentReceiver, restartFilter);
+
+		timer.schedule(new ContextPopupTask(), (POPUP_FREQ * 1000)); // seconds*1000
 	}
 
 	private class ContextPopupTask extends TimerTask {
@@ -81,9 +84,7 @@ public class ContextService extends Service {
 			// long delay = 5000; // + myRandom.nextInt();
 			toastHandler.sendEmptyMessage(0);
 			// toastHandler.sendMessage((Message) String.valueOf(delay));
-			timer.schedule(new ContextPopupTask(), (POPUP_FREQ * 1000)); // seconds
-																			// *
-																			// 1000
+			timer.schedule(new ContextPopupTask(), (POPUP_FREQ * 1000)); // seconds*1000
 		}
 	}
 
@@ -91,15 +92,14 @@ public class ContextService extends Service {
 		super.onDestroy();
 		Toast.makeText(this, "Service Stopped ...", Toast.LENGTH_SHORT).show();
 		unregisterReceiver(contextIntentReceiver);
+		unregisterReceiver(restartIntentReceiver);
 	}
 
 	private final Handler toastHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_SHORT)
-					.show();
-			Intent intent = new Intent(ctx,
-					edu.fsu.cs.contextprovider.ContextAccuracyActivity.class);
+			Toast.makeText(getApplicationContext(), "Context Accuracy Popup", Toast.LENGTH_SHORT).show();
+			Intent intent = new Intent(ctx, edu.fsu.cs.contextprovider.ContextAccuracyActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(intent);
 
@@ -111,29 +111,19 @@ public class ContextService extends Service {
 			Log.d(TAG, "Received Intent: " + intent.getAction());
 			Boolean locationAccurate, movementAccurate, weatherAccurate, socialAccurate, systemAccurate, derivedAccurate;
 
-			locationAccurate = intent.getBooleanExtra(
-					ContextConstants.LOCATION_ACCURATE, false);
-			movementAccurate = intent.getBooleanExtra(
-					ContextConstants.MOVEMENT_ACCURATE, false);
-			weatherAccurate = intent.getBooleanExtra(
-					ContextConstants.WEATHER_ACCURATE, false);
-			socialAccurate = intent.getBooleanExtra(
-					ContextConstants.SOCIAL_ACCURATE, false);
-			systemAccurate = intent.getBooleanExtra(
-					ContextConstants.SYSTEM_ACCURATE, false);
-			derivedAccurate = intent.getBooleanExtra(
-					ContextConstants.DERIVED_ACCURATE, false);
+			locationAccurate = intent.getBooleanExtra(ContextConstants.LOCATION_ACCURATE, false);
+			movementAccurate = intent.getBooleanExtra(ContextConstants.MOVEMENT_ACCURATE, false);
+			weatherAccurate = intent.getBooleanExtra(ContextConstants.WEATHER_ACCURATE, false);
+			socialAccurate = intent.getBooleanExtra(ContextConstants.SOCIAL_ACCURATE, false);
+			systemAccurate = intent.getBooleanExtra(ContextConstants.SYSTEM_ACCURATE, false);
+			derivedAccurate = intent.getBooleanExtra(ContextConstants.DERIVED_ACCURATE, false);
 
 			Toast.makeText(
 					getApplicationContext(),
-					"ContextService Accuracy: \n" + "Location: "
-							+ locationAccurate + "\n" + "Movement: "
-							+ movementAccurate + "\n" + "Weather: "
-							+ weatherAccurate + "\n" + "Social: "
-							+ socialAccurate + "\n" + "System: "
-							+ systemAccurate + "\n" + "Derived: "
-							+ derivedAccurate, Toast.LENGTH_LONG).show();
-			
+					"ContextService Accuracy: \n" + "Location: " + locationAccurate + "\n" + "Movement: " + movementAccurate + "\n" + "Weather: "
+							+ weatherAccurate + "\n" + "Social: " + socialAccurate + "\n" + "System: " + systemAccurate + "\n" + "Derived: " + derivedAccurate,
+					Toast.LENGTH_LONG).show();
+
 			try {
 				StoreLocation(String.valueOf(locationAccurate));
 			} catch (Exception e) {
@@ -169,23 +159,29 @@ public class ContextService extends Service {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}			
-			
+			}
+
 		}
 	};
-	
-	private void StoreAll() throws Exception
-	{
+
+	BroadcastReceiver restartIntentReceiver = new BroadcastReceiver() {
+		public void onReceive(Context context, Intent intent) {
+			Log.d(TAG, "Received Intent: " + intent.getAction());
+
+			Toast.makeText(getApplicationContext(), "ContextService Restart", Toast.LENGTH_LONG).show();
+		}
+	};
+
+	private void StoreAll() throws Exception {
 		String accuracy = "NA";
 		StoreLocation(accuracy);
 		StoreMovement(accuracy);
 		StoreWeather(accuracy);
 		StoreSocial(accuracy);
 		StoreSystem(accuracy);
-		StoreDerived(accuracy);		
+		StoreDerived(accuracy);
 	}
 
-	
 	private void StoreLocation(String accuracy) throws Exception {
 		try {
 			entityManager = EntityManager.GetManager(this);
@@ -198,14 +194,15 @@ public class ContextService extends Service {
 			location.Longitude.setValue(LocationMonitor.getLongitude());
 			location.Altitude.setValue(LocationMonitor.getAltitude());
 			location.Accuracy.setValue(accuracy);
-//			int uid = entityManager.store(location);
-//			LocationEntity fetchedLocation = (LocationEntity) entityManager.fetchById(uid);
-//			String address = fetchedLocation.Address.getValue();
+			int uid = entityManager.store(location);
+			// LocationEntity fetchedLocation = (LocationEntity)
+			// entityManager.fetchById(uid);
+			// String address = fetchedLocation.Address.getValue();
 		} catch (Exception e) {
 			throw e;
 		}
 	}
-	
+
 	private void StoreMovement(String accuracy) throws Exception {
 		try {
 			entityManager = EntityManager.GetManager(this);
@@ -217,11 +214,12 @@ public class ContextService extends Service {
 			movement.Steps.setValue((int) AccelerometerService.getStepCount());
 			movement.LastStep.setValue(AccelerometerService.getLastStepTimestamp());
 			movement.Accuracy.setValue(accuracy);
+			int uid = entityManager.store(movement);
 		} catch (Exception e) {
 			throw e;
 		}
 	}
-	
+
 	private void StoreWeather(String accuracy) throws Exception {
 		try {
 			entityManager = EntityManager.GetManager(this);
@@ -233,11 +231,12 @@ public class ContextService extends Service {
 			weather.Wind.setValue(WeatherMonitor.getWeatherWindCond());
 			weather.HazardLevel.setValue(WeatherMonitor.getWeatherHazard());
 			weather.Accuracy.setValue(accuracy);
+			int uid = entityManager.store(weather);
 		} catch (Exception e) {
 			throw e;
 		}
 	}
-	
+
 	private void StoreSocial(String accuracy) throws Exception {
 		try {
 			entityManager = EntityManager.GetManager(this);
@@ -249,11 +248,12 @@ public class ContextService extends Service {
 			social.LastIncoming.setValue(SocialMonitor.getLastInDate());
 			social.LastOutgoing.setValue(SocialMonitor.getLastOutDate());
 			social.Accuracy.setValue(accuracy);
+			int uid = entityManager.store(social);
 		} catch (Exception e) {
 			throw e;
 		}
 	}
-	
+
 	private void StoreSystem(String accuracy) throws Exception {
 		try {
 			entityManager = EntityManager.GetManager(this);
@@ -267,11 +267,12 @@ public class ContextService extends Service {
 			system.SSID.setValue(SystemMonitor.getSSID());
 			system.Signal.setValue(SystemMonitor.getSignal());
 			system.Accuracy.setValue(accuracy);
+			int uid = entityManager.store(system);
 		} catch (Exception e) {
 			throw e;
 		}
 	}
-	
+
 	private void StoreDerived(String accuracy) throws Exception {
 		try {
 			entityManager = EntityManager.GetManager(this);
@@ -283,10 +284,10 @@ public class ContextService extends Service {
 			derived.Pocket.setValue(DerivedMonitor.getPocketString());
 			derived.Mood.setValue(DerivedMonitor.getMood());
 			derived.Accuracy.setValue(accuracy);
+			int uid = entityManager.store(derived);
 		} catch (Exception e) {
 			throw e;
 		}
 	}
-	
 
 }

@@ -24,7 +24,7 @@ public class LocationEntity extends AbstractEntity {
 	@Override
 	public AbstractEntity createNewInstance() {
 		// TODO Auto-generated method stub
-		return null;
+		return new LocationEntity();
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class LocationEntity extends AbstractEntity {
 	@Override
 	public AbstractField<?>[] getFields() {
 		// TODO Auto-generated method stub
-		return null;
+		return new AbstractField<?>[]{ Timestamp, Address, Neighborhood, Zip, Latitude, Longitude, Altitude, Accuracy };
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class LocationEntity extends AbstractEntity {
 	@Override
 	public String getSchemaName() {
 		// TODO Auto-generated method stub
-		return null;
+		return "LocationEntity";
 	}
 
 }

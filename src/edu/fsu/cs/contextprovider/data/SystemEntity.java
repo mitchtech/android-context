@@ -25,7 +25,7 @@ public class SystemEntity extends AbstractEntity {
     @Override
 	public AbstractEntity createNewInstance() {
 		// TODO Auto-generated method stub
-		return null;
+		return new SystemEntity();
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class SystemEntity extends AbstractEntity {
 	@Override
 	public AbstractField<?>[] getFields() {
 		// TODO Auto-generated method stub
-		return null;
+		return new AbstractField<?>[]{ Timestamp, State, BatteryLevel, Plugged, LastPlugged, LastPresent, SSID, Signal, Accuracy };
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class SystemEntity extends AbstractEntity {
 	@Override
 	public String getSchemaName() {
 		// TODO Auto-generated method stub
-		return null;
+		return "SystemEntity";
 	}
 
 }

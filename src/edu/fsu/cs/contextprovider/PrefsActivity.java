@@ -1,9 +1,11 @@
 package edu.fsu.cs.contextprovider;
 
+import edu.fsu.cs.contextprovider.data.ContextConstants;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -59,6 +61,16 @@ public class PrefsActivity extends PreferenceActivity {
 //			}
 //		}).show();
 //	}
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		
+		Intent intent = new Intent(ContextConstants.CONTEXT_RESTART_INTENT);
+		sendBroadcast(intent);
+	}
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

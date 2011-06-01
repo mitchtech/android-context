@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.RadioButton;
@@ -48,8 +49,7 @@ import edu.fsu.cs.contextprovider.monitor.SystemMonitor;
 import edu.fsu.cs.contextprovider.monitor.WeatherMonitor;
 
 public class ContextAccuracyActivity extends ListActivity {
-//	private static final String[] items = { "Location", "Movement", "Weather",
-//			"Social", "System", "Derived" };
+//	private static final String[] items = { "Location", "Movement", "Weather", "Social", "System", "Derived" };
 
 	private PowerManager.WakeLock wakelock;
     private static Timer timer = new Timer(); 
@@ -58,16 +58,13 @@ public class ContextAccuracyActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-
+		
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		wakelock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "ContextAccuracyActivity");
 
 		ArrayList<ContextRowModel> list = new ArrayList<ContextRowModel>();
 
-//		for (String string : items) {
-//			list.add(new ContextRowModel(string));
-//		}
-		
+//		for (String string : items) { list.add(new ContextRowModel(string)); }	
 		ContextRowModel locationModel = new ContextRowModel("Location", LocationMonitor.getAddress());
 		list.add(locationModel);
 		ContextRowModel movementModel = new ContextRowModel("Movement", MovementMonitor.getMovementState());
@@ -113,9 +110,7 @@ public class ContextAccuracyActivity extends ListActivity {
 //			if (holder == null) {
 //				holder = new ContextViewHolder(row);
 //				row.setTag(holder);			
-//
 //				RadioButton.OnClickListener myOptionOnClickListener = new RadioButton.OnClickListener() {
-//
 //					public void onClick(View v) {
 //						Integer myPosition = (Integer) v.getTag();
 //						ContextRowModel model = getModel(myPosition);
@@ -126,10 +121,8 @@ public class ContextAccuracyActivity extends ListActivity {
 //			ContextRowModel model = getModel(position);
 			return (row);
 		}
-
 	}
 
-	
 	class ContextRowModel {
 		String label;
 		String context;
@@ -147,7 +140,6 @@ public class ContextAccuracyActivity extends ListActivity {
 //			this.rb1 = (RadioButton) base.findViewById(R.id.radioYes);
 //			this.rb2 = (RadioButton) base.findViewById(R.id.radioNo);
 //			this.contextText = (TextView) base.findViewById(R.id.currentContext);
-//			
 //			if(rb1.isChecked() == true) {
 //				accurate = true;
 //			} else if(rb2.isChecked() == true) {
@@ -155,7 +147,6 @@ public class ContextAccuracyActivity extends ListActivity {
 //			}
 //		}
 	}
-	
 	
 	
     private class ContextDismissTask extends TimerTask

@@ -8,7 +8,9 @@ import android.hardware.SensorManager;
 
 public class ContextConstants {
 
+	public static final String CONTEXT_PREFS = "CONTEXT_PREFS";
 	public static final String PREFS_ADDRESS = "PREFS_ADDRESS";
+	
 	
 	public static final String CONTEXT_TIMESTAMP = "Timestamp";
 	public static final String CONTEXT_ACCURACY = "Accuracy";
@@ -69,7 +71,8 @@ public class ContextConstants {
 	
 	public static String CONTEXT_STORE_INTENT = "edu.fsu.cs.contextprovider.store";
 
-	
+	public static String CONTEXT_RESTART_INTENT = "edu.fsu.cs.contextprovider.restart";
+
 	
 	
 //	public static final String DERIVED_DENSITY = "Density";

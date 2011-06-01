@@ -23,7 +23,7 @@ public class DerivedEntity extends AbstractEntity {
 	@Override
 	public AbstractEntity createNewInstance() {
 		// TODO Auto-generated method stub
-		return null;
+		return new DerivedEntity();
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class DerivedEntity extends AbstractEntity {
 	@Override
 	public AbstractField<?>[] getFields() {
 		// TODO Auto-generated method stub
-		return null;
+		return new AbstractField<?>[]{ Timestamp, Place, Activity, Shelter, Pocket, Mood, Accuracy };
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class DerivedEntity extends AbstractEntity {
 	@Override
 	public String getSchemaName() {
 		// TODO Auto-generated method stub
-		return null;
+		return "DerivedEntity";
 	}
 
 }
