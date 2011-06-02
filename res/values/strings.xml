@@ -10,18 +10,22 @@
 	<string name="google_finance_url">http://www.google.com/ig/api?stock=</string>
 	<string name="google_url">http://www.google.com</string>
 	<string name="welcome">Welcome to ContextProvider</string>
-		<string name="welcome_msg">This application is not a game!\n\nIt is a tool for
+	<string name="welcome_msg">This application is not a game!\n\nIt is a tool for
 		research and application profiling. You may wish to start by
 		configuring ContextProvider in the preferences screen.</string>
 
 	<string name="about_msg">ContextProvider - a unified, query-able interface
 		to all contextual data on the device.
-		\n\n\u00A9 2011 by Michael Mitchell and Chris Meyers
+		\n\n\u00A9 2011 by Michael
+		Mitchell and Chris Meyers
 		\n\nhttp://github.com/mitchtech/android-context
 	</string>
-	
-	
-		<!-- Preferences -->
+	<string name="accuracy_message">Please select the accuracy level of each prediction
+		made by the ContextProvider. This message will auto-dismiss in 30
+		seconds.</string>
+
+
+	<!-- Preferences -->
 	<string name="preferences">Preferences</string>
 	<string name="application">Application</string>
 	<string name="app_help">Bills Books Help</string>
@@ -43,18 +47,24 @@
 	<string name="about_changelog">
 		<b>Release Notes</b>
 		\n0.10
-		\n - merged all changed into ContextExpandableList; moved obsolete files
+		\n - merged all changed into ContextExpandableList; moved
+		obsolete files
 		to defunct folder
 		\n\n0.09
-		\n - Added more finance outputs; Added more finance displays.
+		\n - Added more finance
+		outputs; Added more finance displays.
 		\n\n0.8
-		\n - Merge branch \'adwhirl\'; Fixed problems with previous (adwhirl)
+		\n - Merge branch
+		\'adwhirl\'; Fixed problems with previous (adwhirl)
 		merge.
 		\n\n0.7
-		\n - Changed lux (light sensor value) to float instead of int. Still
-		need to tweak it to detect pocket
+		\n -
+		Changed lux (light sensor value) to float instead of int. Still
+		need to
+		tweak it to detect pocket
 		\n\n0.6
-		\n - Added cliboard. Added shelter and pocket to context. Fixed weather
+		\n - Added cliboard. Added shelter and
+		pocket to context. Fixed weather
 	</string>
 
 	<drawable name="white">#ffffff</drawable>
@@ -71,42 +81,58 @@
 	<string name="disable_dialog_msg">Context Disabled</string>
 	<string name="yes">Yes</string>
 	<string name="no">No</string>
-	<string name="dialog_activity_text">Please select the accuracy of each Context below. Message will auto-dismiss in 30 seconds</string>
+	<string name="dialog_activity_text">Please use the sliders to select the accuracy level
+		of each Context below. Message will auto-dismiss in 30 seconds</string>
 
-    <string-array name="prefs_polling_freq">
-        <item>Low</item>
-        <item>Medium</item>
-        <item>High</item>
-    </string-array>
-    
-    <string-array name="prefs_polling_freq_values">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
-    
-    <string-array name="prefs_popup_freq">
-        <item>15 Minutes</item>
-        <item>30 Minutes</item>
-        <item>60 Minutes</item>
-    </string-array>
-    
-    <string-array name="prefs_popup_freq_values">
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-    </string-array>
 
-    <string-array name="prefs_popup_dismiss_freq">
-        <item>15 Seconds</item>
-        <item>30 Seconds</item>
-        <item>60 Seconds</item>
-    </string-array>
-    
-    <string-array name="prefs_popup_dismiss_freq_values">
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-    </string-array>
+
+	<string name="locationTitle">Location</string>
+	<string name="movementTitle">Movement</string>
+	<string name="weatherTitle">Weather</string>
+	<string name="socialTitle">Social</string>
+	<string name="systemTitle">System</string>
+	<string name="derivedTitle">Derived</string>
+	<string name="accuracy">Accuracy</string>
+	<string name="submit">Submit</string>
+	<string name="reset">Reset</string>
+
+
+	<string-array name="prefs_polling_freq">
+		<item>Low</item>
+		<item>Medium</item>
+		<item>High</item>
+	</string-array>
+
+	<string-array name="prefs_polling_freq_values">
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+	</string-array>
+
+	<string-array name="prefs_popup_freq">
+		<item>15 Minutes</item>
+		<item>30 Minutes</item>
+		<item>60 Minutes</item>
+	</string-array>
+
+	<string-array name="prefs_popup_freq_values">
+		<item>15</item>
+		<item>30</item>
+		<item>60</item>
+	</string-array>
+
+	<string-array name="prefs_popup_dismiss_freq">
+		<item>15 Seconds</item>
+		<item>30 Seconds</item>
+		<item>60 Seconds</item>
+	</string-array>
+
+	<string-array name="prefs_popup_dismiss_freq_values">
+		<item>15</item>
+		<item>30</item>
+		<item>60</item>
+	</string-array>
+
+
 
 </resources>

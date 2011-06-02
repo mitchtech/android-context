@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.prefs.Preferences;
 
 import net.smart_entity.DateField;
 import net.smart_entity.DoubleField;
@@ -39,6 +40,7 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -47,14 +49,12 @@ public class ContextService extends Service {
 
 	private static Timer timer = new Timer();
 	private Context ctx;
-
+	EntityManager entityManager;
+	SharedPreferences prefs;
+	
 	// 5 min = 300 sec
 	// 15 min = 900 sec
 	private long POPUP_FREQ = 45;
-
-//	SharedPreferences prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
-
-	EntityManager entityManager;
 
 	public IBinder onBind(Intent arg0) {
 		return null;
@@ -67,17 +67,22 @@ public class ContextService extends Service {
 	}
 
 	private void startService() {
+		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
 		IntentFilter storeFilter = new IntentFilter();
 		storeFilter.addAction(ContextConstants.CONTEXT_STORE_INTENT);
 		registerReceiver(contextIntentReceiver, storeFilter);
 
 		IntentFilter restartFilter = new IntentFilter();
-		restartFilter.addAction(ContextConstants.CONTEXT_STORE_INTENT);
+		restartFilter.addAction(ContextConstants.CONTEXT_RESTART_INTENT);
 		registerReceiver(restartIntentReceiver, restartFilter);
 
 		timer.schedule(new ContextPopupTask(), (POPUP_FREQ * 1000)); // seconds*1000
 	}
 
+	
+	
+	
+	
 	private class ContextPopupTask extends TimerTask {
 		public void run() {
 			// Random myRandom = new Random();

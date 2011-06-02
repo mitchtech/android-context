@@ -1,7 +1,14 @@
 <small>*** Notice ***
-Welcome to Event Power Log!
 
-<b>Version 0.0.1</b>
-- Were almost working!
+<b>Version 0.45</b>
+Context persistence; prefs expanded; corrupt file fix
+<b>Version 0.44</b>
+added orm store functions for each monitor
+<b>Version 0.43</b>
+Implemented ui for context accuracy popup
+<b>Version 0.42</b>
+Expanded prefs; context accuracy popup test service
+<b>Version 0.41</b>
+Corrected conflict merge errors
 
 </small>

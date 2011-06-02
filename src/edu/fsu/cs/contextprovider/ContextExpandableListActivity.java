@@ -105,16 +105,33 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	private static final int DIALOG_ABOUT = 0;
 	private static final String CSV_FILENAME = "Context.csv";
 
-	// preferences
+	// location prefs
 	private boolean locationEnabled;
+	private boolean proximityEnabled;
+	private int locationPollingFreq;
+	// movement prefs
 	private boolean movementEnabled;
+	private int movementPollingFreq;
+	// weather prefs
 	private boolean weatherEnabled;
-	private boolean socialEnabled;
+	private int weatherPollingFreq;
+	// social prefs
+	private boolean socialEnabled;	
+	// system prefs
 	private boolean systemEnabled;
+	// derived prefs
 	private boolean derivedEnabled;
-
+	// general prefs
 	private boolean startupEnabled;
 	private boolean ttsEnabled;
+	private boolean shakeEnabled;
+	private boolean accuracyPopupEnabled;
+	private boolean accuracyAudioEnabled;
+	private int accuracyPopupDelay;
+	private int accuracyDismissDelay;
+	
+	
+	
 
 	public static boolean running = false;
 	public static TextToSpeech tts;
@@ -145,6 +162,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		getPrefs();
 
 		// startup the primary context service (if just installed)
@@ -235,7 +253,6 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		startupEnabled = prefs.getBoolean("PREFS_STARTUP_ENABLED", true);
 		ttsEnabled = prefs.getBoolean("PREFS_TTS_ENABLED", true);
 
-		// categories
 		locationEnabled = prefs.getBoolean("PREFS_LOCATION_ENABLED", true);
 		movementEnabled = prefs.getBoolean("PREFS_MOVEMENT_ENABLED", true);
 		weatherEnabled = prefs.getBoolean("PREFS_WEATHER_ENABLED", true);
