@@ -30,8 +30,6 @@ public class WeatherMonitor extends TimerTask {
 	private static Timer timer = new Timer();
 	private static WeatherMonitor weatherObj = new WeatherMonitor();
 	private static boolean running = false;
-	private static Twitter twitter = null;
-	private static String currentTwitterStatus = new String();
 	
 	WeatherSet ws;
 	GoogleWeatherHandler gwh;
@@ -41,9 +39,13 @@ public class WeatherMonitor extends TimerTask {
 	private static Integer weatherTemp = -1;
 	private static String weatherHumid = "NA";
 	private static String weatherWindCond = "NA";
-	private static String weatherHazard = "NA";
+	private static String weatherHazard = "NA";	
 	
 	EntityManager entityManager;
+	
+	
+	
+	
 
 
 	/**

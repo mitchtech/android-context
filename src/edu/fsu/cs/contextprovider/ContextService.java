@@ -56,8 +56,7 @@ public class ContextService extends Service {
 	
 	// 5 min = 300 sec
 	// 15 min = 900 sec
-	private long POPUP_FREQ = 45;
-	
+	//	private long POPUP_FREQ = 45;
 	
 	// location prefs
 	private boolean locationEnabled;
@@ -92,9 +91,6 @@ public class ContextService extends Service {
 	
 	
 	
-	
-		
-
 	public IBinder onBind(Intent arg0) {
 		return null;
 	}
@@ -128,7 +124,7 @@ public class ContextService extends Service {
 			startService(intent);
 			/* Start LocationMonitor */
 			Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-			LocationMonitor.StartThread(5, geocoder);
+			LocationMonitor.StartThread(locationPollFreq, geocoder);
 //			refreshLocation();
 		}
 		if (movementEnabled) {
@@ -136,12 +132,12 @@ public class ContextService extends Service {
 			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.AccelerometerService.class);
 			startService(intent);
 			/* Start movement context */
-			MovementMonitor.StartThread(5);
+			MovementMonitor.StartThread(movementPollFreq);
 //			refreshMovement();
 		}
 		if (weatherEnabled) {
 			/* Start weather monitor */
-			WeatherMonitor.StartThread(60);
+			WeatherMonitor.StartThread(weatherPollFreq);
 //			refreshWeather();
 		}
 		if (systemEnabled) {
@@ -152,18 +148,22 @@ public class ContextService extends Service {
 		}
 		if (socialEnabled) {
 			/* Start social monitor */
-			SocialMonitor.StartThread(60);
+			SocialMonitor.StartThread(weatherPollFreq);
 //			refreshSocial();
 		}
 		if (derivedEnabled) {
 			/* Start derived monitor */
-			DerivedMonitor.StartThread(60);
+			DerivedMonitor.StartThread(derivedCalcFreq);
 //			refreshDerived();
 		}
 		
-		timer.schedule(new ContextPopupTask(), (POPUP_FREQ * 1000)); // seconds*1000
-		
+		timer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
 	}
+	
+	
+	
+	
+	
 	
 	
 	private void getPrefs() {
@@ -174,7 +174,7 @@ public class ContextService extends Service {
 		startupEnabled = prefs.getBoolean(ContextConstants.PREFS_STARTUP_ENABLED, true);
 		accuracyPopupEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_ENABLED, true);
 		accuracyAudioEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_AUDIO_ENABLED, true);
-		accuracyPopupPeriod = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_PERIOD, 0);
+		accuracyPopupPeriod = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_PERIOD, 45);
 		accuracyDismissDelay = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_DISMISS_DELAY, 0);	
 		
 		locationEnabled = prefs.getBoolean(ContextConstants.PREFS_LOCATION_ENABLED, true);
@@ -197,12 +197,10 @@ public class ContextService extends Service {
 		derivedCalcFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_CALC_FREQ, 0);
 		derivedStoreFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_STORE_FREQ, 0);
 		
-		ttsEnabled = prefs.getBoolean(ContextConstants.PREFS_TTS_ENABLED, true);
-		shakeEnabled = prefs.getBoolean(ContextConstants.PREFS_SHAKE_ENABLED, true);
+		ttsEnabled = prefs.getBoolean(ContextConstants.PREFS_TTS_ENABLED, false);
+		shakeEnabled = prefs.getBoolean(ContextConstants.PREFS_SHAKE_ENABLED, false);
 	}
 
-	
-	
 	
 	private class ContextPopupTask extends TimerTask {
 		public void run() {
@@ -210,7 +208,7 @@ public class ContextService extends Service {
 			// long delay = 5000; // + myRandom.nextInt();
 			toastHandler.sendEmptyMessage(0);
 			// toastHandler.sendMessage((Message) String.valueOf(delay));
-			timer.schedule(new ContextPopupTask(), (POPUP_FREQ * 1000)); // seconds*1000
+			timer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
 		}
 	}
 
@@ -285,7 +283,6 @@ public class ContextService extends Service {
 	BroadcastReceiver restartIntentReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			Log.d(TAG, "Received Intent: " + intent.getAction());
-
 			Toast.makeText(getApplicationContext(), "ContextService Restart", Toast.LENGTH_LONG).show();
 		}
 	};
