@@ -62,25 +62,18 @@ public class ContextConstants {
 	
 	
 	// for accuracy checking screen
-	public static String LOCATION_ACCURATE = "LOCATION_ACCURATE";
+	public static String PLACE_ACCURATE = "PLACE_ACCURATE";
 	public static String MOVEMENT_ACCURATE = "MOVEMENT_ACCURATE";
-	public static String WEATHER_ACCURATE = "WEATHER_ACCURATE";
-	public static String SOCIAL_ACCURATE = "SOCIAL_ACCURATE";
-	public static String SYSTEM_ACCURATE = "SYSTEM_ACCURATE";
-	public static String DERIVED_ACCURATE = "DERIVED_ACCURATE";
+	public static String ACTIVITY_ACCURATE = "ACTIVITY_ACCURATE";
+	public static String SHELTER_ACCURATE = "SHELTER_ACCURATE";
+	public static String ONPERSON_ACCURATE = "ONPERSON_ACCURATE";
 	
+	
+	// intent IDs
 	public static String CONTEXT_STORE_INTENT = "edu.fsu.cs.contextprovider.store";
-
 	public static String CONTEXT_RESTART_INTENT = "edu.fsu.cs.contextprovider.restart";
 
 	
-	
-//	public static final String DERIVED_DENSITY = "Density";
-//	public static final String DERIVED_BIOME = "Biome";
-//	public static final String PROXIMITY_ALL = "PROXIMITY_ALL";
-//	public static final String PROXIMITY_TO = "Proximity to";
-//	public static final String PROXIMITY_NEAR = "Location near";
-//	public static final String PROXIMITY_FAR = "Location far";
 
 	public static float getMaxSensorRange(Context context, int sensorType, float defaultValue) {
 		float max = defaultValue;

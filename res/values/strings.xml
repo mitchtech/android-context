@@ -86,12 +86,12 @@
 
 
 
-	<string name="locationTitle">Location</string>
+	<string name="placeTitle">Place</string>
 	<string name="movementTitle">Movement</string>
-	<string name="weatherTitle">Weather</string>
-	<string name="socialTitle">Social</string>
-	<string name="systemTitle">System</string>
-	<string name="derivedTitle">Derived</string>
+	<string name="activityTitle">Activity</string>
+	<string name="shelterTitle">Shelter</string>
+	<string name="onPersonTitle">OnPerson</string>
+
 	<string name="accuracy">Accuracy</string>
 	<string name="submit">Submit</string>
 	<string name="reset">Reset</string>

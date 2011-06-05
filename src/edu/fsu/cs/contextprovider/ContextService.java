@@ -67,7 +67,9 @@ public class ContextService extends Service {
 	}
 
 	private void startService() {
+		
 		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
+		
 		IntentFilter storeFilter = new IntentFilter();
 		storeFilter.addAction(ContextConstants.CONTEXT_STORE_INTENT);
 		registerReceiver(contextIntentReceiver, storeFilter);
@@ -107,30 +109,28 @@ public class ContextService extends Service {
 			Intent intent = new Intent(ctx, edu.fsu.cs.contextprovider.ContextAccuracyActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(intent);
-
 		}
 	};
 
 	BroadcastReceiver contextIntentReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			Log.d(TAG, "Received Intent: " + intent.getAction());
-			Boolean locationAccurate, movementAccurate, weatherAccurate, socialAccurate, systemAccurate, derivedAccurate;
+			Boolean placeAccurate, movementAccurate, activityAccurate, shelterAccurate, onPersonAccurate;
 
-			locationAccurate = intent.getBooleanExtra(ContextConstants.LOCATION_ACCURATE, false);
-			movementAccurate = intent.getBooleanExtra(ContextConstants.MOVEMENT_ACCURATE, false);
-			weatherAccurate = intent.getBooleanExtra(ContextConstants.WEATHER_ACCURATE, false);
-			socialAccurate = intent.getBooleanExtra(ContextConstants.SOCIAL_ACCURATE, false);
-			systemAccurate = intent.getBooleanExtra(ContextConstants.SYSTEM_ACCURATE, false);
-			derivedAccurate = intent.getBooleanExtra(ContextConstants.DERIVED_ACCURATE, false);
+			placeAccurate = intent.getBooleanExtra(ContextConstants.PLACE_ACCURATE, true);
+			movementAccurate = intent.getBooleanExtra(ContextConstants.MOVEMENT_ACCURATE, true);
+			activityAccurate = intent.getBooleanExtra(ContextConstants.ACTIVITY_ACCURATE, true);
+			shelterAccurate = intent.getBooleanExtra(ContextConstants.SHELTER_ACCURATE, true);
+			onPersonAccurate = intent.getBooleanExtra(ContextConstants.ONPERSON_ACCURATE, true);
 
 			Toast.makeText(
 					getApplicationContext(),
-					"ContextService Accuracy: \n" + "Location: " + locationAccurate + "\n" + "Movement: " + movementAccurate + "\n" + "Weather: "
-							+ weatherAccurate + "\n" + "Social: " + socialAccurate + "\n" + "System: " + systemAccurate + "\n" + "Derived: " + derivedAccurate,
+					"ContextService Accuracy: \n" + "Place: " + placeAccurate + "\n" + "Movement: " + movementAccurate + "\n" + "Activity: "
+							+ activityAccurate + "\n" + "Shelter: " + shelterAccurate + "\n" + "OnPerson: " + onPersonAccurate,
 					Toast.LENGTH_LONG).show();
 
 			try {
-				StoreLocation(String.valueOf(locationAccurate));
+				StoreLocation(String.valueOf(placeAccurate));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -142,25 +142,19 @@ public class ContextService extends Service {
 				e.printStackTrace();
 			}
 			try {
-				StoreWeather(String.valueOf(weatherAccurate));
+				StoreWeather(String.valueOf(activityAccurate));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			try {
-				StoreSocial(String.valueOf(socialAccurate));
+				StoreSocial(String.valueOf(shelterAccurate));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			try {
-				StoreSystem(String.valueOf(systemAccurate));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				StoreDerived(String.valueOf(derivedAccurate));
+				StoreSystem(String.valueOf(onPersonAccurate));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

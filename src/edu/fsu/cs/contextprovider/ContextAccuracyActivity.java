@@ -20,22 +20,20 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 public class ContextAccuracyActivity extends Activity implements View.OnClickListener {
-	SeekBar locationBar = null;
+	SeekBar placeBar = null;
 	SeekBar movementBar = null;
-	SeekBar weatherBar = null;
-	SeekBar socialBar = null;
-	SeekBar systemBar = null;
-	SeekBar derivedBar = null;
+	SeekBar activityBar = null;
+	SeekBar shelterBar = null;
+	SeekBar onPersonBar = null;
 	
 	Button submitBtn = null;
 	Button resetBtn = null;
 	
-	final int INDEX_LOCATION = 1;
+	final int INDEX_PLACE = 1;
 	final int INDEX_MOVEMENT = 2;
-	final int INDEX_WEATHER = 3;
-	final int INDEX_SOCIAL = 4;
-	final int INDEX_SYSTEM = 5;
-	final int INDEX_DERIVED = 6;
+	final int INDEX_ACTIVITY = 3;
+	final int INDEX_SHELTER = 4;
+	final int INDEX_ONPERSON = 5;
 	
 //	private PowerManager.WakeLock wakelock;
     private static Timer timer = new Timer(); 
@@ -50,12 +48,11 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 		
 		setContentView(R.layout.accuracy);
 
-		locationBar = (SeekBar) findViewById(R.id.location);
+		placeBar = (SeekBar) findViewById(R.id.place);
 		movementBar = (SeekBar) findViewById(R.id.movement);
-		weatherBar = (SeekBar) findViewById(R.id.weather);
-		socialBar = (SeekBar) findViewById(R.id.social);
-		systemBar = (SeekBar) findViewById(R.id.system);
-		derivedBar = (SeekBar) findViewById(R.id.derived);
+		activityBar = (SeekBar) findViewById(R.id.activity);
+		shelterBar = (SeekBar) findViewById(R.id.shelter);
+		onPersonBar = (SeekBar) findViewById(R.id.onPerson);
 		
 		submitBtn = (Button) findViewById(R.id.SubmitButton);
 		resetBtn = (Button) findViewById(R.id.ResetButton);
@@ -101,12 +98,11 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 	
 	
 	private void resetBars() {
-		initBar(locationBar, INDEX_LOCATION);
-		initBar(movementBar, INDEX_LOCATION);
-		initBar(weatherBar, INDEX_LOCATION);
-		initBar(socialBar, INDEX_LOCATION);
-		initBar(systemBar, INDEX_LOCATION);
-		initBar(derivedBar, INDEX_LOCATION);
+		initBar(placeBar, INDEX_PLACE);
+		initBar(movementBar, INDEX_MOVEMENT);
+		initBar(activityBar, INDEX_ACTIVITY);
+		initBar(shelterBar, INDEX_SHELTER);
+		initBar(onPersonBar, INDEX_ONPERSON);
 	}
 
 
@@ -127,12 +123,12 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
         public void run() 
         {
         	Intent intent = new Intent(ContextConstants.CONTEXT_STORE_INTENT);
-        	intent.putExtra(ContextConstants.LOCATION_ACCURATE, true);
-        	intent.putExtra(ContextConstants.MOVEMENT_ACCURATE, true);
-      		intent.putExtra(ContextConstants.WEATHER_ACCURATE, true);
-     		intent.putExtra(ContextConstants.SOCIAL_ACCURATE, true);
-        	intent.putExtra(ContextConstants.SYSTEM_ACCURATE, true);
-        	intent.putExtra(ContextConstants.DERIVED_ACCURATE, true);
+        	
+        	intent.putExtra(ContextConstants.PLACE_ACCURATE, placeBar.getProgress());
+      		intent.putExtra(ContextConstants.MOVEMENT_ACCURATE, movementBar.getProgress());
+     		intent.putExtra(ContextConstants.ACTIVITY_ACCURATE, activityBar.getProgress());
+        	intent.putExtra(ContextConstants.SHELTER_ACCURATE, shelterBar.getProgress());
+        	intent.putExtra(ContextConstants.ONPERSON_ACCURATE, onPersonBar.getProgress());
         	sendBroadcast(intent);
         	
         	finish();

@@ -75,8 +75,6 @@ public class ContextAccuracyActivity extends ListActivity {
 		list.add(socialModel);
 		ContextRowModel systemModel = new ContextRowModel("System", String.valueOf(SystemMonitor.isBatteryPlugged()));
 		list.add(systemModel);
-		ContextRowModel derivedModel = new ContextRowModel("Derived", DerivedMonitor.getActivity());
-		list.add(derivedModel);	
 
 		setListAdapter(new ContextAdapter(list));
 		
