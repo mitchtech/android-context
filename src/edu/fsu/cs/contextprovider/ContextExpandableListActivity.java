@@ -107,32 +107,34 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 
 	// location prefs
 	private boolean locationEnabled;
-	private boolean proximityEnabled;
-	private int locationPollingFreq;
+	private int locationPollFreq;
+	private int locationStoreFreq;
 	// movement prefs
 	private boolean movementEnabled;
-	private int movementPollingFreq;
+	private int movementPollFreq;
 	// weather prefs
 	private boolean weatherEnabled;
-	private int weatherPollingFreq;
+	private int weatherPollFreq;
+	private int weatherStoreFreq;
 	// social prefs
-	private boolean socialEnabled;	
+	private boolean socialEnabled;
 	// system prefs
 	private boolean systemEnabled;
 	// derived prefs
 	private boolean derivedEnabled;
+	private int derivedCalcFreq;
+	private int derivedStoreFreq;
 	// general prefs
 	private boolean startupEnabled;
-	private boolean ttsEnabled;
-	private boolean shakeEnabled;
 	private boolean accuracyPopupEnabled;
 	private boolean accuracyAudioEnabled;
-	private int accuracyPopupDelay;
+	private int accuracyPopupPeriod;
 	private int accuracyDismissDelay;
+	// debug
+	private boolean ttsEnabled;
+	private boolean shakeEnabled;
 	
 	
-	
-
 	public static boolean running = false;
 	public static TextToSpeech tts;
 
@@ -182,49 +184,52 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		bindService(new Intent(this, ContextProviderService.class), conn, Context.BIND_AUTO_CREATE);
 
 		if (locationEnabled) {
-			/* Start GPS Service */
-			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.GPSService.class);
-			startService(intent);
-
-			/* Start Network Service */
-			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.NetworkService.class);
-			startService(intent);
-
-			/* Start LocationMonitor */
-			Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-			LocationMonitor.StartThread(5, geocoder);
+//			/* Start GPS Service */
+//			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.GPSService.class);
+//			startService(intent);
+//			/* Start Network Service */
+//			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.NetworkService.class);
+//			startService(intent);
+//			/* Start LocationMonitor */
+//			Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+//			LocationMonitor.StartThread(5, geocoder);
 			refreshLocation();
 		}
+		
 		if (movementEnabled) {
-			/* Start Accelerometer Service */
-			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.AccelerometerService.class);
-			startService(intent);
-
-			/* Start movement context */
-			MovementMonitor.StartThread(5);
+//			/* Start Accelerometer Service */
+//			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.AccelerometerService.class);
+//			startService(intent);
+//			/* Start movement context */
+//			MovementMonitor.StartThread(5);
 			refreshMovement();
 		}
+		
 		if (weatherEnabled) {
-			/* Start weather monitor */
-			WeatherMonitor.StartThread(60);
+//			/* Start weather monitor */
+//			WeatherMonitor.StartThread(60);
 			refreshWeather();
 		}
+		
 		if (systemEnabled) {
-			/* Start Phone/SMS State Monitor Services */
-			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.TelephonyService.class);
-			startService(intent);
+//			/* Start Phone/SMS State Monitor Services */
+//			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.TelephonyService.class);
+//			startService(intent);
 			refreshSystem();
 		}
+		
 		if (socialEnabled) {
-			/* Start social monitor */
-			SocialMonitor.StartThread(60);
+//			/* Start social monitor */
+//			SocialMonitor.StartThread(60);
 			refreshSocial();
 		}
 		if (derivedEnabled) {
-			/* Start derived monitor */
-			DerivedMonitor.StartThread(60);
+//			/* Start derived monitor */
+//			DerivedMonitor.StartThread(60);
 			refreshDerived();
 		}
+		
+			
 
 		// Set up our adapter
 		mAdapter = new SimpleExpandableListAdapter(this, groupData, android.R.layout.simple_expandable_list_item_1, new String[] { NAME, VALUE }, new int[] {
@@ -251,7 +256,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 
 		// general
 		startupEnabled = prefs.getBoolean("PREFS_STARTUP_ENABLED", true);
-		ttsEnabled = prefs.getBoolean("PREFS_TTS_ENABLED", true);
+		ttsEnabled = prefs.getBoolean("PREFS_TTS_ENABLED", false);
 
 		locationEnabled = prefs.getBoolean("PREFS_LOCATION_ENABLED", true);
 		movementEnabled = prefs.getBoolean("PREFS_MOVEMENT_ENABLED", true);

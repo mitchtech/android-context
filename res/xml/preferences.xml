@@ -2,20 +2,9 @@
 <PreferenceScreen android:title="@string/app_name" xmlns:android="http://schemas.android.com/apk/res/android">
 	<PreferenceCategory android:title="General"
 		android:key="PREFS_GENERAL">
-		<EditTextPreference android:title="Decimal Places"
-			android:summary="Number of Decimal Places to Round" android:key="PREFS_DECIMAL_PLACES"
-			android:defaultValue="2" android:dialogTitle="Number of Decimal Places"
-			android:negativeButtonText="@string/cancel"
-			android:positiveButtonText="@string/ok"></EditTextPreference>
 		<CheckBoxPreference android:key="PREFS_STARTUP_ENABLED"
 			android:title="Run at Startup" android:summaryOn="Run at Startup Enabled"
 			android:summaryOff="Run at Startup Disabled"></CheckBoxPreference>
-		<CheckBoxPreference android:key="PREFS_SHAKE_ENABLED"
-			android:title="Shake Response" android:summaryOn="Instant-On Shake Response Enabled"
-			android:summaryOff="Instant-On Shake Response Disabled"></CheckBoxPreference>
-		<CheckBoxPreference android:key="PREFS_TTS_ENABLED"
-			android:title="TTS Context" android:summaryOn="Text-to-Speech Response Enabled"
-			android:summaryOff="Text-to-Speech Response Disabled"></CheckBoxPreference>
 		<CheckBoxPreference android:key="PREFS_ACCURACY_POPUP_ENABLED"
 			android:title="Context Accuracy Popup" android:summaryOn="Context Accuracy Popup Enabled"
 			android:summaryOff="Context Accuracy Popup Disabled"></CheckBoxPreference>
@@ -44,8 +33,13 @@
 		<ListPreference android:entryValues="@array/prefs_polling_freq_values"
 			android:entries="@array/prefs_polling_freq" android:defaultValue="1"
 			android:negativeButtonText="@string/cancel"
-			android:positiveButtonText="@string/ok" android:dialogTitle="Location Polling Frequency"
-			android:title="Location Polling Frequency" android:key="PREFS_LOCATION_POLLING_FREQ"></ListPreference>
+			android:positiveButtonText="@string/ok" android:dialogTitle="Location Poll Frequency"
+			android:title="Location Poll Frequency" android:key="PREFS_LOCATION_POLL_FREQ"></ListPreference>
+		<ListPreference android:entryValues="@array/prefs_polling_freq_values"
+			android:entries="@array/prefs_polling_freq" android:defaultValue="1"
+			android:negativeButtonText="@string/cancel"
+			android:positiveButtonText="@string/ok" android:dialogTitle="Location Store Frequency"
+			android:title="Location Store Frequency" android:key="PREFS_LOCATION_STORE_FREQ"></ListPreference>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="Movement Paramaters"
 		android:key="PREFS_MOVEMENT">
@@ -55,8 +49,13 @@
 		<ListPreference android:entryValues="@array/prefs_polling_freq_values"
 			android:entries="@array/prefs_polling_freq" android:defaultValue="1"
 			android:negativeButtonText="@string/cancel"
-			android:positiveButtonText="@string/ok" android:dialogTitle="Movement Polling Frequency"
-			android:title="Movement Polling Frequency" android:key="PREFS_MOVEMENT_POLLING_FREQ"></ListPreference>
+			android:positiveButtonText="@string/ok" android:dialogTitle="Movement Poll Frequency"
+			android:title="Movement Poll Frequency" android:key="PREFS_MOVEMENT_POLL_FREQ"></ListPreference>
+		<ListPreference android:entryValues="@array/prefs_polling_freq_values"
+			android:entries="@array/prefs_polling_freq" android:defaultValue="1"
+			android:negativeButtonText="@string/cancel"
+			android:positiveButtonText="@string/ok" android:dialogTitle="Movement Store Frequency"
+			android:title="Movement Store Frequency" android:key="PREFS_MOVEMENT_STORE_FREQ"></ListPreference>
 	</PreferenceCategory>
 	<PreferenceCategory android:key="PREFS_WEATHER"
 		android:title="Weather Paramaters">
@@ -66,8 +65,8 @@
 		<ListPreference android:entryValues="@array/prefs_polling_freq_values"
 			android:entries="@array/prefs_polling_freq" android:defaultValue="1"
 			android:negativeButtonText="@string/cancel"
-			android:positiveButtonText="@string/ok" android:dialogTitle="Weather Polling Frequency"
-			android:title="Weather Polling Frequency" android:key="PREFS_WEATHER_POLLING_FREQ"></ListPreference>
+			android:positiveButtonText="@string/ok" android:dialogTitle="Weather Poll Frequency"
+			android:title="Weather Poll Frequency" android:key="PREFS_WEATHER_POLL_FREQ"></ListPreference>
 	</PreferenceCategory>
 	<PreferenceCategory android:key="PREFS_SYSTEM"
 		android:title="System Paramaters">
@@ -90,6 +89,21 @@
 			android:entries="@array/prefs_polling_freq" android:defaultValue="1"
 			android:negativeButtonText="@string/cancel"
 			android:positiveButtonText="@string/ok" android:dialogTitle="Derived Calculation Frequency"
-			android:title="Derived Calculation Frequency" android:key="PREFS_DERIVED_CALCULATE_FREQ"></ListPreference>
+			android:title="Derived Calculation Frequency" android:key="PREFS_DERIVED_CALC_FREQ"></ListPreference>
+		<ListPreference android:entryValues="@array/prefs_polling_freq_values"
+			android:entries="@array/prefs_polling_freq" android:defaultValue="1"
+			android:negativeButtonText="@string/cancel"
+			android:positiveButtonText="@string/ok" android:dialogTitle="Derived Store Frequency"
+			android:title="Derived Store Frequency" android:key="PREFS_DERIVED_STORE_FREQ"></ListPreference>
+	</PreferenceCategory>
+		<PreferenceCategory android:key="PREFS_DEBUG"
+		android:title="Debugging Options">
+		<CheckBoxPreference android:key="PREFS_SHAKE_ENABLED"
+			android:title="Shake Response" android:summaryOn="Instant-On Shake Response Enabled"
+			android:summaryOff="Instant-On Shake Response Disabled"></CheckBoxPreference>
+		<CheckBoxPreference android:key="PREFS_TTS_ENABLED"
+			android:title="TTS Context" android:summaryOn="Text-to-Speech Response Enabled"
+			android:summaryOff="Text-to-Speech Response Disabled"></CheckBoxPreference>
+
 	</PreferenceCategory>
 </PreferenceScreen>

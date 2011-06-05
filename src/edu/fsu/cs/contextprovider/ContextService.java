@@ -1,6 +1,7 @@
 package edu.fsu.cs.contextprovider;
 
 import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -36,6 +37,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Geocoder;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.IBinder;
@@ -55,6 +57,44 @@ public class ContextService extends Service {
 	// 5 min = 300 sec
 	// 15 min = 900 sec
 	private long POPUP_FREQ = 45;
+	
+	
+	// location prefs
+	private boolean locationEnabled;
+	private int locationPollFreq;
+	private int locationStoreFreq;
+	// movement prefs
+	private boolean movementEnabled;
+	private int movementPollFreq;
+	// weather prefs
+	private boolean weatherEnabled;
+	private int weatherPollFreq;
+	private int weatherStoreFreq;
+	// social prefs
+	private boolean socialEnabled;
+	// system prefs
+	private boolean systemEnabled;
+	// derived prefs
+	private boolean derivedEnabled;
+	private int derivedCalcFreq;
+	private int derivedStoreFreq;
+	// general prefs
+	private boolean startupEnabled;
+	private boolean accuracyPopupEnabled;
+	private boolean accuracyAudioEnabled;
+	private int accuracyPopupPeriod;
+	private int accuracyDismissDelay;
+	// debug
+	private boolean ttsEnabled;
+	private boolean shakeEnabled;
+	
+	
+	
+	
+	
+	
+	
+	
 
 	public IBinder onBind(Intent arg0) {
 		return null;
@@ -68,7 +108,7 @@ public class ContextService extends Service {
 
 	private void startService() {
 		
-		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
+		
 		
 		IntentFilter storeFilter = new IntentFilter();
 		storeFilter.addAction(ContextConstants.CONTEXT_STORE_INTENT);
@@ -78,7 +118,75 @@ public class ContextService extends Service {
 		restartFilter.addAction(ContextConstants.CONTEXT_RESTART_INTENT);
 		registerReceiver(restartIntentReceiver, restartFilter);
 
+		Intent intent = null;
+		
+		if (locationEnabled) {
+			/* Start GPS Service */
+			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.GPSService.class);
+			startService(intent);
+			/* Start Network Service */
+			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.NetworkService.class);
+			startService(intent);
+			/* Start LocationMonitor */
+			Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+			LocationMonitor.StartThread(5, geocoder);
+//			refreshLocation();
+		}
+		if (movementEnabled) {
+			/* Start Accelerometer Service */
+			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.AccelerometerService.class);
+			startService(intent);
+			/* Start movement context */
+			MovementMonitor.StartThread(5);
+//			refreshMovement();
+		}
+		if (weatherEnabled) {
+			/* Start weather monitor */
+			WeatherMonitor.StartThread(60);
+//			refreshWeather();
+		}
+		if (systemEnabled) {
+			/* Start Phone/SMS State Monitor Services */
+			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.TelephonyService.class);
+			startService(intent);
+//			refreshSystem();
+		}
+		if (socialEnabled) {
+			/* Start social monitor */
+			SocialMonitor.StartThread(60);
+//			refreshSocial();
+		}
+		if (derivedEnabled) {
+			/* Start derived monitor */
+			DerivedMonitor.StartThread(60);
+//			refreshDerived();
+		}
+		
 		timer.schedule(new ContextPopupTask(), (POPUP_FREQ * 1000)); // seconds*1000
+		
+	}
+	
+	
+	private void getPrefs() {
+
+//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
+		
+		// general
+		startupEnabled = prefs.getBoolean("PREFS_STARTUP_ENABLED", true);
+
+		locationEnabled = prefs.getBoolean("PREFS_LOCATION_ENABLED", true);
+		movementEnabled = prefs.getBoolean("PREFS_MOVEMENT_ENABLED", true);
+		weatherEnabled = prefs.getBoolean("PREFS_WEATHER_ENABLED", true);
+		socialEnabled = prefs.getBoolean("PREFS_SOCIAL_ENABLED", true);
+		systemEnabled = prefs.getBoolean("PREFS_SYSTEM_ENABLED", true);
+		derivedEnabled = prefs.getBoolean("PREFS_DERIVED_ENABLED", true);
+		
+		
+		
+		
+		
+		
 	}
 
 	
