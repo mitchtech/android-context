@@ -104,6 +104,7 @@ public class ContextService extends Service {
 	private void startService() {
 		
 		getPrefs();
+		startMonitors();
 		
 		IntentFilter storeFilter = new IntentFilter();
 		storeFilter.addAction(ContextConstants.CONTEXT_STORE_INTENT);
@@ -112,7 +113,13 @@ public class ContextService extends Service {
 		IntentFilter restartFilter = new IntentFilter();
 		restartFilter.addAction(ContextConstants.CONTEXT_RESTART_INTENT);
 		registerReceiver(restartIntentReceiver, restartFilter);
-
+		
+		timer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
+	}
+	
+	
+	private void startMonitors() {
+		
 		Intent intent = null;
 		
 		if (locationEnabled) {
@@ -156,8 +163,33 @@ public class ContextService extends Service {
 			DerivedMonitor.StartThread(derivedCalcFreq);
 //			refreshDerived();
 		}
+	}
+	
+	
+	
+	
+	private void stopMonitors() {
 		
-		timer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
+		if (locationEnabled) {
+			LocationMonitor.StopThread();
+		}
+		if (movementEnabled) {
+			MovementMonitor.StopThread();
+		}
+		if (weatherEnabled) {
+			WeatherMonitor.StopThread();
+		}
+		if (systemEnabled) {
+//			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.TelephonyService.class);
+//			startService(intent);
+		}
+		if (socialEnabled) {
+			SocialMonitor.StopThread();
+		}
+		if (derivedEnabled) {
+			DerivedMonitor.StopThread();
+		}
+//		timer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
 	}
 	
 	
@@ -284,6 +316,9 @@ public class ContextService extends Service {
 		public void onReceive(Context context, Intent intent) {
 			Log.d(TAG, "Received Intent: " + intent.getAction());
 			Toast.makeText(getApplicationContext(), "ContextService Restart", Toast.LENGTH_LONG).show();
+			stopMonitors();
+			getPrefs();
+			startMonitors();
 		}
 	};
 
