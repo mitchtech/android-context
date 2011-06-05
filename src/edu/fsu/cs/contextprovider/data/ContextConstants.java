@@ -62,19 +62,51 @@ public class ContextConstants {
 	
 	
 	// for accuracy checking screen
-	public static String PLACE_ACCURATE = "PLACE_ACCURATE";
-	public static String MOVEMENT_ACCURATE = "MOVEMENT_ACCURATE";
-	public static String ACTIVITY_ACCURATE = "ACTIVITY_ACCURATE";
-	public static String SHELTER_ACCURATE = "SHELTER_ACCURATE";
-	public static String ONPERSON_ACCURATE = "ONPERSON_ACCURATE";
+	public static final String PLACE_ACCURATE = "PLACE_ACCURATE";
+	public static final String MOVEMENT_ACCURATE = "MOVEMENT_ACCURATE";
+	public static final String ACTIVITY_ACCURATE = "ACTIVITY_ACCURATE";
+	public static final String SHELTER_ACCURATE = "SHELTER_ACCURATE";
+	public static final String ONPERSON_ACCURATE = "ONPERSON_ACCURATE";
 	
 	
 	// intent IDs
-	public static String CONTEXT_STORE_INTENT = "edu.fsu.cs.contextprovider.store";
-	public static String CONTEXT_RESTART_INTENT = "edu.fsu.cs.contextprovider.restart";
+	public static final String CONTEXT_STORE_INTENT = "edu.fsu.cs.contextprovider.store";
+	public static final String CONTEXT_RESTART_INTENT = "edu.fsu.cs.contextprovider.restart";
 
 	
-
+	// location prefs
+	public static final String PREFS_LOCATION_ENABLED = "PREFS_LOCATION_ENABLED";
+	public static final String PREFS_LOCATION_PROXIMITY_ENABLED = "PREFS_LOCATION_PROXIMITY_ENABLED";
+	public static final String PREFS_LOCATION_POLL_FREQ = "PREFS_LOCATION_POLL_FREQ";
+	public static String PREFS_LOCATION_STORE_FREQ = "PREFS_LOCATION_STORE_FREQ";
+	// movement prefs
+	public static final String PREFS_MOVEMENT_ENABLED = "PREFS_MOVEMENT_ENABLED";
+	public static final String PREFS_MOVEMENT_POLL_FREQ = "PREFS_MOVEMENT_POLL_FREQ";
+	public static final String PREFS_MOVEMENT_STORE_FREQ = "PREFS_MOVEMENT_STORE_FREQ";
+	// weather prefs
+	public static final String PREFS_WEATHER_ENABLED = "PREFS_WEATHER_ENABLED";
+	public static final String PREFS_WEATHER_POLL_FREQ = "PREFS_WEATHER_POLL_FREQ";
+	public static final String PREFS_WEATHER_STORE_FREQ = "PREFS_WEATHER_STORE_FREQ";
+	// social prefs
+	public static final String PREFS_SOCIAL_ENABLED = "PREFS_SOCIAL_ENABLED";
+	// system prefs
+	public static final String PREFS_SYSTEM_ENABLED = "PREFS_SYSTEM_ENABLED";
+	// derived prefs
+	public static final String PREFS_DERIVED_ENABLED = "PREFS_DERIVED_ENABLED";
+	public static final String PREFS_DERIVED_CALC_FREQ = "PREFS_DERIVED_CALC_FREQ";
+	public static final String PREFS_DERIVED_STORE_FREQ = "PREFS_DERIVED_STORE_FREQ";
+	// general prefs
+	public static final String PREFS_STARTUP_ENABLED = "PREFS_STARTUP_ENABLED";
+	public static final String PREFS_ACCURACY_POPUP_ENABLED = "PREFS_ACCURACY_POPUP_ENABLED";
+	public static final String PREFS_ACCURACY_AUDIO_ENABLED = "PREFS_ACCURACY_AUDIO_ENABLED";
+	public static final String PREFS_ACCURACY_POPUP_PERIOD = "PREFS_ACCURACY_POPUP_PERIOD";
+	public static final String PREFS_ACCURACY_POPUP_DISMISS_DELAY = "PREFS_ACCURACY_POPUP_DISMISS_DELAY";
+	// debug
+	public static final String PREFS_TTS_ENABLED = "PREFS_TTS_ENABLED";
+	public static final String PREFS_SHAKE_ENABLED = "PREFS_SHAKE_ENABLED";
+	
+	
+	
 	public static float getMaxSensorRange(Context context, int sensorType, float defaultValue) {
 		float max = defaultValue;
 		SensorManager sm = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);

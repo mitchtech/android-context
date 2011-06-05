@@ -61,11 +61,13 @@ public class ContextService extends Service {
 	
 	// location prefs
 	private boolean locationEnabled;
+	private boolean locationProximityEnabled;
 	private int locationPollFreq;
 	private int locationStoreFreq;
 	// movement prefs
 	private boolean movementEnabled;
 	private int movementPollFreq;
+	private int movementStoreFreq;
 	// weather prefs
 	private boolean weatherEnabled;
 	private int weatherPollFreq;
@@ -91,10 +93,7 @@ public class ContextService extends Service {
 	
 	
 	
-	
-	
-	
-	
+		
 
 	public IBinder onBind(Intent arg0) {
 		return null;
@@ -108,7 +107,7 @@ public class ContextService extends Service {
 
 	private void startService() {
 		
-		
+		getPrefs();
 		
 		IntentFilter storeFilter = new IntentFilter();
 		storeFilter.addAction(ContextConstants.CONTEXT_STORE_INTENT);
@@ -172,24 +171,36 @@ public class ContextService extends Service {
 //		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
 		
-		// general
-		startupEnabled = prefs.getBoolean("PREFS_STARTUP_ENABLED", true);
+		startupEnabled = prefs.getBoolean(ContextConstants.PREFS_STARTUP_ENABLED, true);
+		accuracyPopupEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_ENABLED, true);
+		accuracyAudioEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_AUDIO_ENABLED, true);
+		accuracyPopupPeriod = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_PERIOD, 0);
+		accuracyDismissDelay = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_DISMISS_DELAY, 0);	
+		
+		locationEnabled = prefs.getBoolean(ContextConstants.PREFS_LOCATION_ENABLED, true);
+		locationProximityEnabled = prefs.getBoolean(ContextConstants.PREFS_LOCATION_PROXIMITY_ENABLED, true);
+		locationPollFreq = prefs.getInt(ContextConstants.PREFS_LOCATION_POLL_FREQ, 0);
+		locationStoreFreq = prefs.getInt(ContextConstants.PREFS_LOCATION_STORE_FREQ, 0);
+		
+		movementEnabled = prefs.getBoolean(ContextConstants.PREFS_MOVEMENT_ENABLED, true);
+		movementPollFreq = prefs.getInt(ContextConstants.PREFS_MOVEMENT_POLL_FREQ, 0);
+		movementStoreFreq = prefs.getInt(ContextConstants.PREFS_MOVEMENT_STORE_FREQ, 0);
+		
+		weatherEnabled = prefs.getBoolean(ContextConstants.PREFS_WEATHER_ENABLED, true);
+		weatherPollFreq = prefs.getInt(ContextConstants.PREFS_WEATHER_POLL_FREQ, 0);
+		weatherStoreFreq = prefs.getInt(ContextConstants.PREFS_WEATHER_STORE_FREQ, 0);
 
-		locationEnabled = prefs.getBoolean("PREFS_LOCATION_ENABLED", true);
-		movementEnabled = prefs.getBoolean("PREFS_MOVEMENT_ENABLED", true);
-		weatherEnabled = prefs.getBoolean("PREFS_WEATHER_ENABLED", true);
-		socialEnabled = prefs.getBoolean("PREFS_SOCIAL_ENABLED", true);
-		systemEnabled = prefs.getBoolean("PREFS_SYSTEM_ENABLED", true);
-		derivedEnabled = prefs.getBoolean("PREFS_DERIVED_ENABLED", true);
+		socialEnabled = prefs.getBoolean(ContextConstants.PREFS_SOCIAL_ENABLED, true);
+		systemEnabled = prefs.getBoolean(ContextConstants.PREFS_SYSTEM_ENABLED, true);
 		
+		derivedEnabled = prefs.getBoolean(ContextConstants.PREFS_DERIVED_ENABLED, true);
+		derivedCalcFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_CALC_FREQ, 0);
+		derivedStoreFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_STORE_FREQ, 0);
 		
-		
-		
-		
-		
+		ttsEnabled = prefs.getBoolean(ContextConstants.PREFS_TTS_ENABLED, true);
+		shakeEnabled = prefs.getBoolean(ContextConstants.PREFS_SHAKE_ENABLED, true);
 	}
 
-	
 	
 	
 	

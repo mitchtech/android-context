@@ -67,6 +67,11 @@
 			android:negativeButtonText="@string/cancel"
 			android:positiveButtonText="@string/ok" android:dialogTitle="Weather Poll Frequency"
 			android:title="Weather Poll Frequency" android:key="PREFS_WEATHER_POLL_FREQ"></ListPreference>
+		<ListPreference android:entryValues="@array/prefs_polling_freq_values"
+			android:entries="@array/prefs_polling_freq" android:defaultValue="1"
+			android:negativeButtonText="@string/cancel"
+			android:positiveButtonText="@string/ok" android:dialogTitle="Weather Store Frequency"
+			android:title="Weather Store Frequency" android:key="PREFS_WEATHER_STORE_FREQ"></ListPreference>
 	</PreferenceCategory>
 	<PreferenceCategory android:key="PREFS_SYSTEM"
 		android:title="System Paramaters">
