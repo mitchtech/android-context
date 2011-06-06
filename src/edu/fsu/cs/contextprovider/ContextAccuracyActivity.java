@@ -214,7 +214,7 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 	
 	private void startVibrate() {
 		long[] pattern = {500, 300};
-		vibrate.vibrate(pattern, 3);
+		vibrate.vibrate(pattern, -1);
 	}
 
 

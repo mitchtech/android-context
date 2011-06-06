@@ -86,15 +86,8 @@ public class ContextService extends Service {
 	private int derivedCalcFreq;
 	private int derivedStoreFreq;
 	// general prefs
-	private boolean startupEnabled;
 	private boolean accuracyPopupEnabled;
-	private boolean accuracyAudioEnabled;
-	private boolean accuracyVibrateEnabled;
 	private int accuracyPopupPeriod;
-	private int accuracyDismissDelay;
-	// debug
-	private boolean ttsEnabled;
-	private boolean shakeEnabled;
 	
 	
 	
@@ -121,6 +114,7 @@ public class ContextService extends Service {
 		restartFilter.addAction(ContextConstants.CONTEXT_RESTART_INTENT);
 		registerReceiver(restartIntentReceiver, restartFilter);
 		
+		if (accuracyPopupEnabled)
 		popupTimer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
 	}
 	
@@ -197,11 +191,8 @@ public class ContextService extends Service {
 //		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
 		
-		startupEnabled = prefs.getBoolean(ContextConstants.PREFS_STARTUP_ENABLED, true);
 		accuracyPopupEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_ENABLED, true);
-		accuracyAudioEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_AUDIO_ENABLED, true);
 		accuracyPopupPeriod = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_PERIOD, 45);
-		accuracyDismissDelay = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_DISMISS_DELAY, 30);	
 		
 		locationEnabled = prefs.getBoolean(ContextConstants.PREFS_LOCATION_ENABLED, true);
 		locationProximityEnabled = prefs.getBoolean(ContextConstants.PREFS_LOCATION_PROXIMITY_ENABLED, true);
@@ -222,9 +213,6 @@ public class ContextService extends Service {
 		derivedEnabled = prefs.getBoolean(ContextConstants.PREFS_DERIVED_ENABLED, true);
 		derivedCalcFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_CALC_FREQ, 5);
 		derivedStoreFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_STORE_FREQ, 30);
-		
-		ttsEnabled = prefs.getBoolean(ContextConstants.PREFS_TTS_ENABLED, false);
-		shakeEnabled = prefs.getBoolean(ContextConstants.PREFS_SHAKE_ENABLED, false);
 	}
 
 	
