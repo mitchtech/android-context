@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EntityConfiguration> 
-	<Database name="EntityMap.db" version="2.0" upgradeClass=""></Database>
+	<Database name="EntityMap.db" version="2" upgradeClass=""></Database>
 	<Entities>
 		<Entity class="edu.fsu.cs.contextprovider.data.LocationEntity"></Entity>
 		<Entity class="edu.fsu.cs.contextprovider.data.MovementEntity"></Entity>

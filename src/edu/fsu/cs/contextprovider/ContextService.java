@@ -89,6 +89,7 @@ public class ContextService extends Service {
 	private boolean startupEnabled;
 	private boolean accuracyPopupEnabled;
 	private boolean accuracyAudioEnabled;
+	private boolean accuracyVibrateEnabled;
 	private int accuracyPopupPeriod;
 	private int accuracyDismissDelay;
 	// debug
@@ -198,7 +199,7 @@ public class ContextService extends Service {
 		
 		startupEnabled = prefs.getBoolean(ContextConstants.PREFS_STARTUP_ENABLED, true);
 		accuracyPopupEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_ENABLED, true);
-		accuracyAudioEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_AUDIO_ENABLED, true);
+		accuracyAudioEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_AUDIO_ENABLED, true);
 		accuracyPopupPeriod = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_PERIOD, 45);
 		accuracyDismissDelay = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_DISMISS_DELAY, 30);	
 		

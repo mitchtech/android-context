@@ -43,7 +43,7 @@ public class LocationMonitor extends TimerTask {
 	private static final String TAG = "LocationMonitor";
 	private static final long radiusOfEarthMeters = 6378100;
 
-	private static final boolean DEBUG_TTS = true;
+	private static final boolean DEBUG_TTS = false;
 	private static boolean running = false;
 	private static Timer timer = new Timer();
 	private static Address currentAddress = null;

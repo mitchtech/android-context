@@ -12,10 +12,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.media.AudioManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.os.Vibrator;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,6 +30,17 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 public class ContextAccuracyActivity extends Activity implements View.OnClickListener {
+	private Ringtone tone;
+	private AudioManager volume;
+	private AudioManager audio;
+	private Vibrator vibrate;
+	
+	SharedPreferences prefs;
+	private boolean accuracyAudioEnabled;
+	private boolean accuracyVibrateEnabled;
+	private int accuracyPopupPeriod;
+	private int accuracyDismissDelay;
+	
 	SeekBar placeBar = null;
 	SeekBar movementBar = null;
 	SeekBar activityBar = null;
@@ -46,11 +64,16 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 	
 //	private PowerManager.WakeLock wakelock;
     private static Timer timer = new Timer(); 
-    private long DISMISS_TIMEOUT = 30;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		getPrefs();
+		
+		vibrate = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+		audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		volume = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		
 //		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 //		wakelock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "ContextAccuracyActivity");
@@ -83,23 +106,44 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 		
 		resetBars();
 		
-        timer.schedule(new ContextDismissTask(), (DISMISS_TIMEOUT*1000));
+        if (accuracyAudioEnabled)
+        	tone.play();
+        if (accuracyVibrateEnabled)
+        	startVibrate();   	
+        
+        timer.schedule(new ContextDismissTask(), (accuracyDismissDelay * 1000));
 
+        
 	}
 	
-//	@Override
-//	protected void onPause() {
-//		super.onPause();
-////		wakelock.release();
-//	}
-//
-//	@Override
-//	protected void onResume() {
-//		super.onResume();
-////		wakelock.acquire();
-//	}
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		timer.cancel();
+		tone.stop();
+		vibrate.cancel();
+//		wakelock.release();
+//		timer.cancel();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+//		wakelock.acquire();
+	}
 	
-	
+	private void getPrefs() {
+
+		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
+
+		accuracyAudioEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_AUDIO_ENABLED, false);
+		accuracyVibrateEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_VIBRATE_ENABLED, true);
+		accuracyPopupPeriod = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_PERIOD, 30);
+		accuracyDismissDelay = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_DISMISS_DELAY, 30);
+		
+		setRingtone();
+	}
 	
 	private void resetBars() {
 		initBar(placeBar, INDEX_PLACE);
@@ -151,10 +195,27 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
         	intent.putExtra(ContextConstants.SHELTER_ACCURATE, (int) shelterBar.getProgress());
         	intent.putExtra(ContextConstants.ONPERSON_ACCURATE, (int) onPersonBar.getProgress());
         	sendBroadcast(intent);
-        	
+        	       	
         	finish();
         }
     }   
+    
+	private void setRingtone() {
+		Uri ringUri;
+		String ringtone = prefs.getString(ContextConstants.PREFS_ACCURACY_POPUP_AUDIO, "Default");
+		
+		if(ringtone.equalsIgnoreCase("default"))
+			ringUri = Settings.System.DEFAULT_RINGTONE_URI;
+		else
+			ringUri = Uri.parse(ringtone);
+		
+		tone = RingtoneManager.getRingtone(this, ringUri);
+	}
+	
+	private void startVibrate() {
+		long[] pattern = {500, 300};
+		vibrate.vibrate(pattern, 3);
+	}
 
 
 

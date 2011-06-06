@@ -251,7 +251,9 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 
 	private void getPrefs() {
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
 
 		// general
 //		startupEnabled = prefs.getBoolean("PREFS_STARTUP_ENABLED", true);
