@@ -85,7 +85,6 @@ import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
 import edu.fsu.cs.contextprovider.sensor.LightService;
 
 public class ContextExpandableListActivity extends ExpandableListActivity implements OnChildClickListener, TextToSpeech.OnInitListener {
-	private static final String PKG = "edu.fsu.cs.contextprovider";
 	private static final String TAG = "ContextExpandableListActivity";
 
 	private static final String NAME = "NAME";

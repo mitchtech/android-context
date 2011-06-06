@@ -28,7 +28,7 @@ import android.view.View;
 
 public class PrefsActivity extends PreferenceActivity {
 	private static final String TAG = "edu.fsu.cs.PrefsActivity";
-	private static final String PREFS_NAME = "ContextPrefs";
+	private static final String PREFS_NAME = ContextConstants.CONTEXT_PREFS;
 
 	private static final int MENU_ABOUT_ID = Menu.FIRST;
 	private static final int ABOUT_DIALOG = 0;

@@ -50,7 +50,12 @@ import android.widget.Toast;
 public class ContextService extends Service {
 	private static final String TAG = "ContextService";
 
-	private static Timer timer = new Timer();
+	private static Timer popupTimer = new Timer();
+	private static Timer locationStoreTimer = new Timer();
+	private static Timer movementStoreTimer = new Timer();
+	private static Timer weatherStoreTimer = new Timer();
+	private static Timer derivedStoreTimer = new Timer();	
+	
 	private Context ctx;
 	EntityManager entityManager;
 	SharedPreferences prefs;
@@ -115,7 +120,7 @@ public class ContextService extends Service {
 		restartFilter.addAction(ContextConstants.CONTEXT_RESTART_INTENT);
 		registerReceiver(restartIntentReceiver, restartFilter);
 		
-		timer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
+		popupTimer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
 	}
 	
 	
@@ -133,7 +138,7 @@ public class ContextService extends Service {
 			/* Start LocationMonitor */
 			Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 			LocationMonitor.StartThread(locationPollFreq, geocoder);
-//			refreshLocation();
+			locationStoreTimer.schedule(new LocationStoreTask(), (locationStoreFreq * 1000)); // seconds*1000
 		}
 		if (movementEnabled) {
 			/* Start Accelerometer Service */
@@ -141,63 +146,50 @@ public class ContextService extends Service {
 			startService(intent);
 			/* Start movement context */
 			MovementMonitor.StartThread(movementPollFreq);
-//			refreshMovement();
+			movementStoreTimer.schedule(new MovementStoreTask(), (movementStoreFreq * 1000)); // seconds*1000
 		}
 		if (weatherEnabled) {
 			/* Start weather monitor */
 			WeatherMonitor.StartThread(weatherPollFreq);
-//			refreshWeather();
+			weatherStoreTimer.schedule(new WeatherStoreTask(), (weatherStoreFreq * 1000)); // seconds*1000
 		}
 		if (systemEnabled) {
-			/* Start Phone/SMS State Monitor Services */
-			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.TelephonyService.class);
-			startService(intent);
-//			refreshSystem();
-		}
-		if (socialEnabled) {
-			/* Start social monitor */
-			SocialMonitor.StartThread(weatherPollFreq);
-//			refreshSocial();
-		}
-		if (derivedEnabled) {
-			/* Start derived monitor */
-			DerivedMonitor.StartThread(derivedCalcFreq);
-//			refreshDerived();
-		}
-	}
-	
-	
-	
-	
-	private void stopMonitors() {
-		
-		if (locationEnabled) {
-			LocationMonitor.StopThread();
-		}
-		if (movementEnabled) {
-			MovementMonitor.StopThread();
-		}
-		if (weatherEnabled) {
-			WeatherMonitor.StopThread();
-		}
-		if (systemEnabled) {
+//			/* Start Phone/SMS State Monitor Services */
 //			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.TelephonyService.class);
 //			startService(intent);
 		}
 		if (socialEnabled) {
-			SocialMonitor.StopThread();
+//			/* Start social monitor */
+//			SocialMonitor.StartThread(weatherPollFreq);
+		}
+		if (derivedEnabled) {
+			/* Start derived monitor */
+			DerivedMonitor.StartThread(derivedCalcFreq);
+			derivedStoreTimer.schedule(new DerivedStoreTask(), (derivedStoreFreq * 1000)); // seconds*1000
+		}
+	}
+	
+
+	private void stopMonitors() {
+		
+		if (locationEnabled) {
+			LocationMonitor.StopThread();
+			locationStoreTimer.cancel();
+		}
+		if (movementEnabled) {
+			MovementMonitor.StopThread();
+			movementStoreTimer.cancel();
+		}
+		if (weatherEnabled) {
+			WeatherMonitor.StopThread();
+			weatherStoreTimer.cancel();			
 		}
 		if (derivedEnabled) {
 			DerivedMonitor.StopThread();
+			derivedStoreTimer.cancel();
 		}
-//		timer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
 	}
-	
-	
-	
-	
-	
-	
+		
 	
 	private void getPrefs() {
 
@@ -241,7 +233,56 @@ public class ContextService extends Service {
 			// long delay = 5000; // + myRandom.nextInt();
 			toastHandler.sendEmptyMessage(0);
 			// toastHandler.sendMessage((Message) String.valueOf(delay));
-			timer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
+			popupTimer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
+		}
+	}
+	
+	private class LocationStoreTask extends TimerTask {
+		public void run() {
+			try {
+				StoreLocation();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			locationStoreTimer.schedule(new LocationStoreTask(), (locationStoreFreq * 1000)); // seconds*1000
+		}
+	}
+
+	
+	private class MovementStoreTask extends TimerTask {
+		public void run() {
+			try {
+				StoreMovement();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			movementStoreTimer.schedule(new MovementStoreTask(), (movementStoreFreq * 1000)); // seconds*1000
+		}
+	}
+	
+	private class WeatherStoreTask extends TimerTask {
+		public void run() {
+			try {
+				StoreWeather();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			weatherStoreTimer.schedule(new WeatherStoreTask(), (weatherStoreFreq * 1000)); // seconds*1000
+		}
+	}
+	
+	private class DerivedStoreTask extends TimerTask {
+		public void run() {
+			try {
+				StoreDerived();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			derivedStoreTimer.schedule(new DerivedStoreTask(), (derivedStoreFreq * 1000)); // seconds*1000
 		}
 	}
 
