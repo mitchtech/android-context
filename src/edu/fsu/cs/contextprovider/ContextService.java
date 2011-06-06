@@ -114,8 +114,8 @@ public class ContextService extends Service {
 		restartFilter.addAction(ContextConstants.CONTEXT_RESTART_INTENT);
 		registerReceiver(restartIntentReceiver, restartFilter);
 		
-		if (accuracyPopupEnabled)
-		popupTimer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
+//		if (accuracyPopupEnabled)
+//		popupTimer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
 	}
 	
 	
@@ -237,7 +237,6 @@ public class ContextService extends Service {
 			locationStoreTimer.schedule(new LocationStoreTask(), (locationStoreFreq * 1000)); // seconds*1000
 		}
 	}
-
 	
 	private class MovementStoreTask extends TimerTask {
 		public void run() {

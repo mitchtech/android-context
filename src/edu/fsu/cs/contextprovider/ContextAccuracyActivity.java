@@ -9,6 +9,7 @@ import edu.fsu.cs.contextprovider.monitor.DerivedMonitor;
 import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
 
 import android.app.Activity;
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,6 +31,8 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 public class ContextAccuracyActivity extends Activity implements View.OnClickListener {
+	private static final String TAG = "WakeupServiceSliderActivity";
+
 	private Ringtone tone;
 	private AudioManager volume;
 	private AudioManager audio;
@@ -62,23 +65,29 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 	final int INDEX_SHELTER = 4;
 	final int INDEX_ONPERSON = 5;
 	
-//	private PowerManager.WakeLock wakelock;
-    private static Timer timer = new Timer(); 
+	private PowerManager.WakeLock wakelock;
+
+	private static Timer timer = new Timer(); 
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d(TAG, "WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON");
+//		 Window w = getWindow(); // in Activity's onCreate() for instance
+//		 w.setFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);		
+		final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		wakelock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "ContextAccuracyActivity");
+		wakelock.acquire();
+		KeyguardManager km = (KeyguardManager) getSystemService (KEYGUARD_SERVICE); 
+		KeyguardManager.KeyguardLock keylock = km.newKeyguardLock(TAG); 
+		keylock.disableKeyguard(); 
 		
 		getPrefs();
+		setContentView(R.layout.accuracy);
 		
 		vibrate = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 		audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		volume = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		
-//		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-//		wakelock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "ContextAccuracyActivity");
-		
-		setContentView(R.layout.accuracy);
+		volume = (AudioManager) getSystemService(Context.AUDIO_SERVICE);		
 
 		placeBar = (SeekBar) findViewById(R.id.place);
 		movementBar = (SeekBar) findViewById(R.id.movement);
@@ -112,19 +121,21 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
         	startVibrate();   	
         
         timer.schedule(new ContextDismissTask(), (accuracyDismissDelay * 1000));
-
         
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
 		timer.cancel();
 		tone.stop();
 		vibrate.cancel();
-//		wakelock.release();
-//		timer.cancel();
+	}
+	
+	@Override
+	protected void onDestroy() {
+		wakelock.release();
+		super.onDestroy();
 	}
 
 	@Override
@@ -217,9 +228,4 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 		vibrate.vibrate(pattern, -1);
 	}
 
-
-
-
-	
-	
 }
