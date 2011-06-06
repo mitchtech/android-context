@@ -403,7 +403,7 @@ public class ContextService extends Service {
 			derived.Place.setValue(DerivedMonitor.getPlace());
 			derived.Activity.setValue(DerivedMonitor.getActivity());
 			derived.Shelter.setValue(DerivedMonitor.getShelterString());
-			derived.Pocket.setValue(DerivedMonitor.getPocketString());
+			derived.Pocket.setValue(DerivedMonitor.getOnPersonString());
 			derived.Mood.setValue(DerivedMonitor.getMood());
 			int uid = entityManager.store(derived);
 		} catch (Exception e) {

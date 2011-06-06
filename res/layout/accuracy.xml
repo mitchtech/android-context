@@ -8,7 +8,7 @@
         <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/placeHeader" android:text="@string/placeTitle"></TextView>
         <LinearLayout android:id="@+id/linearLayout8" android:layout_width="fill_parent" android:layout_height="wrap_content">
             <ImageView android:id="@+id/imageView1" android:src="@drawable/location" android:layout_width="wrap_content" android:layout_height="wrap_content"></ImageView>
-            <EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:editable="false" android:id="@+id/editLocation" android:text="@string/placeTitle"></EditText>
+            <EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:editable="false" android:text="@string/placeTitle" android:id="@+id/editPlace"></EditText>
         </LinearLayout>
         <LinearLayout android:id="@+id/linearLayout1" android:layout_width="fill_parent" android:paddingBottom="10px" android:layout_height="wrap_content">
             <TextView android:layout_height="wrap_content" android:id="@+id/textView1" android:text="@string/accuracy" android:layout_width="wrap_content"></TextView>
@@ -26,7 +26,7 @@
         <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/activityHeader" android:text="@string/activityTitle"></TextView>
         <LinearLayout android:id="@+id/LinearLayout02" android:layout_width="fill_parent" android:layout_height="wrap_content">
             <ImageView android:id="@+id/ImageView01" android:src="@drawable/date" android:layout_width="wrap_content" android:layout_height="wrap_content"></ImageView>
-            <EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/editWeather" android:editable="false" android:text="@string/activityTitle"></EditText>
+            <EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:editable="false" android:text="@string/activityTitle" android:id="@+id/editActivity"></EditText>
         </LinearLayout>
         <LinearLayout android:id="@+id/linearLayout3" android:layout_width="fill_parent" android:paddingBottom="10px" android:layout_height="wrap_content">
             <TextView android:layout_height="wrap_content" android:id="@+id/textView3" android:text="@string/accuracy" android:layout_width="wrap_content"></TextView>
@@ -35,7 +35,7 @@
         <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/shelterHeader" android:text="@string/shelterTitle"></TextView>
         <LinearLayout android:id="@+id/LinearLayout03" android:layout_width="fill_parent" android:layout_height="wrap_content">
             <ImageView android:id="@+id/ImageView02" android:src="@drawable/weather" android:layout_width="wrap_content" android:layout_height="wrap_content"></ImageView>
-            <EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/editSocial" android:editable="false" android:text="@string/shelterTitle"></EditText>
+            <EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:editable="false" android:text="@string/shelterTitle" android:id="@+id/editShelter"></EditText>
         </LinearLayout>
         <LinearLayout android:id="@+id/linearLayout4" android:layout_width="fill_parent" android:paddingBottom="10px" android:layout_height="wrap_content">
             <TextView android:layout_height="wrap_content" android:id="@+id/textView4" android:text="@string/accuracy" android:layout_width="wrap_content"></TextView>
@@ -44,7 +44,7 @@
         <TextView android:layout_height="wrap_content" android:id="@+id/systemHeader" android:layout_width="wrap_content" android:text="@string/onPersonTitle"></TextView>
         <LinearLayout android:id="@+id/LinearLayout05" android:layout_width="fill_parent" android:layout_height="wrap_content">
             <ImageView android:id="@+id/ImageView04" android:src="@drawable/telephony" android:layout_width="wrap_content" android:layout_height="wrap_content"></ImageView>
-            <EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/editSystem" android:editable="false" android:text="@string/onPersonTitle"></EditText>
+            <EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:editable="false" android:text="@string/onPersonTitle" android:id="@+id/editOnPerson"></EditText>
         </LinearLayout>
         <LinearLayout android:id="@+id/linearLayout5" android:layout_width="fill_parent" android:paddingBottom="10px" android:layout_height="wrap_content">
             <TextView android:layout_height="wrap_content" android:id="@+id/textView5" android:text="@string/accuracy" android:layout_width="wrap_content"></TextView>

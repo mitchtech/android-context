@@ -20,8 +20,10 @@ public class DerivedMonitor extends TimerTask {
 	
 	public static String place = "Place";
 	public static String activity = "Activity";
+	
 	public static boolean shelter = true;
-	public static boolean pocket = true;
+	public static boolean onPerson = true;
+	
 	public static String mood = "Mood";
 	
 	
@@ -67,15 +69,21 @@ public class DerivedMonitor extends TimerTask {
 	}
 
 	public static String getShelterString() {
-		return String.valueOf(shelter);
+		if (shelter)
+			return "Indoors";
+		else
+			return "Outdoors";
 	}
 	
-	public static boolean getPocket() {
-		return pocket;
+	public static boolean getonPerson() {
+		return onPerson;
 	}
 	
-	public static String getPocketString() {
-		return String.valueOf(pocket);
+	public static String getOnPersonString() {
+		if (onPerson)
+			return "Device On Person";
+		else
+			return "Device NOT On Person";
 	}
 
 	public static String getMood() {

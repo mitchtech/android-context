@@ -102,7 +102,7 @@ public class ContextProvider extends ContentProvider {
 		results.put(ContextConstants.DERIVED_PLACE, DerivedMonitor.getPlace());
 		results.put(ContextConstants.DERIVED_ACTIVITY, DerivedMonitor.getActivity());
 		results.put(ContextConstants.DERIVED_SHELTER, String.valueOf(DerivedMonitor.getShelter()));
-		results.put(ContextConstants.DERIVED_ONPERSON, String.valueOf(DerivedMonitor.getPocket()));
+		results.put(ContextConstants.DERIVED_ONPERSON, String.valueOf(DerivedMonitor.getonPerson()));
 		results.put(ContextConstants.DERIVED_MOOD, DerivedMonitor.getMood());
 	}
 	

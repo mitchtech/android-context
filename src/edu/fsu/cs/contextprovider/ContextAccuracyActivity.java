@@ -5,6 +5,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import edu.fsu.cs.contextprovider.data.ContextConstants;
+import edu.fsu.cs.contextprovider.monitor.DerivedMonitor;
+import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,6 +18,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -25,6 +28,12 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 	SeekBar activityBar = null;
 	SeekBar shelterBar = null;
 	SeekBar onPersonBar = null;
+	
+	EditText placeText = null;
+	EditText movementText = null;
+	EditText activityText = null;
+	EditText shelterText = null;
+	EditText onPersonText = null;
 	
 	Button submitBtn = null;
 	Button resetBtn = null;
@@ -54,6 +63,18 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 		shelterBar = (SeekBar) findViewById(R.id.shelter);
 		onPersonBar = (SeekBar) findViewById(R.id.onPerson);
 		
+		placeText = (EditText) findViewById(R.id.editPlace);
+		movementText = (EditText) findViewById(R.id.editMovement);
+		activityText = (EditText) findViewById(R.id.editActivity);
+		shelterText = (EditText) findViewById(R.id.editShelter);
+		onPersonText = (EditText) findViewById(R.id.editOnPerson);
+		
+		placeText.setText(DerivedMonitor.getPlace());
+		movementText.setText(MovementMonitor.getMovementState());
+		activityText.setText(DerivedMonitor.getActivity());
+		shelterText.setText(DerivedMonitor.getShelterString());
+		onPersonText.setText(DerivedMonitor.getOnPersonString());
+		
 		submitBtn = (Button) findViewById(R.id.SubmitButton);
 		resetBtn = (Button) findViewById(R.id.ResetButton);
 		
@@ -78,7 +99,16 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 ////		wakelock.acquire();
 //	}
 	
-		
+	
+	
+	private void resetBars() {
+		initBar(placeBar, INDEX_PLACE);
+		initBar(movementBar, INDEX_MOVEMENT);
+		initBar(activityBar, INDEX_ACTIVITY);
+		initBar(shelterBar, INDEX_SHELTER);
+		initBar(onPersonBar, INDEX_ONPERSON);
+	}
+
 
 	private void initBar(SeekBar bar, final int stream) {
 		bar.setMax(10);
@@ -95,24 +125,15 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 			}
 		});
 	}
-	
-	
-	private void resetBars() {
-		initBar(placeBar, INDEX_PLACE);
-		initBar(movementBar, INDEX_MOVEMENT);
-		initBar(activityBar, INDEX_ACTIVITY);
-		initBar(shelterBar, INDEX_SHELTER);
-		initBar(onPersonBar, INDEX_ONPERSON);
-	}
 
-
+	
 	@Override
 	public void onClick(View v) {
 			if (v == resetBtn) {
-				Toast.makeText(this, "Reset", Toast.LENGTH_SHORT).show();		
+				Toast.makeText(this, "Reset defaults", Toast.LENGTH_SHORT).show();		
 				resetBars();
 			} else if (v == submitBtn) {
-				Toast.makeText(this, "Submit", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "Context Submited", Toast.LENGTH_SHORT).show();
 				finish();
 			}
 	}
