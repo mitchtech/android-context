@@ -19,7 +19,6 @@ public class LocationEntity extends AbstractEntity {
     public final DoubleField Latitude = new DoubleField(ContextConstants.LOCATION_LATITUDE);
     public final DoubleField Longitude = new DoubleField(ContextConstants.LOCATION_LONGITUDE);
     public final DoubleField Altitude = new DoubleField(ContextConstants.LOCATION_ALTITUDE);
-    public final TextField Accuracy = new TextField(ContextConstants.CONTEXT_ACCURACY);
 
 	@Override
 	public AbstractEntity createNewInstance() {
@@ -36,7 +35,7 @@ public class LocationEntity extends AbstractEntity {
 	@Override
 	public AbstractField<?>[] getFields() {
 		// TODO Auto-generated method stub
-		return new AbstractField<?>[]{ Timestamp, Address, Neighborhood, Zip, Latitude, Longitude, Altitude, Accuracy };
+		return new AbstractField<?>[]{ Timestamp, Address, Neighborhood, Zip, Latitude, Longitude, Altitude };
 	}
 
 	@Override

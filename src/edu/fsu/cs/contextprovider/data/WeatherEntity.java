@@ -18,7 +18,6 @@ public class WeatherEntity extends AbstractEntity {
     public final StringField Humidity = new StringField(ContextConstants.WEATHER_HUMIDITY);
     public final StringField Wind = new StringField(ContextConstants.WEATHER_WIND);
     public final StringField HazardLevel = new StringField(ContextConstants.WEATHER_HAZARD);
-    public final TextField Accuracy = new TextField(ContextConstants.CONTEXT_ACCURACY);
 
 	@Override
 	public AbstractEntity createNewInstance() {
@@ -35,7 +34,7 @@ public class WeatherEntity extends AbstractEntity {
 	@Override
 	public AbstractField<?>[] getFields() {
 		// TODO Auto-generated method stub
-		return new AbstractField<?>[]{ Timestamp, Condition, Temperature, Humidity, Wind, HazardLevel, Accuracy };
+		return new AbstractField<?>[]{ Timestamp, Condition, Temperature, Humidity, Wind, HazardLevel };
 	}
 
 	@Override

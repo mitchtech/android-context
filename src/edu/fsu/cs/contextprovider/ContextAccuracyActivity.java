@@ -124,11 +124,11 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
         {
         	Intent intent = new Intent(ContextConstants.CONTEXT_STORE_INTENT);
         	
-        	intent.putExtra(ContextConstants.PLACE_ACCURATE, placeBar.getProgress());
-      		intent.putExtra(ContextConstants.MOVEMENT_ACCURATE, movementBar.getProgress());
-     		intent.putExtra(ContextConstants.ACTIVITY_ACCURATE, activityBar.getProgress());
-        	intent.putExtra(ContextConstants.SHELTER_ACCURATE, shelterBar.getProgress());
-        	intent.putExtra(ContextConstants.ONPERSON_ACCURATE, onPersonBar.getProgress());
+        	intent.putExtra(ContextConstants.PLACE_ACCURATE, (int) placeBar.getProgress());
+      		intent.putExtra(ContextConstants.MOVEMENT_ACCURATE, (int) movementBar.getProgress());
+     		intent.putExtra(ContextConstants.ACTIVITY_ACCURATE, (int) activityBar.getProgress());
+        	intent.putExtra(ContextConstants.SHELTER_ACCURATE, (int) shelterBar.getProgress());
+        	intent.putExtra(ContextConstants.ONPERSON_ACCURATE, (int) onPersonBar.getProgress());
         	sendBroadcast(intent);
         	
         	finish();

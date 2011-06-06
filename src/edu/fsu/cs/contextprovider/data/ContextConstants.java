@@ -57,10 +57,9 @@ public class ContextConstants {
 	public static final String DERIVED_PLACE = "Place";
 	public static final String DERIVED_ACTIVITY = "Activity";
 	public static final String DERIVED_SHELTER = "Shelter";
-	public static final String DERIVED_POCKET = "Pocket";
+	public static final String DERIVED_ONPERSON = "OnPerson";
 	public static final String DERIVED_MOOD = "Mood";
-	
-	
+		
 	// for accuracy checking screen
 	public static final String PLACE_ACCURATE = "PLACE_ACCURATE";
 	public static final String MOVEMENT_ACCURATE = "MOVEMENT_ACCURATE";

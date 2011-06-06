@@ -255,7 +255,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 		// general
-		startupEnabled = prefs.getBoolean("PREFS_STARTUP_ENABLED", true);
+//		startupEnabled = prefs.getBoolean("PREFS_STARTUP_ENABLED", true);
 		ttsEnabled = prefs.getBoolean("PREFS_TTS_ENABLED", false);
 
 		locationEnabled = prefs.getBoolean("PREFS_LOCATION_ENABLED", true);
@@ -525,7 +525,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		curChildMap.put(VALUE, "Sleeping");
 		curChildMap = new HashMap<String, String>();
 		derived.add(curChildMap);
-		curChildMap.put(NAME, ContextConstants.DERIVED_POCKET);
+		curChildMap.put(NAME, ContextConstants.DERIVED_ONPERSON);
 		curChildMap.put(VALUE, String.valueOf(LightService.isInPocket()));
 		curChildMap = new HashMap<String, String>();
 		derived.add(curChildMap);

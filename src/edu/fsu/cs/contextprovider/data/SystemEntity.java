@@ -20,7 +20,6 @@ public class SystemEntity extends AbstractEntity {
     public final DateField LastPresent = new DateField(ContextConstants.SYSTEM_LAST_PRESENT);
     public final TextField SSID = new TextField(ContextConstants.SYSTEM_WIFI_SSID);
     public final IntegerField Signal = new IntegerField(ContextConstants.SYSTEM_WIFI_SIGNAL);
-    public final TextField Accuracy = new TextField(ContextConstants.CONTEXT_ACCURACY);
 
     @Override
 	public AbstractEntity createNewInstance() {
@@ -37,7 +36,7 @@ public class SystemEntity extends AbstractEntity {
 	@Override
 	public AbstractField<?>[] getFields() {
 		// TODO Auto-generated method stub
-		return new AbstractField<?>[]{ Timestamp, State, BatteryLevel, Plugged, LastPlugged, LastPresent, SSID, Signal, Accuracy };
+		return new AbstractField<?>[]{ Timestamp, State, BatteryLevel, Plugged, LastPlugged, LastPresent, SSID, Signal };
 	}
 
 	@Override

@@ -18,7 +18,6 @@ public class SocialEntity extends AbstractEntity {
     public final StringField Message = new StringField(ContextConstants.SOCIAL_MESSAGE);
     public final DateField LastIncoming = new DateField(ContextConstants.SOCIAL_LAST_OUT);
     public final DateField LastOutgoing = new DateField(ContextConstants.SOCIAL_LAST_IN);
-    public final TextField Accuracy = new TextField(ContextConstants.CONTEXT_ACCURACY);
 
 	@Override
 	public AbstractEntity createNewInstance() {
@@ -35,7 +34,7 @@ public class SocialEntity extends AbstractEntity {
 	@Override
 	public AbstractField<?>[] getFields() {
 		// TODO Auto-generated method stub
-		return new AbstractField<?>[]{ Timestamp, Contact, Communication, Message, LastIncoming, LastOutgoing, Accuracy };
+		return new AbstractField<?>[]{ Timestamp, Contact, Communication, Message, LastIncoming, LastOutgoing };
 	}
 
 	@Override

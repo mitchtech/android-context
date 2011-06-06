@@ -10,19 +10,19 @@ import net.smart_entity.IntegerField;
 import net.smart_entity.StringField;
 import net.smart_entity.TextField;
 
-public class MovementEntity extends AbstractEntity {
+public class AccuracyEntity extends AbstractEntity {
 	
     public final DateField Timestamp = new DateField(ContextConstants.CONTEXT_TIMESTAMP);
-    public final TextField State = new TextField(ContextConstants.MOVEMENT_STATE);
-    public final DoubleField Speed = new DoubleField(ContextConstants.MOVEMENT_SPEED);
-    public final DoubleField Bearing = new DoubleField(ContextConstants.MOVEMENT_BEARING);
-    public final IntegerField Steps = new IntegerField(ContextConstants.MOVEMENT_STEP_COUNT);
-    public final DateField LastStep = new DateField(ContextConstants.MOVEMENT_LAST_STEP);
+    public final IntegerField Place = new IntegerField(ContextConstants.DERIVED_PLACE);
+    public final IntegerField Movement = new IntegerField(ContextConstants.MOVEMENT_STATE);
+    public final IntegerField Activity = new IntegerField(ContextConstants.DERIVED_ACTIVITY);
+    public final IntegerField Shelter = new IntegerField(ContextConstants.DERIVED_SHELTER);
+    public final IntegerField OnPerson = new IntegerField(ContextConstants.DERIVED_ONPERSON);
 
 	@Override
 	public AbstractEntity createNewInstance() {
 		// TODO Auto-generated method stub
-		return new MovementEntity();
+		return new AccuracyEntity();
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class MovementEntity extends AbstractEntity {
 	@Override
 	public AbstractField<?>[] getFields() {
 		// TODO Auto-generated method stub
-		return new AbstractField<?>[]{ Timestamp, State, Speed, Bearing, Steps, LastStep };
+		return new AbstractField<?>[]{ Timestamp, Place, Movement, Activity, Shelter, OnPerson };
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class MovementEntity extends AbstractEntity {
 	@Override
 	public String getSchemaName() {
 		// TODO Auto-generated method stub
-		return "MovementEntity";
+		return "DerivedEntity";
 	}
 
 }

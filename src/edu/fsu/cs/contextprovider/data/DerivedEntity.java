@@ -16,9 +16,8 @@ public class DerivedEntity extends AbstractEntity {
     public final TextField Place = new TextField(ContextConstants.DERIVED_PLACE);
     public final TextField Activity = new TextField(ContextConstants.DERIVED_ACTIVITY);
     public final TextField Shelter = new TextField(ContextConstants.DERIVED_SHELTER);
-    public final TextField Pocket = new TextField(ContextConstants.DERIVED_POCKET);
+    public final TextField Pocket = new TextField(ContextConstants.DERIVED_ONPERSON);
     public final TextField Mood = new TextField(ContextConstants.DERIVED_MOOD);
-    public final TextField Accuracy = new TextField(ContextConstants.CONTEXT_ACCURACY);
 
 	@Override
 	public AbstractEntity createNewInstance() {
@@ -35,7 +34,7 @@ public class DerivedEntity extends AbstractEntity {
 	@Override
 	public AbstractField<?>[] getFields() {
 		// TODO Auto-generated method stub
-		return new AbstractField<?>[]{ Timestamp, Place, Activity, Shelter, Pocket, Mood, Accuracy };
+		return new AbstractField<?>[]{ Timestamp, Place, Activity, Shelter, Pocket, Mood };
 	}
 
 	@Override

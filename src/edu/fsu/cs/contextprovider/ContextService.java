@@ -14,6 +14,7 @@ import net.smart_entity.IntegerField;
 import net.smart_entity.StringField;
 import net.smart_entity.TextField;
 
+import edu.fsu.cs.contextprovider.data.AccuracyEntity;
 import edu.fsu.cs.contextprovider.data.ContextConstants;
 import edu.fsu.cs.contextprovider.data.DerivedEntity;
 import edu.fsu.cs.contextprovider.data.LocationEntity;
@@ -207,27 +208,27 @@ public class ContextService extends Service {
 		accuracyPopupEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_ENABLED, true);
 		accuracyAudioEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_AUDIO_ENABLED, true);
 		accuracyPopupPeriod = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_PERIOD, 45);
-		accuracyDismissDelay = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_DISMISS_DELAY, 0);	
+		accuracyDismissDelay = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_DISMISS_DELAY, 30);	
 		
 		locationEnabled = prefs.getBoolean(ContextConstants.PREFS_LOCATION_ENABLED, true);
 		locationProximityEnabled = prefs.getBoolean(ContextConstants.PREFS_LOCATION_PROXIMITY_ENABLED, true);
-		locationPollFreq = prefs.getInt(ContextConstants.PREFS_LOCATION_POLL_FREQ, 0);
-		locationStoreFreq = prefs.getInt(ContextConstants.PREFS_LOCATION_STORE_FREQ, 0);
+		locationPollFreq = prefs.getInt(ContextConstants.PREFS_LOCATION_POLL_FREQ, 30);
+		locationStoreFreq = prefs.getInt(ContextConstants.PREFS_LOCATION_STORE_FREQ, 30);
 		
 		movementEnabled = prefs.getBoolean(ContextConstants.PREFS_MOVEMENT_ENABLED, true);
-		movementPollFreq = prefs.getInt(ContextConstants.PREFS_MOVEMENT_POLL_FREQ, 0);
-		movementStoreFreq = prefs.getInt(ContextConstants.PREFS_MOVEMENT_STORE_FREQ, 0);
+		movementPollFreq = prefs.getInt(ContextConstants.PREFS_MOVEMENT_POLL_FREQ, 5);
+		movementStoreFreq = prefs.getInt(ContextConstants.PREFS_MOVEMENT_STORE_FREQ, 30);
 		
 		weatherEnabled = prefs.getBoolean(ContextConstants.PREFS_WEATHER_ENABLED, true);
-		weatherPollFreq = prefs.getInt(ContextConstants.PREFS_WEATHER_POLL_FREQ, 0);
-		weatherStoreFreq = prefs.getInt(ContextConstants.PREFS_WEATHER_STORE_FREQ, 0);
+		weatherPollFreq = prefs.getInt(ContextConstants.PREFS_WEATHER_POLL_FREQ, 60);
+		weatherStoreFreq = prefs.getInt(ContextConstants.PREFS_WEATHER_STORE_FREQ, 30);
 
 		socialEnabled = prefs.getBoolean(ContextConstants.PREFS_SOCIAL_ENABLED, true);
 		systemEnabled = prefs.getBoolean(ContextConstants.PREFS_SYSTEM_ENABLED, true);
 		
 		derivedEnabled = prefs.getBoolean(ContextConstants.PREFS_DERIVED_ENABLED, true);
-		derivedCalcFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_CALC_FREQ, 0);
-		derivedStoreFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_STORE_FREQ, 0);
+		derivedCalcFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_CALC_FREQ, 5);
+		derivedStoreFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_STORE_FREQ, 30);
 		
 		ttsEnabled = prefs.getBoolean(ContextConstants.PREFS_TTS_ENABLED, false);
 		shakeEnabled = prefs.getBoolean(ContextConstants.PREFS_SHAKE_ENABLED, false);
@@ -264,51 +265,28 @@ public class ContextService extends Service {
 	BroadcastReceiver contextIntentReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			Log.d(TAG, "Received Intent: " + intent.getAction());
-			Boolean placeAccurate, movementAccurate, activityAccurate, shelterAccurate, onPersonAccurate;
+			int placeAccurate, movementAccurate, activityAccurate, shelterAccurate, onPersonAccurate;
 
-			placeAccurate = intent.getBooleanExtra(ContextConstants.PLACE_ACCURATE, true);
-			movementAccurate = intent.getBooleanExtra(ContextConstants.MOVEMENT_ACCURATE, true);
-			activityAccurate = intent.getBooleanExtra(ContextConstants.ACTIVITY_ACCURATE, true);
-			shelterAccurate = intent.getBooleanExtra(ContextConstants.SHELTER_ACCURATE, true);
-			onPersonAccurate = intent.getBooleanExtra(ContextConstants.ONPERSON_ACCURATE, true);
-
+			placeAccurate = intent.getIntExtra(ContextConstants.PLACE_ACCURATE, 10);
+			movementAccurate = intent.getIntExtra(ContextConstants.MOVEMENT_ACCURATE, 10);
+			activityAccurate = intent.getIntExtra(ContextConstants.ACTIVITY_ACCURATE, 10);
+			shelterAccurate = intent.getIntExtra(ContextConstants.SHELTER_ACCURATE, 10);
+			onPersonAccurate = intent.getIntExtra(ContextConstants.ONPERSON_ACCURATE, 10);
+			
 			Toast.makeText(
 					getApplicationContext(),
 					"ContextService Accuracy: \n" + "Place: " + placeAccurate + "\n" + "Movement: " + movementAccurate + "\n" + "Activity: "
 							+ activityAccurate + "\n" + "Shelter: " + shelterAccurate + "\n" + "OnPerson: " + onPersonAccurate,
 					Toast.LENGTH_LONG).show();
-
+			
 			try {
-				StoreLocation(String.valueOf(placeAccurate));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				StoreMovement(String.valueOf(movementAccurate));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				StoreWeather(String.valueOf(activityAccurate));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				StoreSocial(String.valueOf(shelterAccurate));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				StoreSystem(String.valueOf(onPersonAccurate));
+				StoreAccuracy(placeAccurate, movementAccurate, activityAccurate, shelterAccurate, onPersonAccurate);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
+			
 		}
 	};
 
@@ -322,17 +300,16 @@ public class ContextService extends Service {
 		}
 	};
 
-	private void StoreAll() throws Exception {
-		String accuracy = "NA";
-		StoreLocation(accuracy);
-		StoreMovement(accuracy);
-		StoreWeather(accuracy);
-		StoreSocial(accuracy);
-		StoreSystem(accuracy);
-		StoreDerived(accuracy);
+	private void StoreAllContext() throws Exception {
+		StoreLocation();
+		StoreMovement();
+		StoreWeather();
+		StoreSocial();
+		StoreSystem();
+		StoreDerived();
 	}
 
-	private void StoreLocation(String accuracy) throws Exception {
+	private void StoreLocation() throws Exception {
 		try {
 			entityManager = EntityManager.GetManager(this);
 			LocationEntity location = new LocationEntity();
@@ -343,7 +320,6 @@ public class ContextService extends Service {
 			location.Latitude.setValue(LocationMonitor.getLatitude());
 			location.Longitude.setValue(LocationMonitor.getLongitude());
 			location.Altitude.setValue(LocationMonitor.getAltitude());
-			location.Accuracy.setValue(accuracy);
 			int uid = entityManager.store(location);
 			// LocationEntity fetchedLocation = (LocationEntity)
 			// entityManager.fetchById(uid);
@@ -353,7 +329,7 @@ public class ContextService extends Service {
 		}
 	}
 
-	private void StoreMovement(String accuracy) throws Exception {
+	private void StoreMovement() throws Exception {
 		try {
 			entityManager = EntityManager.GetManager(this);
 			MovementEntity movement = new MovementEntity();
@@ -363,14 +339,13 @@ public class ContextService extends Service {
 			movement.Bearing.setValue((double) LocationMonitor.getBearing());
 			movement.Steps.setValue((int) AccelerometerService.getStepCount());
 			movement.LastStep.setValue(AccelerometerService.getLastStepTimestamp());
-			movement.Accuracy.setValue(accuracy);
 			int uid = entityManager.store(movement);
 		} catch (Exception e) {
 			throw e;
 		}
 	}
 
-	private void StoreWeather(String accuracy) throws Exception {
+	private void StoreWeather() throws Exception {
 		try {
 			entityManager = EntityManager.GetManager(this);
 			WeatherEntity weather = new WeatherEntity();
@@ -380,14 +355,13 @@ public class ContextService extends Service {
 			weather.Humidity.setValue(WeatherMonitor.getWeatherHumid());
 			weather.Wind.setValue(WeatherMonitor.getWeatherWindCond());
 			weather.HazardLevel.setValue(WeatherMonitor.getWeatherHazard());
-			weather.Accuracy.setValue(accuracy);
 			int uid = entityManager.store(weather);
 		} catch (Exception e) {
 			throw e;
 		}
 	}
 
-	private void StoreSocial(String accuracy) throws Exception {
+	private void StoreSocial() throws Exception {
 		try {
 			entityManager = EntityManager.GetManager(this);
 			SocialEntity social = new SocialEntity();
@@ -397,14 +371,13 @@ public class ContextService extends Service {
 			social.Message.setValue(SocialMonitor.getMessage());
 			social.LastIncoming.setValue(SocialMonitor.getLastInDate());
 			social.LastOutgoing.setValue(SocialMonitor.getLastOutDate());
-			social.Accuracy.setValue(accuracy);
 			int uid = entityManager.store(social);
 		} catch (Exception e) {
 			throw e;
 		}
 	}
 
-	private void StoreSystem(String accuracy) throws Exception {
+	private void StoreSystem() throws Exception {
 		try {
 			entityManager = EntityManager.GetManager(this);
 			SystemEntity system = new SystemEntity();
@@ -416,14 +389,13 @@ public class ContextService extends Service {
 			system.LastPresent.setValue(SystemMonitor.getUserLastPresentDate());
 			system.SSID.setValue(SystemMonitor.getSSID());
 			system.Signal.setValue(SystemMonitor.getSignal());
-			system.Accuracy.setValue(accuracy);
 			int uid = entityManager.store(system);
 		} catch (Exception e) {
 			throw e;
 		}
 	}
 
-	private void StoreDerived(String accuracy) throws Exception {
+	private void StoreDerived() throws Exception {
 		try {
 			entityManager = EntityManager.GetManager(this);
 			DerivedEntity derived = new DerivedEntity();
@@ -433,11 +405,27 @@ public class ContextService extends Service {
 			derived.Shelter.setValue(DerivedMonitor.getShelterString());
 			derived.Pocket.setValue(DerivedMonitor.getPocketString());
 			derived.Mood.setValue(DerivedMonitor.getMood());
-			derived.Accuracy.setValue(accuracy);
 			int uid = entityManager.store(derived);
 		} catch (Exception e) {
 			throw e;
 		}
 	}
+	
+	private void StoreAccuracy(int place, int movement, int activity, int shelter, int onPerson) throws Exception {
+		try {
+			entityManager = EntityManager.GetManager(this);
+			AccuracyEntity accuracy = new AccuracyEntity();
+			accuracy.Timestamp.setValue(new Date());
+			accuracy.Place.setValue(place);
+			accuracy.Movement.setValue(movement);
+			accuracy.Activity.setValue(activity);
+			accuracy.Shelter.setValue(shelter);
+			accuracy.OnPerson.setValue(onPerson);
+			int uid = entityManager.store(accuracy);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
 
 }
