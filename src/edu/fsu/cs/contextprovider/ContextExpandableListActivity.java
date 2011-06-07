@@ -92,9 +92,11 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 
 	private ExpandableListAdapter mAdapter;
 
-	private static final int MENU_REFRESH_ID = Menu.FIRST + 1;
-	private static final int MENU_ADD_ID = Menu.FIRST + 2;
-	private static final int MENU_SHARE_ID = Menu.FIRST + 3;
+	// private static final int MENU_ADD_ID = Menu.FIRST + 2;
+	// private static final int MENU_SHARE_ID = Menu.FIRST + 3;
+	private static final int MENU_SET_HOME_ID = Menu.FIRST + 1;
+	private static final int MENU_SET_WORK_ID = Menu.FIRST + 2;
+	private static final int MENU_REFRESH_ID = Menu.FIRST + 3;
 	private static final int MENU_PREFS_ID = Menu.FIRST + 4;
 	private static final int MENU_ABOUT_ID = Menu.FIRST + 5;
 
@@ -132,8 +134,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	// debug
 	private boolean ttsEnabled;
 	private boolean shakeEnabled;
-	
-	
+
 	public static boolean running = false;
 	public static TextToSpeech tts;
 
@@ -163,7 +164,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		getPrefs();
 
 		// startup the primary context service (if just installed)
@@ -183,54 +184,28 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		bindService(new Intent(this, ContextProviderService.class), conn, Context.BIND_AUTO_CREATE);
 
 		if (locationEnabled) {
-//			/* Start GPS Service */
-//			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.GPSService.class);
-//			startService(intent);
-//			/* Start Network Service */
-//			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.NetworkService.class);
-//			startService(intent);
-//			/* Start LocationMonitor */
-//			Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-//			LocationMonitor.StartThread(5, geocoder);
 			refreshLocation();
 		}
-		
+
 		if (movementEnabled) {
-//			/* Start Accelerometer Service */
-//			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.AccelerometerService.class);
-//			startService(intent);
-//			/* Start movement context */
-//			MovementMonitor.StartThread(5);
 			refreshMovement();
 		}
-		
+
 		if (weatherEnabled) {
-//			/* Start weather monitor */
-//			WeatherMonitor.StartThread(60);
 			refreshWeather();
 		}
-		
+
 		if (systemEnabled) {
-//			/* Start Phone/SMS State Monitor Services */
-//			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.TelephonyService.class);
-//			startService(intent);
 			refreshSystem();
 		}
-		
+
 		if (socialEnabled) {
-//			/* Start social monitor */
-//			SocialMonitor.StartThread(60);
 			refreshSocial();
 		}
 		if (derivedEnabled) {
-//			/* Start derived monitor */
-//			DerivedMonitor.StartThread(60);
 			refreshDerived();
 		}
-		
-			
 
-		// Set up our adapter
 		mAdapter = new SimpleExpandableListAdapter(this, groupData, android.R.layout.simple_expandable_list_item_1, new String[] { NAME, VALUE }, new int[] {
 				android.R.id.text1, android.R.id.text2 }, childData, android.R.layout.simple_expandable_list_item_2, new String[] { NAME, VALUE }, new int[] {
 				android.R.id.text1, android.R.id.text2 });
@@ -251,12 +226,12 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 
 	private void getPrefs() {
 
-//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		// SharedPreferences prefs =
+		// PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
 
 		// general
-//		startupEnabled = prefs.getBoolean("PREFS_STARTUP_ENABLED", true);
+		// startupEnabled = prefs.getBoolean("PREFS_STARTUP_ENABLED", true);
 		ttsEnabled = prefs.getBoolean("PREFS_TTS_ENABLED", false);
 
 		locationEnabled = prefs.getBoolean("PREFS_LOCATION_ENABLED", true);
@@ -549,9 +524,14 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+
+		// menu.add(Menu.NONE, MENU_ADD_ID, Menu.NONE,
+		// "Add").setIcon(android.R.drawable.ic_menu_add).setAlphabeticShortcut('a');
+		menu.add(Menu.NONE, MENU_SET_HOME_ID, Menu.NONE, "Set Home").setIcon(android.R.drawable.ic_menu_compass).setAlphabeticShortcut('h');
+		menu.add(Menu.NONE, MENU_SET_WORK_ID, Menu.NONE, "Set Work").setIcon(android.R.drawable.ic_menu_compass).setAlphabeticShortcut('w');
 		menu.add(Menu.NONE, MENU_REFRESH_ID, Menu.NONE, "Refresh").setIcon(android.R.drawable.ic_menu_rotate).setAlphabeticShortcut('r');
-		menu.add(Menu.NONE, MENU_ADD_ID, Menu.NONE, "Add").setIcon(android.R.drawable.ic_menu_add).setAlphabeticShortcut('a');
-		menu.add(Menu.NONE, MENU_SHARE_ID, Menu.NONE, "Share").setIcon(android.R.drawable.ic_menu_share).setAlphabeticShortcut('s');
+		// menu.add(Menu.NONE, MENU_SHARE_ID, Menu.NONE,
+		// "Share").setIcon(android.R.drawable.ic_menu_share).setAlphabeticShortcut('s');
 		menu.add(Menu.NONE, MENU_PREFS_ID, Menu.NONE, "Prefs").setIcon(android.R.drawable.ic_menu_preferences).setAlphabeticShortcut('p');
 		menu.add(Menu.NONE, MENU_ABOUT_ID, Menu.NONE, "About").setIcon(android.R.drawable.ic_menu_info_details).setAlphabeticShortcut('i');
 
@@ -564,28 +544,39 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		case MENU_REFRESH_ID:
 			refresh();
 			return true;
-		case MENU_ADD_ID:
-			refresh();
-			Context context = getApplicationContext();
-			String address = null;
-			try {
-				address = mService.getCurrentAddress();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			AddressDialog.add addAddressDialog = new AddressDialog.add(this, address);
-			addAddressDialog.show();
-			this.refreshProximity();
-			return (true);
-		case MENU_SHARE_ID:
-			try {
-				exportToFile();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		case MENU_SET_HOME_ID:
+			startActivityForResult(new Intent(getApplicationContext(), edu.fsu.cs.contextprovider.map.AddPlaceMapActivity.class),
+					ContextConstants.SET_HOME_REQUEST);
+			// refresh();
 			return true;
+		case MENU_SET_WORK_ID:
+			startActivityForResult(new Intent(getApplicationContext(), edu.fsu.cs.contextprovider.map.AddPlaceMapActivity.class),
+					ContextConstants.SET_WORK_REQUEST);
+			// refresh();
+			return true;
+			// case MENU_ADD_ID:
+			// refresh();
+			// Context context = getApplicationContext();
+			// String address = null;
+			// try {
+			// address = mService.getCurrentAddress();
+			// } catch (RemoteException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
+			// }
+			// AddressDialog.add addAddressDialog = new AddressDialog.add(this,
+			// address);
+			// addAddressDialog.show();
+			// this.refreshProximity();
+			// return (true);
+			// case MENU_SHARE_ID:
+			// try {
+			// exportToFile();
+			// } catch (IOException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
+			// }
+			// return true;
 		case MENU_PREFS_ID:
 			editPrefs();
 			return true;
@@ -595,6 +586,22 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		}
 
 		return (super.onOptionsItemSelected(item));
+	}
+
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == ContextConstants.SET_HOME_REQUEST) {
+			if (resultCode == RESULT_OK) {
+				// Toast.makeText(this, "My Location:" + location.getLatitude()
+				// + "," + location.getLongitude(), Toast.LENGTH_LONG);
+				Toast.makeText(this, "Home Set Sucessfully", Toast.LENGTH_LONG);
+			}
+		} else if (requestCode == ContextConstants.SET_WORK_REQUEST) {
+			if (resultCode == RESULT_OK) {
+				// Toast.makeText(this, "My Location:" + location.getLatitude()
+				// + "," + location.getLongitude(), Toast.LENGTH_LONG);
+				Toast.makeText(this, "Work Set Sucessfully", Toast.LENGTH_LONG);
+			}
+		}
 	}
 
 	@Override

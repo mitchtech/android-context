@@ -71,7 +71,9 @@ public class ContextConstants {
 	// intent IDs
 	public static final String CONTEXT_STORE_INTENT = "edu.fsu.cs.contextprovider.store";
 	public static final String CONTEXT_RESTART_INTENT = "edu.fsu.cs.contextprovider.restart";
-
+	
+	public static final int SET_HOME_REQUEST = 0;
+	public static final int SET_WORK_REQUEST = 1;
 	
 	// location prefs
 	public static final String PREFS_LOCATION_ENABLED = "PREFS_LOCATION_ENABLED";
