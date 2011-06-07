@@ -132,7 +132,7 @@ public class ContextService extends Service {
 			/* Start LocationMonitor */
 			Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 			LocationMonitor.StartThread(locationPollFreq, geocoder);
-			locationStoreTimer.schedule(new LocationStoreTask(), (locationStoreFreq * 1000)); // seconds*1000
+//			locationStoreTimer.schedule(new LocationStoreTask(), (locationStoreFreq * 1000)); // seconds*1000
 		}
 		if (movementEnabled) {
 			/* Start Accelerometer Service */
@@ -140,12 +140,12 @@ public class ContextService extends Service {
 			startService(intent);
 			/* Start movement context */
 			MovementMonitor.StartThread(movementPollFreq);
-			movementStoreTimer.schedule(new MovementStoreTask(), (movementStoreFreq * 1000)); // seconds*1000
+//			movementStoreTimer.schedule(new MovementStoreTask(), (movementStoreFreq * 1000)); // seconds*1000
 		}
 		if (weatherEnabled) {
 			/* Start weather monitor */
 			WeatherMonitor.StartThread(weatherPollFreq);
-			weatherStoreTimer.schedule(new WeatherStoreTask(), (weatherStoreFreq * 1000)); // seconds*1000
+//			weatherStoreTimer.schedule(new WeatherStoreTask(), (weatherStoreFreq * 1000)); // seconds*1000
 		}
 		if (systemEnabled) {
 //			/* Start Phone/SMS State Monitor Services */
@@ -159,7 +159,7 @@ public class ContextService extends Service {
 		if (derivedEnabled) {
 			/* Start derived monitor */
 			DerivedMonitor.StartThread(derivedCalcFreq);
-			derivedStoreTimer.schedule(new DerivedStoreTask(), (derivedStoreFreq * 1000)); // seconds*1000
+//			derivedStoreTimer.schedule(new DerivedStoreTask(), (derivedStoreFreq * 1000)); // seconds*1000
 		}
 	}
 	

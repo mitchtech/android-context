@@ -2,8 +2,10 @@ package edu.fsu.cs.contextprovider.sensor;
 
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -13,6 +15,7 @@ import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import edu.fsu.cs.contextprovider.ContextExpandableListActivity;
+import edu.fsu.cs.contextprovider.data.ContextConstants;
 
 /**
  * Most objects are declared static because we want only 1 instance.  We could have instead used an iBinder but it is a bit
@@ -28,7 +31,7 @@ public class GPSService extends Service
 	private static final String locationType = LocationManager.GPS_PROVIDER;
 	private static LocationManager manager;
 	private static LocationListener listener;
-	@SuppressWarnings("unused")
+
 	private static boolean running = false;
 	private static boolean isreliable = false;
 	private static Location currentLocation = new Location(locationType);
@@ -79,6 +82,13 @@ public class GPSService extends Service
 	}
 	
 	public void onCreate() {
+		startService();
+	}
+	
+	public void startService() {
+		
+		getPrefs();
+			
 		listener = new LocationListener() {
 			public void onLocationChanged(Location location) {
 				isreliable = true;
@@ -142,20 +152,49 @@ public class GPSService extends Service
 		manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		currentLocation = manager.getLastKnownLocation(locationType);
 		manager.requestLocationUpdates(locationType, 0, 0, listener);
-
-
+		
+		IntentFilter restartFilter = new IntentFilter();
+		restartFilter.addAction(ContextConstants.CONTEXT_RESTART_INTENT);
+		registerReceiver(restartIntentReceiver, restartFilter);
+		
+		running = true;
 	}
+	
+	private void getPrefs() {
+		// prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		// frequency = prefs.getInt(AccelerometerEditActivity.PREF_FREQUENCY,
+		// 50);
+		// ignoreThreshold = AccelerometerEditActivity.getRate(frequency);
+
+		// prefs.registerOnSharedPreferenceChangeListener(this);
+	}
+
+	private void stopService() {
+		// PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+		unregisterReceiver(restartIntentReceiver);
+		running = false;
+	}
+	
+	BroadcastReceiver restartIntentReceiver = new BroadcastReceiver() {
+		public void onReceive(Context context, Intent intent) {
+			Log.d(TAG, TAG + "Restart Intent: " + intent.getAction());
+			if (running) {
+				stopService();
+			}
+			startService();
+		}
+	};
+	
 
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
 		Log.i(TAG, "Service has been started.");
-		running = true;
 		return 0;
 	}
 
 	public void onDestroy()
 	{
-		running = false;
+		stopService();
 		Log.i("GPS", "Stopping the service now.");
 		manager.removeUpdates(listener);
 		stopSelf();

@@ -1,11 +1,16 @@
 package edu.fsu.cs.contextprovider.sensor;
 
+import java.util.List;
+
+import edu.fsu.cs.contextprovider.data.ContextConstants;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -13,6 +18,7 @@ import android.telephony.PhoneStateListener;
 import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
 
 public class TelephonyService extends Service {
 
@@ -106,43 +112,66 @@ public class TelephonyService extends Service {
 		}
 	};
 
+
 	public void init() {
 		if (!serviceEnabled) {
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-//			pluginId = prefs.getInt(SmsEditActivity.KEY_PLUGIN_ID, -1);
-			IntentFilter filter = new IntentFilter(ACTION_SMS_RECEIVED);
-			registerReceiver(receiver, filter);
-			// don't forget to set plug-in enabled if everything was initialized
-			serviceEnabled = true;
-			tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-			tm.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+			startService();
 		}
+	}
+	
+	private void startService() {
+
+		getPrefs();
+
+		// make sure not to call it twice
+		IntentFilter filter = new IntentFilter(ACTION_SMS_RECEIVED);
+		registerReceiver(receiver, filter);
+		// don't forget to set plug-in enabled if everything was initialized
+		serviceEnabled = true;
+		tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+		tm.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+
+		IntentFilter restartFilter = new IntentFilter();
+		restartFilter.addAction(ContextConstants.CONTEXT_RESTART_INTENT);
+		registerReceiver(restartIntentReceiver, restartFilter);
+	}
+	
+	private void getPrefs() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+		// prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		// frequency = prefs.getInt(AccelerometerEditActivity.PREF_FREQUENCY,
+		// 50);
+		// ignoreThreshold = AccelerometerEditActivity.getRate(frequency);
+
+		// prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 
-	public void onCreate() {
-		if (!serviceEnabled) {
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-//			pluginId = prefs.getInt(SmsEditActivity.KEY_PLUGIN_ID, -1);
-			IntentFilter filter = new IntentFilter(ACTION_SMS_RECEIVED);
-			registerReceiver(receiver, filter);
-			// don't forget to set plug-in enabled if everything was initialized
-			serviceEnabled = true;
-			tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-			tm.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-		}
+	private void stopService() {
+		// PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+		unregisterReceiver(restartIntentReceiver);
+		unregisterReceiver(receiver);
+		tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+		tm.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
 	}
 	
+	BroadcastReceiver restartIntentReceiver = new BroadcastReceiver() {
+		public void onReceive(Context context, Intent intent) {
+			Log.d(TAG, TAG + "Restart Intent: " + intent.getAction());
+			if (serviceEnabled) {
+				stopService();
+			}
+			startService();
+		}
+	};
 	
-	
+	@Override
 	public void onDestroy() {
 		if (serviceEnabled) {
-			unregisterReceiver(receiver);
-			tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-			tm.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
+			stopService();
 		}
 		super.onDestroy();
 	}
-
 	
 	public String getTAG() {
 		return TAG;

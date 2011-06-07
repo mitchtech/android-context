@@ -6,9 +6,13 @@ import java.util.Stack;
 
 import edu.fsu.cs.contextprovider.ContextExpandableListActivity;
 import edu.fsu.cs.contextprovider.PrefsActivity;
+import edu.fsu.cs.contextprovider.data.ContextConstants;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.hardware.Sensor;
@@ -84,7 +88,7 @@ public class AccelerometerService extends Service implements SensorEventListener
 	static public long getStepTimestamp() {
 		return step_timestamp;
 	}
-	
+
 	static public Date getLastStepTimestamp() {
 		return new Date(step_timestamp);
 	}
@@ -93,38 +97,59 @@ public class AccelerometerService extends Service implements SensorEventListener
 	public void onCreate() {
 		Log.i(TAG, "init() called for AccelerometerService");
 		if (!serviceEnabled) {
-
-			prefs = PreferenceManager.getDefaultSharedPreferences(this);
-			// frequency =prefs.getInt(AccelerometerEditActivity.PREF_FREQUENCY,
-			// 50);
-			// pluginId = prefs.getInt(AccelerometerEditActivity.KEY_PLUGIN_ID,
-			// -1);
-			// ignoreThreshold = AccelerometerEditActivity.getRate(frequency);
-
-			prefs.registerOnSharedPreferenceChangeListener(this);
-
-			// make sure not to call it twice
-			sm = (SensorManager) getSystemService(SENSOR_SERVICE);
-			List<Sensor> sensors = sm.getSensorList(Sensor.TYPE_ACCELEROMETER);
-			if (sensors != null && sensors.size() > 0) {
-				accelerometerSensor = sensors.get(0);
-				sm.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_UI);
-				serviceEnabled = true;
-			} else {
-				Toast.makeText(this, "Accelerometer sensor is not available on this device!", Toast.LENGTH_SHORT).show();
-			}
+			startService();
 		}
 	}
 
-//	private void getPrefs() {
-//		shakeEnabled = PrefsActivity.getShakeEnabled(getApplicationContext());
-//	}
+	private void startService() {
+
+		getPrefs();
+
+		// make sure not to call it twice
+		sm = (SensorManager) getSystemService(SENSOR_SERVICE);
+		List<Sensor> sensors = sm.getSensorList(Sensor.TYPE_ACCELEROMETER);
+		if (sensors != null && sensors.size() > 0) {
+			accelerometerSensor = sensors.get(0);
+			sm.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_UI);
+			serviceEnabled = true;
+		} else {
+			Toast.makeText(this, "Accelerometer sensor is not available on this device!", Toast.LENGTH_SHORT).show();
+		}
+
+		IntentFilter restartFilter = new IntentFilter();
+		restartFilter.addAction(ContextConstants.CONTEXT_RESTART_INTENT);
+		registerReceiver(restartIntentReceiver, restartFilter);
+	}
+
+	private void getPrefs() {
+		// prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		// frequency = prefs.getInt(AccelerometerEditActivity.PREF_FREQUENCY,
+		// 50);
+		// ignoreThreshold = AccelerometerEditActivity.getRate(frequency);
+
+		// prefs.registerOnSharedPreferenceChangeListener(this);
+	}
+
+	private void stopService() {
+		sm.unregisterListener(this);
+		// PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+		unregisterReceiver(restartIntentReceiver);
+	}
+	
+	BroadcastReceiver restartIntentReceiver = new BroadcastReceiver() {
+		public void onReceive(Context context, Intent intent) {
+			Log.d(TAG, TAG + "Restart Intent: " + intent.getAction());
+			if (serviceEnabled) {
+				stopService();
+			}
+			startService();
+		}
+	};
 
 	@Override
 	public void onDestroy() {
 		if (serviceEnabled) {
-			sm.unregisterListener(this);
-			PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+			stopService();
 		}
 		super.onDestroy();
 	}
@@ -288,7 +313,7 @@ public class AccelerometerService extends Service implements SensorEventListener
 
 	public static void setSensitivity(float sensitivity) {
 		mLimit = sensitivity; // 1.97 2.96 4.44 6.66 10.00 15.00 22.50 33.75
-								// 50.62
+		// 50.62
 	}
 
 	@Override
@@ -304,5 +329,7 @@ public class AccelerometerService extends Service implements SensorEventListener
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
 
 }
