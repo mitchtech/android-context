@@ -74,6 +74,9 @@ public class ContextConstants {
 	
 	public static final int SET_HOME_REQUEST = 0;
 	public static final int SET_WORK_REQUEST = 1;
+	public static final String PLACE_REQUEST_ID = "PLACE_REQUEST_ID";
+//	public static final String SET_HOME_REQUEST_ID = "SET_HOME_REQUEST";
+//	public static final String SET_WORK_REQUEST_ID = "SET_WORK_REQUEST";
 	
 	// location prefs
 	public static final String PREFS_LOCATION_ENABLED = "PREFS_LOCATION_ENABLED";

@@ -540,18 +540,24 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent = null;
 		switch (item.getItemId()) {
 		case MENU_REFRESH_ID:
 			refresh();
 			return true;
 		case MENU_SET_HOME_ID:
-			startActivityForResult(new Intent(getApplicationContext(), edu.fsu.cs.contextprovider.map.AddPlaceMapActivity.class),
-					ContextConstants.SET_HOME_REQUEST);
+			intent = new Intent(getApplicationContext(), edu.fsu.cs.contextprovider.map.AddPlaceMapActivity.class);
+			intent.putExtra(ContextConstants.PLACE_REQUEST_ID, ContextConstants.SET_HOME_REQUEST);
+			startActivityForResult(intent, ContextConstants.SET_HOME_REQUEST);
 			// refresh();
 			return true;
 		case MENU_SET_WORK_ID:
-			startActivityForResult(new Intent(getApplicationContext(), edu.fsu.cs.contextprovider.map.AddPlaceMapActivity.class),
-					ContextConstants.SET_WORK_REQUEST);
+			intent = new Intent(getApplicationContext(), edu.fsu.cs.contextprovider.map.AddPlaceMapActivity.class);
+			intent.putExtra(ContextConstants.PLACE_REQUEST_ID, ContextConstants.SET_WORK_REQUEST);
+			startActivityForResult(intent, ContextConstants.SET_WORK_REQUEST);
+			
+//			startActivityForResult(new Intent(getApplicationContext(), edu.fsu.cs.contextprovider.map.AddPlaceMapActivity.class),
+//					ContextConstants.SET_WORK_REQUEST);
 			// refresh();
 			return true;
 			// case MENU_ADD_ID:

@@ -26,6 +26,8 @@ import edu.fsu.cs.contextprovider.R;
 import edu.fsu.cs.contextprovider.R.drawable;
 import edu.fsu.cs.contextprovider.R.id;
 import edu.fsu.cs.contextprovider.R.layout;
+import edu.fsu.cs.contextprovider.data.ContextConstants;
+import edu.fsu.cs.contextprovider.monitor.DerivedMonitor;
 
 public class AddPlaceMapActivity extends MapActivity {
 	private MyLocationOverlay myLocationOverlay;
@@ -37,17 +39,21 @@ public class AddPlaceMapActivity extends MapActivity {
 	private Location currentLocation;
 	protected final AtomicReference<Place> destinationReference = new AtomicReference<Place>();
 	protected Drawable destinationDrawable;
+	
+	private int REQUEST_ID = -1;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.placemap);
+		Intent intent = getIntent();
+		REQUEST_ID = intent.getIntExtra(ContextConstants.PLACE_REQUEST_ID, -1);
 		
 		// geopoint for overlayitem
-		Double latitude = 37.423156 * 1E6;
-		Double longuitude = -122.084917 * 1E6;
-		GeoPoint point = new GeoPoint(latitude.intValue(), longuitude.intValue());
+//		Double latitude = 37.423156 * 1E6;
+//		Double longuitude = -122.084917 * 1E6;
+//		GeoPoint point = new GeoPoint(latitude.intValue(), longuitude.intValue());
 		
 //		// create new overlayitem
 //		OverlayItem overlayitem = new OverlayItem(point, "Googleplex", "Google");
@@ -69,7 +75,7 @@ public class AddPlaceMapActivity extends MapActivity {
 
 		// Mapcontroller set zoom and center
 		mapController = map.getController();
-		mapController.setCenter(point);
+//		mapController.setCenter(point);
 		mapController.setZoom(16);
 		map.setBuiltInZoomControls(true);
 
@@ -158,12 +164,34 @@ public class AddPlaceMapActivity extends MapActivity {
 	public void placeSelected(Place place) {
 		destinationReference.set(place);
 		final FloatingPointGeoPoint point = place.getLocation();
+		
+//		List<Overlay> mapOverlays = map.getOverlays();
+//		mapOverlays.add(new PlaceOverlay(this));
+//		OverlayItem overlayitem = new OverlayItem(point.getGeoPoint(), "Home", "Home");
+//		overlay = new PlaceItemizedOverlay(getResources().getDrawable(R.drawable.home));
+//		overlay.addOverlay(overlayitem);
+		
 
 		new AlertDialog.Builder(this).setMessage("Add Place?").setIcon(R.drawable.location)
 				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-//						startActivity(startGameIntent);
-						setPlace(point);
+
+						switch (REQUEST_ID) {
+						case ContextConstants.SET_HOME_REQUEST:
+							DerivedMonitor.Home = new FloatingPointGeoPoint(point.getLatitude(), point.getLongitude());
+							Toast.makeText(getApplicationContext(), "Home Updated\nLat:" + point.getLatitude() + 
+									"\nLon:" + point.getLongitude()+ "\n Press Back to Exit", Toast.LENGTH_LONG).show();
+							break;
+						case ContextConstants.SET_WORK_REQUEST:
+
+							DerivedMonitor.Work = new FloatingPointGeoPoint(point.getLatitude(), point.getLongitude());
+							Toast.makeText(getApplicationContext(), "Work Updated\nLat:" + point.getLatitude() + 
+									"\nLon:" + point.getLongitude() + "\n Press Back to Exit", Toast.LENGTH_LONG).show();
+							break;
+						default:
+							break;
+						}
+						
 					}
 				}).setNegativeButton("No", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
@@ -171,11 +199,6 @@ public class AddPlaceMapActivity extends MapActivity {
 						// chosen.
 					}
 				}).show();		
-	}
-	
-	public void setPlace(FloatingPointGeoPoint point) {
-		Toast.makeText(getApplicationContext(), "Place Added\nLat:" + point.getLatitude() + 
-				"\nLon:" + point.getLatitude(), Toast.LENGTH_LONG).show();
 	}
 	
 

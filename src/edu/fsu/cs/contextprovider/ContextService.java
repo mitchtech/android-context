@@ -90,7 +90,6 @@ public class ContextService extends Service {
 	private int accuracyPopupPeriod;
 	
 	
-	
 	public IBinder onBind(Intent arg0) {
 		return null;
 	}

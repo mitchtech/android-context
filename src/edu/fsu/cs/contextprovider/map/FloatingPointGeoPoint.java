@@ -6,8 +6,8 @@ public class FloatingPointGeoPoint {
 
   private static final long serialVersionUID = -3659066238832850779L;
 
-  private final double latitude;
-  private final double longitude;
+  private double latitude;
+  private double longitude;
 
   public FloatingPointGeoPoint(GeoPoint point) {
     this.latitude = point.getLatitudeE6() / 1E6f;
@@ -26,8 +26,16 @@ public class FloatingPointGeoPoint {
   public double getLongitude() {
     return longitude;
   }
-  
-  public GeoPoint getGeoPoint() {
+    
+  public void setLatitude(double latitude) {
+	this.latitude = latitude;
+}
+
+public void setLongitude(double longitude) {
+	this.longitude = longitude;
+}
+
+public GeoPoint getGeoPoint() {
     return new GeoPoint((int) Math.round(getLatitude() * 1E6),
         (int) Math.round(getLongitude() * 1E6));
   }

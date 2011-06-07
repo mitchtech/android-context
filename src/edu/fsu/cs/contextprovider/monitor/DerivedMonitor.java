@@ -3,6 +3,8 @@ package edu.fsu.cs.contextprovider.monitor;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edu.fsu.cs.contextprovider.map.FloatingPointGeoPoint;
+import edu.fsu.cs.contextprovider.map.Place;
 import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
 import edu.fsu.cs.contextprovider.sensor.GPSService;
 
@@ -30,7 +32,16 @@ public class DerivedMonitor extends TimerTask {
 	
 	public static String mood = "Mood";
 	
+	public static FloatingPointGeoPoint Home = null;
+	public static FloatingPointGeoPoint Work = null;
 	
+	public static double homeDistance = 0;
+	public static double workDistance = 0;
+
+	public static double atThreshold = 50;
+	public static double nearbyThreshold = 500;
+	public static double farThreshold = 10000;
+
 	/**
 	 * Create a timer/thread to continuous run and keep the getMovement() state up to date
 	 * 
@@ -63,7 +74,26 @@ public class DerivedMonitor extends TimerTask {
 	}
 	
 	public void calcPlace() {
-//		if (LocationMonitor.proximityTo(longitude, latitude)
+		if (Home != null && Work != null) {
+			
+		
+		homeDistance = LocationMonitor.proximityTo(Home.getLongitude(), Home.getLatitude());
+		workDistance = LocationMonitor.proximityTo(Work.getLongitude(), Work.getLatitude());
+		
+		if (homeDistance < atThreshold) {
+			place = "AT HOME";
+		} else if (workDistance < atThreshold) {
+			place = "AT WORK";
+		} else if (homeDistance < nearbyThreshold) {
+			place = "NEAR HOME";
+		} else if (workDistance < nearbyThreshold) {
+			place = "NEAR WORK";
+		} else if (homeDistance < farThreshold) {
+			place = "FAR FROM HOME";
+		} else if (workDistance < farThreshold) {
+			place = "FAR FROM WORK";
+		}
+		}
 	}
 	
 	public void calcShelter() {
