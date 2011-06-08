@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen android:title="@string/app_name" xmlns:android="http://schemas.android.com/apk/res/android">
-	<PreferenceCategory android:title="General"
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android">
+  
+  <PreferenceCategory android:title="General"
 		android:key="PREFS_GENERAL">
 		<CheckBoxPreference android:key="PREFS_STARTUP_ENABLED"
 			android:title="Run at Startup" android:summaryOn="Run at Startup Enabled"
-			android:summaryOff="Run at Startup Disabled"></CheckBoxPreference>
+			android:summaryOff="Run at Startup Disabled" android:defaultValue="true"></CheckBoxPreference>
 		<CheckBoxPreference android:key="PREFS_ACCURACY_POPUP_ENABLED"
 			android:title="Context Accuracy Popup" android:summaryOn="Context Accuracy Popup Enabled"
-			android:summaryOff="Context Accuracy Popup Disabled"></CheckBoxPreference>
+			android:summaryOff="Context Accuracy Popup Disabled" android:defaultValue="true"></CheckBoxPreference>
 		<CheckBoxPreference android:key="PREFS_ACCURACY_POPUP_AUDIO_ENABLED"
 			android:title="Context Accuracy Audio" android:summaryOn="Context Accuracy Audio Enabled"
-			android:summaryOff="Context Accuracy Audio Disabled"></CheckBoxPreference>	
+			android:summaryOff="Context Accuracy Audio Disabled" android:defaultValue=""></CheckBoxPreference>	
 		<RingtonePreference android:title="Context Popup Ringtone" android:ringtoneType="ringtone"
 			android:key="PREFS_ACCURACY_POPUP_AUDIO" android:summary="Select ringtone to play at popup"></RingtonePreference>
 		<CheckBoxPreference android:key="PREFS_ACCURACY_POPUP_VIBRATE_ENABLED"
 			android:title="Context Accuracy Popup Vibration" android:summaryOn="Context Accuracy Popup Vibrate Enabled"
-			android:summaryOff="Context Accuracy Popup Vibrate Disabled"></CheckBoxPreference>
+			android:summaryOff="Context Accuracy Popup Vibrate Disabled" android:defaultValue="true"></CheckBoxPreference>
 		<ListPreference android:entryValues="@array/prefs_popup_freq_values"
 			android:entries="@array/prefs_popup_freq" android:defaultValue="1"
 			android:negativeButtonText="@string/cancel"
@@ -31,7 +33,7 @@
 		android:title="Location Paramaters">
 		<CheckBoxPreference android:key="PREFS_LOCATION_ENABLED"
 			android:title="Location" android:summaryOn="Location Context Enabled"
-			android:summaryOff="Location Context Disabled"></CheckBoxPreference>
+			android:summaryOff="Location Context Disabled" android:defaultValue="true"></CheckBoxPreference>
 		<CheckBoxPreference android:title="Proximity"
 			android:summaryOn="Proximity Context Enabled" android:key="PREFS_PROXIMITY_ENABLED"
 			android:summaryOff="Proximity Context Disabled"></CheckBoxPreference>
@@ -50,7 +52,7 @@
 		android:key="PREFS_MOVEMENT">
 		<CheckBoxPreference android:key="PREFS_MOVEMENT_ENABLED"
 			android:title="Movement" android:summaryOn="Movement Context Enabled"
-			android:summaryOff="Movement Context Disabled"></CheckBoxPreference>
+			android:summaryOff="Movement Context Disabled" android:defaultValue="true"></CheckBoxPreference>
 		<ListPreference android:entryValues="@array/prefs_polling_freq_values"
 			android:entries="@array/prefs_polling_freq" android:defaultValue="1"
 			android:negativeButtonText="@string/cancel"
@@ -66,7 +68,7 @@
 		android:title="Weather Paramaters">
 		<CheckBoxPreference android:title="Weather"
 			android:summaryOn="Weather Context Enabled" android:key="PREFS_WEATHER_ENABLED"
-			android:summaryOff="Weather Context Disabled"></CheckBoxPreference>
+			android:summaryOff="Weather Context Disabled" android:defaultValue="true"></CheckBoxPreference>
 		<ListPreference android:entryValues="@array/prefs_polling_freq_values"
 			android:entries="@array/prefs_polling_freq" android:defaultValue="1"
 			android:negativeButtonText="@string/cancel"
@@ -82,19 +84,19 @@
 		android:title="System Paramaters">
 		<CheckBoxPreference android:title="System"
 			android:summaryOn="System Context Enabled" android:key="PREFS_SYSTEM_ENABLED"
-			android:summaryOff="System Context Disabled"></CheckBoxPreference>		
+			android:summaryOff="System Context Disabled" android:defaultValue="true"></CheckBoxPreference>		
 	</PreferenceCategory>
 	<PreferenceCategory android:key="PREFS_SOCIAL"
 		android:title="Social Paramaters">
 		<CheckBoxPreference android:title="Social"
 			android:summaryOn="Social Context Enabled" android:key="PREFS_SOCIAL_ENABLED"
-			android:summaryOff="Social Context Disabled"></CheckBoxPreference>
+			android:summaryOff="Social Context Disabled" android:defaultValue="true"></CheckBoxPreference>
 	</PreferenceCategory>
 	<PreferenceCategory android:key="PREFS_DERIVED"
 		android:title="Derived Paramaters">
 		<CheckBoxPreference android:title="Derived"
 			android:summaryOn="Derived Context Enabled" android:key="PREFS_DERIVED_ENABLED"
-			android:summaryOff="Derived Context Disabled"></CheckBoxPreference>
+			android:summaryOff="Derived Context Disabled" android:defaultValue="true"></CheckBoxPreference>
 		<ListPreference android:entryValues="@array/prefs_polling_freq_values"
 			android:entries="@array/prefs_polling_freq" android:defaultValue="1"
 			android:negativeButtonText="@string/cancel"
@@ -110,10 +112,11 @@
 		android:title="Debugging Options">
 		<CheckBoxPreference android:key="PREFS_SHAKE_ENABLED"
 			android:title="Shake Response" android:summaryOn="Instant-On Shake Response Enabled"
-			android:summaryOff="Instant-On Shake Response Disabled"></CheckBoxPreference>
+			android:summaryOff="Instant-On Shake Response Disabled" android:defaultValue="false"></CheckBoxPreference>
 		<CheckBoxPreference android:key="PREFS_TTS_ENABLED"
 			android:title="TTS Context" android:summaryOn="Text-to-Speech Response Enabled"
-			android:summaryOff="Text-to-Speech Response Disabled"></CheckBoxPreference>
+			android:summaryOff="Text-to-Speech Response Disabled" android:defaultValue=""></CheckBoxPreference>
 
 	</PreferenceCategory>
+    
 </PreferenceScreen>

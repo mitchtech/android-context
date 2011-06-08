@@ -39,7 +39,7 @@ public class PrefsActivity extends PreferenceActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.preferences);
+		addPreferencesFromResource(R.xml.prefs);
 		prefs = getPreferenceScreen().getSharedPreferences();
 	}
 

@@ -68,10 +68,13 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 	private PowerManager.WakeLock wakelock;
 
 	private static Timer timer = new Timer(); 
+	private Activity ctx;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		this.ctx = this;
 		Log.d(TAG, "WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON");
 //		 Window w = getWindow(); // in Activity's onCreate() for instance
 //		 w.setFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);		
@@ -118,9 +121,11 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
         if (accuracyAudioEnabled)
         	tone.play();
         if (accuracyVibrateEnabled)
-        	startVibrate();   	
+        	startVibrate();
         
-        timer.schedule(new ContextDismissTask(), (accuracyDismissDelay * 1000));
+        timer = new Timer();
+        
+        timer.schedule(new ContextDismissTask(), (5 * 1000));
         
 	}
 	
@@ -151,7 +156,7 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 		accuracyAudioEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_AUDIO_ENABLED, false);
 		accuracyVibrateEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_VIBRATE_ENABLED, true);
 		accuracyPopupPeriod = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_PERIOD, 30);
-		accuracyDismissDelay = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_DISMISS_DELAY, 30);
+		accuracyDismissDelay = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_DISMISS_DELAY, 5);
 		
 		setRingtone();
 	}
@@ -207,7 +212,7 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
         	intent.putExtra(ContextConstants.ONPERSON_ACCURATE, (int) onPersonBar.getProgress());
         	sendBroadcast(intent);
         	       	
-        	finish();
+        	ctx.finish();
         }
     }   
     
