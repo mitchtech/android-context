@@ -124,7 +124,6 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
         	startVibrate();
         
         timer = new Timer();
-        
         timer.schedule(new ContextDismissTask(), (5 * 1000));
         
 	}
@@ -132,14 +131,15 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 	@Override
 	protected void onPause() {
 		super.onPause();
-		timer.cancel();
-		tone.stop();
-		vibrate.cancel();
+
 	}
 	
 	@Override
 	protected void onDestroy() {
 		wakelock.release();
+		timer.cancel();
+		tone.stop();
+		vibrate.cancel();
 		super.onDestroy();
 	}
 
@@ -229,7 +229,7 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 	}
 	
 	private void startVibrate() {
-		long[] pattern = {500, 300};
+		long[] pattern = {500, 300, 500, 300};
 		vibrate.vibrate(pattern, -1);
 	}
 
