@@ -106,7 +106,22 @@ public class AccelerometerService extends Service implements SensorEventListener
 		List<Sensor> sensors = sm.getSensorList(Sensor.TYPE_ACCELEROMETER);
 		if (sensors != null && sensors.size() > 0) {
 			accelerometerSensor = sensors.get(0);
-			sm.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_UI);
+			
+			switch (accelPoll) {
+			case 4:
+				sm.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_FASTEST);
+				break;
+			case 3:
+				sm.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
+				break;
+			case 2:
+				sm.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+				break;
+			case 1:
+			default:
+				sm.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_UI);
+				break;
+			}
 			serviceEnabled = true;
 		} else {
 			Toast.makeText(this, "Accelerometer sensor is not available on this device!", Toast.LENGTH_SHORT).show();
@@ -119,15 +134,9 @@ public class AccelerometerService extends Service implements SensorEventListener
 
 	private void getPrefs() {
 		
-		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
 		accelPoll = prefs.getInt(ContextConstants.PREFS_ACCEL_POLL_FREQ, 1);
-		
-		
-		// frequency = prefs.getInt(AccelerometerEditActivity.PREF_FREQUENCY, 50);
-		// ignoreThreshold = AccelerometerEditActivity.getRate(frequency);
-		
-//		locationPollFreq = prefs.getInt(ContextConstants.PREFS_LOCATION_POLL_FREQ, 30);
-//		locationStoreFreq = prefs.getInt(ContextConstants.PREFS_LOCATION_STORE_FREQ, 30);
+		ignoreThreshold = prefs.getInt(ContextConstants.PREFS_ACCEL_IGNORE_THRESHOLD, 0);
 
 		prefs.registerOnSharedPreferenceChangeListener(this);
 	}
@@ -325,9 +334,15 @@ public class AccelerometerService extends Service implements SensorEventListener
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-//		if (key.equals(object)) {
-//			ignoreThreshold = PrefsActivity.getRate(prefs.getInt(key, 50));
-//		}
+		if (key.equals(ContextConstants.PREFS_ACCEL_POLL_FREQ)) {
+			Toast.makeText(this, "PREFS_ACCEL_POLL_FREQ", Toast.LENGTH_SHORT).show();
+			getPrefs();
+			stopService();
+			startService();
+		} else if (key.equals(ContextConstants.PREFS_ACCEL_IGNORE_THRESHOLD)) {
+			Toast.makeText(this, "PREFS_ACCEL_IGNORE_THRESHOLD", Toast.LENGTH_SHORT).show();
+			getPrefs();
+		}
 	}
 
 	@Override

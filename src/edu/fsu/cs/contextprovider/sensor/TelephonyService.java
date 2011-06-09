@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
@@ -20,11 +21,11 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
-public class TelephonyService extends Service {
+public class TelephonyService extends Service implements OnSharedPreferenceChangeListener {
 
 	private static final String TAG = "SMS Service";
-	private static final boolean DEBUG = true;
-	protected boolean serviceEnabled = false;
+	private static final boolean DEBUG = false;
+	protected boolean running = false;
 	
 	public static String PHONE_STATE = "NA";
 	public static long PHONE_STATE_UPDATE = 0;	
@@ -41,6 +42,7 @@ public class TelephonyService extends Service {
 	private static final int MAX_LENGTH = 30;
 	private static final String ACTION_SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
 	
+	SharedPreferences prefs;	
 
 	TelephonyManager tm;
 	private PhoneStateListener phoneStateListener = new PhoneStateListener() {
@@ -69,8 +71,6 @@ public class TelephonyService extends Service {
 			}
 		}
 	};
-	
-	
 	
 	
 	BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -104,17 +104,14 @@ public class TelephonyService extends Service {
 						SMS_LAST_MESSAGE = msg;
 						if (DEBUG) Log.d(TAG, "State: " + SMS_STATE);
 						break;			
-
-
 					}
 				}
 			}
 		}
 	};
 
-
 	public void init() {
-		if (!serviceEnabled) {
+		if (!running) {
 			startService();
 		}
 	}
@@ -123,11 +120,10 @@ public class TelephonyService extends Service {
 
 		getPrefs();
 
-		// make sure not to call it twice
 		IntentFilter filter = new IntentFilter(ACTION_SMS_RECEIVED);
 		registerReceiver(receiver, filter);
 		// don't forget to set plug-in enabled if everything was initialized
-		serviceEnabled = true;
+		running = true;
 		tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
 		tm.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
 
@@ -137,28 +133,26 @@ public class TelephonyService extends Service {
 	}
 	
 	private void getPrefs() {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
+//		accelPoll = prefs.getInt(ContextConstants.PREFS_ACCEL_POLL_FREQ, 1);
+//		ignoreThreshold = prefs.getInt(ContextConstants.PREFS_ACCEL_IGNORE_THRESHOLD, 0);
+		prefs.registerOnSharedPreferenceChangeListener(this);
 
-		// prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		// frequency = prefs.getInt(AccelerometerEditActivity.PREF_FREQUENCY,
-		// 50);
-		// ignoreThreshold = AccelerometerEditActivity.getRate(frequency);
-
-		// prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	private void stopService() {
-		// PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
 		unregisterReceiver(restartIntentReceiver);
 		unregisterReceiver(receiver);
 		tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
 		tm.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
+		running = false;
 	}
 	
 	BroadcastReceiver restartIntentReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			Log.d(TAG, TAG + "Restart Intent: " + intent.getAction());
-			if (serviceEnabled) {
+			if (running) {
 				stopService();
 			}
 			startService();
@@ -167,7 +161,7 @@ public class TelephonyService extends Service {
 	
 	@Override
 	public void onDestroy() {
-		if (serviceEnabled) {
+		if (running) {
 			stopService();
 		}
 		super.onDestroy();
@@ -181,6 +175,12 @@ public class TelephonyService extends Service {
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

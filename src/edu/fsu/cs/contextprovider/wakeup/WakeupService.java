@@ -32,21 +32,8 @@ public class WakeupService extends WakefulIntentService {
 
 	@Override
 	protected void doWakefulWork(Intent intent) {
-//		File log = new File(Environment.getExternalStorageDirectory(), "AlarmLog.txt");
-//		Log.d(TAG, "doWakefulWork(Intent intent)");
-//		
-//		try {
-//			BufferedWriter out = new BufferedWriter(new FileWriter(log.getAbsolutePath(), log.exists()));
-//			out.write(new Date().toString());
-//			out.write("\n");
-//			out.close();
-//		} catch (IOException e) {
-//			Log.e("AppService", "Exception appending to log file", e);
-//		}
-
 		Intent accuracyIntent = new Intent(getApplicationContext(), edu.fsu.cs.contextprovider.ContextAccuracyActivity.class);
 		accuracyIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(accuracyIntent);
-
 	}
 }

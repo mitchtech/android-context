@@ -27,6 +27,20 @@
 		<item>4</item>
 	</string-array>
 	
+	<string-array name="prefs_accel_ignore">
+		<item>None</item>
+		<item>Low</item>
+		<item>Medium</item>
+		<item>High</item>
+	</string-array>
+
+	<string-array name="prefs_accel_ignore_values">
+		<item>0</item>
+		<item>2</item>
+		<item>4</item>
+		<item>6</item>
+	</string-array>
+	
 	<string-array name="prefs_storing_freq">
 		<item>Low</item>
 		<item>Medium</item>

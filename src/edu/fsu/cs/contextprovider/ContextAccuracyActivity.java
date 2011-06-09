@@ -75,10 +75,7 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-//		this.ctx = this;
-		Log.d(TAG, "WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON");
-//		 Window w = getWindow(); // in Activity's onCreate() for instance
-//		 w.setFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);		
+//		getWindow().setFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);		
 		final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		wakelock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "ContextAccuracyActivity");
 		wakelock.acquire();
@@ -138,14 +135,12 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 	@Override
 	protected void onDestroy() {
 		wakelock.release();
-//		vibrate.cancel();
 		super.onDestroy();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-//		wakelock.acquire();
 	}
 	
 	@Override
@@ -157,7 +152,6 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 		sendAccurate();
 		finish();
 		}
-//		return;
 	}
 	
 	private void getPrefs() {
@@ -181,7 +175,6 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 		initBar(onPersonBar, INDEX_ONPERSON);
 	}
 	
-
 
 	private void initBar(SeekBar bar, final int stream) {
 		bar.setMax(10);
@@ -223,7 +216,6 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
     }   
     
     private void sendAccurate() {
-//    	Toast.makeText(this, "Context Submited", Toast.LENGTH_SHORT).show();
     	Intent intent = new Intent(ContextConstants.CONTEXT_STORE_INTENT);
     	
     	intent.putExtra(ContextConstants.PLACE_ACCURATE, (int) placeBar.getProgress());
@@ -233,12 +225,7 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
     	intent.putExtra(ContextConstants.ONPERSON_ACCURATE, (int) onPersonBar.getProgress());
     	sendBroadcast(intent);    		
     }
-    
-    
-    
-    
-    
-    
+        
 	private void setRingtone() {
 		Uri ringUri;
 		String ringtone = prefs.getString(ContextConstants.PREFS_ACCURACY_POPUP_AUDIO, "Default");
@@ -252,7 +239,7 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 	}
 	
 	private void startVibrate() {
-		long[] pattern = {500, 300, 500, 300};
+		long[] pattern = {500, 300, 800, 300};
 		vibrate.vibrate(pattern, -1);
 	}
 

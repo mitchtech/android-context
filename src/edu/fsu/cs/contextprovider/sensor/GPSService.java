@@ -6,14 +6,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.widget.Toast;
 import edu.fsu.cs.contextprovider.ContextExpandableListActivity;
 import edu.fsu.cs.contextprovider.data.ContextConstants;
 
@@ -23,11 +27,14 @@ import edu.fsu.cs.contextprovider.data.ContextConstants;
  * @author meyers
  *
  */
-public class GPSService extends Service
+public class GPSService extends Service implements OnSharedPreferenceChangeListener
 {
 	private static final String TAG = "GPSService";
 	private static final boolean DEBUG_TTS = false;
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
+	
+	private SharedPreferences prefs;
+	
 	private static final String locationType = LocationManager.GPS_PROVIDER;
 	private static LocationManager manager;
 	private static LocationListener listener;
@@ -94,16 +101,18 @@ public class GPSService extends Service
 				isreliable = true;
 				currentLocation.set(location);
 				
-				Log.i(TAG, "New location found: [" + location.getLongitude() + "," + location.getLatitude() + "] | Speed: [" + location.getSpeed() + "]");
+				if (DEBUG) {
+					Log.i(TAG, "New location found: [" + location.getLongitude() + "," + location.getLatitude() + "] | Speed: [" + location.getSpeed() + "]");
+				}
 			}
 
 			public void onProviderDisabled(String provider) {
 				//manager.removeUpdates(this);
-				if (DEBUG == true) {
+				if (DEBUG) {
 					Log.i(TAG, locationType + ": is no longer reliable");
 				}
 				isreliable = false;
-				if (DEBUG_TTS == true) {
+				if (DEBUG_TTS) {
 					ContextExpandableListActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
 				}
 			}
@@ -111,7 +120,7 @@ public class GPSService extends Service
 			public void onProviderEnabled(String provider) {
 				Log.i(TAG, locationType + ": is reliable");
 				//isreliable = true;
-				if (DEBUG_TTS == true) {
+				if (DEBUG_TTS) {
 					ContextExpandableListActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
 				}
 			}
@@ -122,27 +131,27 @@ public class GPSService extends Service
 				case LocationProvider.OUT_OF_SERVICE:
 				case LocationProvider.TEMPORARILY_UNAVAILABLE:
 					isreliable = false;
-					if (DEBUG_TTS == true) {
+					if (DEBUG_TTS) {
 						ContextExpandableListActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
 					}
-					if (DEBUG == true) {
+					if (DEBUG) {
 						Log.i(TAG, "GPS Temporarily unavailable");
 					}
 					break;
 				case LocationProvider.AVAILABLE:
 					isreliable = true;
-					if (DEBUG_TTS == true) {
+					if (DEBUG_TTS) {
 						ContextExpandableListActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
 					}
-					if (DEBUG == true) {
+					if (DEBUG) {
 						Log.i(TAG, "GPS Available");
 					}
 					break;
 				default:
-					if (DEBUG_TTS == true) {
+					if (DEBUG_TTS) {
 						ContextExpandableListActivity.tts.speak("Other GPS event detected", TextToSpeech.QUEUE_FLUSH, null);
 					}
-					if (DEBUG == true) {
+					if (DEBUG) {
 						Log.i(TAG, "GPS State unkown");
 					}
 				}
@@ -161,16 +170,14 @@ public class GPSService extends Service
 	}
 	
 	private void getPrefs() {
-		// prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		// frequency = prefs.getInt(AccelerometerEditActivity.PREF_FREQUENCY,
-		// 50);
-		// ignoreThreshold = AccelerometerEditActivity.getRate(frequency);
-
-		// prefs.registerOnSharedPreferenceChangeListener(this);
+		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
+//		accelPoll = prefs.getInt(ContextConstants.PREFS_ACCEL_POLL_FREQ, 1);
+//		ignoreThreshold = prefs.getInt(ContextConstants.PREFS_ACCEL_IGNORE_THRESHOLD, 0);
+		prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	private void stopService() {
-		// PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
 		unregisterReceiver(restartIntentReceiver);
 		running = false;
 	}
@@ -188,16 +195,33 @@ public class GPSService extends Service
 
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
-		Log.i(TAG, "Service has been started.");
+		if (DEBUG) {
+			Log.i(TAG, "Service has been started");
+		}
 		return 0;
 	}
 
 	public void onDestroy()
 	{
 		stopService();
-		Log.i("GPS", "Stopping the service now.");
+		if (DEBUG) {
+			Log.i("GPS", "Stopping the service");
+		}
 		manager.removeUpdates(listener);
 		stopSelf();
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+//		if (key.equals(ContextConstants.PREFS_ACCEL_POLL_FREQ)) {
+//			Toast.makeText(this, "PREFS_ACCEL_POLL_FREQ", Toast.LENGTH_SHORT).show();
+//			getPrefs();
+//			stopService();
+//			startService();
+//		} else if (key.equals(ContextConstants.PREFS_ACCEL_IGNORE_THRESHOLD)) {
+//			Toast.makeText(this, "PREFS_ACCEL_IGNORE_THRESHOLD", Toast.LENGTH_SHORT).show();
+//			getPrefs();
+//		}
 	}
 	
 

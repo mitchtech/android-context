@@ -25,7 +25,7 @@ public class WakeupAlarmReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		WakefulIntentService.acquireStaticLock(context);
-		Log.d(TAG, "onReceive: context.startService(new Intent(context, WakeupService.class))");
 		context.startService(new Intent(context, edu.fsu.cs.contextprovider.wakeup.WakeupService.class));
+//		context.startService(new Intent(context, edu.fsu.cs.contextprovider.ContextService.class));
 	}
 }

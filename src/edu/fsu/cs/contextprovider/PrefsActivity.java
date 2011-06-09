@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -26,7 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-public class PrefsActivity extends PreferenceActivity {
+public class PrefsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	private static final String TAG = "edu.fsu.cs.PrefsActivity";
 	private static final String PREFS_NAME = ContextConstants.CONTEXT_PREFS;
 
@@ -43,32 +44,13 @@ public class PrefsActivity extends PreferenceActivity {
 		prefs = getPreferenceScreen().getSharedPreferences();
 	}
 
-
-//	private void enabled(final boolean enable) {
-//		String dialogTitle;
-//		if (enable) {
-//			dialogTitle = getString(R.string.enable_dialog_msg);
-//		} else {
-//			dialogTitle = getString(R.string.disable_dialog_msg);
-//		}
-//		new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(dialogTitle).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-//			public void onClick(DialogInterface dialog, int whichButton) {
-//				// enable monitor here
-//			}
-//		}).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-//			public void onClick(DialogInterface dialog, int whichButton) {
-//				// Do nothing
-//			}
-//		}).show();
-//	}
-
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
 		
-		Intent intent = new Intent(ContextConstants.CONTEXT_RESTART_INTENT);
-		sendBroadcast(intent);
+//		Intent intent = new Intent(ContextConstants.CONTEXT_RESTART_INTENT);
+//		sendBroadcast(intent);
 	}
 
 
@@ -120,5 +102,33 @@ public class PrefsActivity extends PreferenceActivity {
 		}
 		return version;
 	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+	    Preference pref = findPreference(key);
+
+	    if (pref instanceof ListPreference) {
+	        ListPreference listPref = (ListPreference) pref;
+	        pref.setSummary(listPref.getEntry());
+	    }
+	}
+	
+//	private void enabled(final boolean enable) {
+//	String dialogTitle;
+//	if (enable) {
+//		dialogTitle = getString(R.string.enable_dialog_msg);
+//	} else {
+//		dialogTitle = getString(R.string.disable_dialog_msg);
+//	}
+//	new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(dialogTitle).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+//		public void onClick(DialogInterface dialog, int whichButton) {
+//			// enable monitor here
+//		}
+//	}).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+//		public void onClick(DialogInterface dialog, int whichButton) {
+//			// Do nothing
+//		}
+//	}).show();
+//}
 
 }

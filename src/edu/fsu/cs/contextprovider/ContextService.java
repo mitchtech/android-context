@@ -29,6 +29,7 @@ import edu.fsu.cs.contextprovider.monitor.SocialMonitor;
 import edu.fsu.cs.contextprovider.monitor.SystemMonitor;
 import edu.fsu.cs.contextprovider.monitor.WeatherMonitor;
 import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
+import edu.fsu.cs.contextprovider.wakeup.WakefulIntentService;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -37,6 +38,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Geocoder;
 import android.media.MediaPlayer;
@@ -47,7 +49,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-public class ContextService extends Service {
+public class ContextService extends Service implements OnSharedPreferenceChangeListener {
+
 	private static final String TAG = "ContextService";
 
 	private static Timer popupTimer = new Timer();
@@ -59,10 +62,6 @@ public class ContextService extends Service {
 	private Context ctx;
 	EntityManager entityManager;
 	SharedPreferences prefs;
-	
-	// 5 min = 300 sec
-	// 15 min = 900 sec
-	//	private long POPUP_FREQ = 45;
 	
 	// location prefs
 	private boolean locationEnabled;
@@ -115,6 +114,13 @@ public class ContextService extends Service {
 		
 //		if (accuracyPopupEnabled)
 //		popupTimer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
+	}
+	
+	
+	private void stopService() {
+		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+		unregisterReceiver(restartIntentReceiver);
+		unregisterReceiver(contextIntentReceiver);
 	}
 	
 	
@@ -187,7 +193,6 @@ public class ContextService extends Service {
 	
 	private void getPrefs() {
 
-//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
 		
 		accuracyPopupEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_ENABLED, true);
@@ -212,18 +217,16 @@ public class ContextService extends Service {
 		derivedEnabled = prefs.getBoolean(ContextConstants.PREFS_DERIVED_ENABLED, true);
 		derivedCalcFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_CALC_FREQ, 5);
 		derivedStoreFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_STORE_FREQ, 30);
+		
+		prefs.registerOnSharedPreferenceChangeListener(this);
 	}
-
 	
 	private class ContextPopupTask extends TimerTask {
 		public void run() {
-			// Random myRandom = new Random();
-			// long delay = 5000; // + myRandom.nextInt();
 			toastHandler.sendEmptyMessage(0);
-			// toastHandler.sendMessage((Message) String.valueOf(delay));
 			popupTimer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
 		}
-	}
+	}	
 	
 	private class LocationStoreTask extends TimerTask {
 		public void run() {
@@ -276,6 +279,7 @@ public class ContextService extends Service {
 	public void onDestroy() {
 		super.onDestroy();
 		Toast.makeText(this, "Service Stopped ...", Toast.LENGTH_SHORT).show();
+		stopService();
 		unregisterReceiver(contextIntentReceiver);
 		unregisterReceiver(restartIntentReceiver);
 	}
@@ -453,6 +457,32 @@ public class ContextService extends Service {
 		} catch (Exception e) {
 			throw e;
 		}
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		// TODO Auto-generated method stub
+			
+//		locationEnabled = prefs.getBoolean(ContextConstants.PREFS_LOCATION_ENABLED, true);
+//		locationProximityEnabled = prefs.getBoolean(ContextConstants.PREFS_LOCATION_PROXIMITY_ENABLED, true);
+//		locationPollFreq = prefs.getInt(ContextConstants.PREFS_LOCATION_POLL_FREQ, 30);
+//		locationStoreFreq = prefs.getInt(ContextConstants.PREFS_LOCATION_STORE_FREQ, 30);
+//		
+//		movementEnabled = prefs.getBoolean(ContextConstants.PREFS_MOVEMENT_ENABLED, true);
+//		movementPollFreq = prefs.getInt(ContextConstants.PREFS_MOVEMENT_POLL_FREQ, 5);
+//		movementStoreFreq = prefs.getInt(ContextConstants.PREFS_MOVEMENT_STORE_FREQ, 30);
+//		
+//		weatherEnabled = prefs.getBoolean(ContextConstants.PREFS_WEATHER_ENABLED, true);
+//		weatherPollFreq = prefs.getInt(ContextConstants.PREFS_WEATHER_POLL_FREQ, 60);
+//		weatherStoreFreq = prefs.getInt(ContextConstants.PREFS_WEATHER_STORE_FREQ, 30);
+//
+//		socialEnabled = prefs.getBoolean(ContextConstants.PREFS_SOCIAL_ENABLED, true);
+//		systemEnabled = prefs.getBoolean(ContextConstants.PREFS_SYSTEM_ENABLED, true);
+//		
+//		derivedEnabled = prefs.getBoolean(ContextConstants.PREFS_DERIVED_ENABLED, true);
+//		derivedCalcFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_CALC_FREQ, 5);
+//		derivedStoreFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_STORE_FREQ, 30);
+		
 	}
 	
 

@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -19,17 +20,19 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-public class ProximityService extends Service implements SensorEventListener {
+public class ProximityService extends Service implements SensorEventListener, OnSharedPreferenceChangeListener {
 
 	private static final String TAG = "ProximitySensor Service";
 	private static final boolean DEBUG = true;
-	protected boolean serviceEnabled = false;
+	protected boolean running = false;
 	
 	private SensorManager sm;
 	private Sensor proximitySensor;
 	
+	SharedPreferences prefs;
+	
 	public void init() {
-		if (!serviceEnabled) {
+		if (!running) {
 			startService();
 		}
 	}
@@ -44,7 +47,7 @@ public class ProximityService extends Service implements SensorEventListener {
 		if (sensors != null && sensors.size() > 0) {
 			proximitySensor = sensors.get(0);
 			sm.registerListener(this, proximitySensor, SensorManager.SENSOR_DELAY_UI);
-			serviceEnabled = true;
+			running = true;
 		} else {
 			Toast.makeText(this, "Proximity sensor is not available on this device!", Toast.LENGTH_SHORT).show();
 		}
@@ -55,26 +58,23 @@ public class ProximityService extends Service implements SensorEventListener {
 	}
 	
 	private void getPrefs() {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-		// prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		// frequency = prefs.getInt(AccelerometerEditActivity.PREF_FREQUENCY,
-		// 50);
-		// ignoreThreshold = AccelerometerEditActivity.getRate(frequency);
-
-		// prefs.registerOnSharedPreferenceChangeListener(this);
+		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
+//		accelPoll = prefs.getInt(ContextConstants.PREFS_ACCEL_POLL_FREQ, 1);
+//		ignoreThreshold = prefs.getInt(ContextConstants.PREFS_ACCEL_IGNORE_THRESHOLD, 0);
+		prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	private void stopService() {
 		sm.unregisterListener(this);
-		// PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
 		unregisterReceiver(restartIntentReceiver);
+		running = false;
 	}
 	
 	BroadcastReceiver restartIntentReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			Log.d(TAG, TAG + "Restart Intent: " + intent.getAction());
-			if (serviceEnabled) {
+			if (running) {
 				stopService();
 			}
 			startService();
@@ -83,7 +83,7 @@ public class ProximityService extends Service implements SensorEventListener {
 	
 	@Override
 	public void onDestroy() {
-		if (serviceEnabled) {
+		if (running) {
 			stopService();
 		}
 		super.onDestroy();
@@ -113,6 +113,12 @@ public class ProximityService extends Service implements SensorEventListener {
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

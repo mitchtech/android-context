@@ -88,6 +88,7 @@ public class ContextConstants {
 	public static final String PREFS_MOVEMENT_POLL_FREQ = "PREFS_MOVEMENT_POLL_FREQ";
 	public static final String PREFS_MOVEMENT_STORE_FREQ = "PREFS_MOVEMENT_STORE_FREQ";	
 	public static final String PREFS_ACCEL_POLL_FREQ = "PREFS_ACCEL_POLL_FREQ";
+	public static final String PREFS_ACCEL_IGNORE_THRESHOLD = "PREFS_ACCEL_IGNORE_THRESHOLD";
 	
 	// weather prefs
 	public static final String PREFS_WEATHER_ENABLED = "PREFS_WEATHER_ENABLED";

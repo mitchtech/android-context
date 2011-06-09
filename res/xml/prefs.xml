@@ -20,19 +20,19 @@
 			android:summary="Select ringtone to play at popup"
 			android:dependency="PREFS_ACCURACY_POPUP_AUDIO_ENABLED"></RingtonePreference>
 		<CheckBoxPreference android:key="PREFS_ACCURACY_POPUP_VIBRATE_ENABLED"
-			android:title="Context Accuracy Popup Vibration" android:summaryOn="Context Accuracy Popup Vibrate Enabled"
+			android:title="Context Accuracy Popup Vibration" android:summaryOn="Context Accuracy Vibrate Enabled"
 			android:summaryOff="Context Accuracy Popup Vibrate Disabled"
 			android:dependency="PREFS_ACCURACY_POPUP_ENABLED"
 			android:defaultValue="true"></CheckBoxPreference>
 		<ListPreference android:entryValues="@array/prefs_popup_freq_values"
-			android:entries="@array/prefs_popup_freq" android:defaultValue="1"
+			android:entries="@array/prefs_popup_freq" android:defaultValue="30"
 			android:negativeButtonText="@string/cancel"
 			android:positiveButtonText="@string/ok" android:dialogTitle="Context Popup Frequency"
 			android:title="Context Popup Frequency" android:key="PREFS_POPUP_FREQ"
 			android:dependency="PREFS_ACCURACY_POPUP_ENABLED"></ListPreference>
 		<ListPreference android:entryValues="@array/prefs_popup_dismiss_freq_values"
 			android:entries="@array/prefs_popup_dismiss_freq"
-			android:defaultValue="1" android:negativeButtonText="@string/cancel"
+			android:defaultValue="5" android:negativeButtonText="@string/cancel"
 			android:positiveButtonText="@string/ok" android:dialogTitle="Context Popup Auto-Dismiss"
 			android:title="Context Popup Auto-Dismiss" android:key="PREFS_POPUP_DISMISS_FREQ"
 			android:dependency="PREFS_ACCURACY_POPUP_ENABLED"></ListPreference>
@@ -42,7 +42,7 @@
 		<CheckBoxPreference android:key="PREFS_LOCATION_ENABLED"
 			android:title="Location" android:summaryOn="Location Context Enabled"
 			android:summaryOff="Location Context Disabled" android:defaultValue="true"></CheckBoxPreference>
-		<CheckBoxPreference android:title="Proximity"
+		<CheckBoxPreference android:title="Proximity" android:defaultValue="true"
 			android:summaryOn="Proximity Context Enabled" android:key="PREFS_PROXIMITY_ENABLED"
 			android:summaryOff="Proximity Context Disabled"
 			android:dependency="PREFS_LOCATION_ENABLED"></CheckBoxPreference>
@@ -69,6 +69,12 @@
 			android:negativeButtonText="@string/cancel"
 			android:positiveButtonText="@string/ok" android:dialogTitle="Accelerometer Poll Frequency"
 			android:title="Accelerometer Poll Frequency" android:key="PREFS_ACCEL_POLL_FREQ"
+			android:dependency="PREFS_MOVEMENT_ENABLED"></ListPreference>
+		<ListPreference android:entryValues="@array/prefs_accel_ignore_values"
+			android:entries="@array/prefs_accel_ignore" android:defaultValue="0"
+			android:negativeButtonText="@string/cancel"
+			android:positiveButtonText="@string/ok" android:dialogTitle="Accelerometer Ignore Threshold"
+			android:title="Accelerometer Ignore Threshold" android:key="PREFS_ACCEL_IGNORE_THRESHOLD"
 			android:dependency="PREFS_MOVEMENT_ENABLED"></ListPreference>
 		<ListPreference android:entryValues="@array/prefs_polling_freq_values"
 			android:entries="@array/prefs_polling_freq" android:defaultValue="1"

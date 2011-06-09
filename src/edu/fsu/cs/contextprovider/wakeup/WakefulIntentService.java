@@ -24,7 +24,7 @@ import android.os.PowerManager;
 import android.util.Log;
 
 abstract public class WakefulIntentService extends IntentService {
-	abstract void doWakefulWork(Intent intent);
+	protected abstract void doWakefulWork(Intent intent);
 
 	public static final String LOCK_NAME_STATIC = "edu.fsu.cs.contextprovider.WakefulIntentService.Static";
 	private static PowerManager.WakeLock lockStatic = null;

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -18,7 +19,7 @@ import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
-public class NetworkService extends Service {
+public class NetworkService extends Service implements OnSharedPreferenceChangeListener {
 	private static final String TAG = "NetworkService";
 	private static final String locationType = LocationManager.NETWORK_PROVIDER;
 	private static Location currentLocation = new Location(locationType);
@@ -30,6 +31,8 @@ public class NetworkService extends Service {
 	private static final boolean DEBUG = true;
 	private static boolean running = false;
 
+	SharedPreferences prefs;
+	
 	public void onCreate() {
 		startService();
 	}	
@@ -50,7 +53,7 @@ public class NetworkService extends Service {
 			public void onProviderDisabled(String provider) {
 				//manager.removeUpdates(this);
 				Log.i(TAG, locationType + ": is no longer reliable");
-				if (DEBUG_TTS == true) {
+				if (DEBUG_TTS) {
 					ContextExpandableListActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
 				}
 				isreliable = false;
@@ -58,7 +61,7 @@ public class NetworkService extends Service {
 
 			public void onProviderEnabled(String provider) {
 				Log.i(TAG, locationType + ": is reliable");
-				if (DEBUG_TTS == true) {
+				if (DEBUG_TTS) {
 					ContextExpandableListActivity.tts.speak("GPS reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
 				}
 				isreliable = true;
@@ -69,19 +72,19 @@ public class NetworkService extends Service {
 				switch (status) {
 				case LocationProvider.OUT_OF_SERVICE:
 				case LocationProvider.TEMPORARILY_UNAVAILABLE:
-					if (DEBUG_TTS == true) {
+					if (DEBUG_TTS) {
 						ContextExpandableListActivity.tts.speak("Network reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
 					}
 					isreliable = false;
 					break;
 				case LocationProvider.AVAILABLE:
-					if (DEBUG_TTS == true) {
+					if (DEBUG_TTS) {
 						ContextExpandableListActivity.tts.speak("Network reliability is " + String.valueOf(isreliable), TextToSpeech.QUEUE_FLUSH, null);
 					}
 					isreliable = true;
 					break;
 				default:
-					if (DEBUG_TTS == true) {
+					if (DEBUG_TTS) {
 						ContextExpandableListActivity.tts.speak("Network other event detected", TextToSpeech.QUEUE_FLUSH, null);
 					}
 				}
@@ -99,21 +102,18 @@ public class NetworkService extends Service {
 	}
 	
 	private void getPrefs() {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-		// prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		// frequency = prefs.getInt(AccelerometerEditActivity.PREF_FREQUENCY,
-		// 50);
-		// ignoreThreshold = AccelerometerEditActivity.getRate(frequency);
-
-		// prefs.registerOnSharedPreferenceChangeListener(this);
-	}
+		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
+//		accelPoll = prefs.getInt(ContextConstants.PREFS_ACCEL_POLL_FREQ, 1);
+//		ignoreThreshold = prefs.getInt(ContextConstants.PREFS_ACCEL_IGNORE_THRESHOLD, 0);
+		prefs.registerOnSharedPreferenceChangeListener(this);
+		}
 
 	private void stopService() {
-		// PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
-		Log.i("GPS", "Stopping the service now.");
+		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+		if (DEBUG) { 
+			Log.i("GPS", "Stopping the service now.");
+		}
 		manager.removeUpdates(listener);
-//		stopSelf();
 		unregisterReceiver(restartIntentReceiver);
 		running = false;
 	}
@@ -127,10 +127,6 @@ public class NetworkService extends Service {
 			startService();
 		}
 	};
-	
-	
-	
-	
 	
 	public static double getLatitude() {
 		return currentLocation.getLatitude();
@@ -160,16 +156,18 @@ public class NetworkService extends Service {
 	
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
-		Log.i(TAG, "Service has been started.");
-//		running = true;
 		return 0;
 	}
 
 	public void onDestroy()
 	{
 		stopService();
-//		running = false;
+	}
 
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
