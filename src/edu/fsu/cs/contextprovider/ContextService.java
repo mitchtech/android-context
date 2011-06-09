@@ -57,12 +57,12 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 	private static Timer locationStoreTimer = new Timer();
 	private static Timer movementStoreTimer = new Timer();
 	private static Timer weatherStoreTimer = new Timer();
-	private static Timer derivedStoreTimer = new Timer();	
-	
+	private static Timer derivedStoreTimer = new Timer();
+
 	private Context ctx;
 	EntityManager entityManager;
 	SharedPreferences prefs;
-	
+
 	// location prefs
 	private boolean locationEnabled;
 	private boolean locationProximityEnabled;
@@ -87,8 +87,7 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 	// general prefs
 	private boolean accuracyPopupEnabled;
 	private int accuracyPopupPeriod;
-	
-	
+
 	public IBinder onBind(Intent arg0) {
 		return null;
 	}
@@ -100,10 +99,10 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 	}
 
 	private void startService() {
-		
+
 		getPrefs();
 		startMonitors();
-		
+
 		IntentFilter storeFilter = new IntentFilter();
 		storeFilter.addAction(ContextConstants.CONTEXT_STORE_INTENT);
 		registerReceiver(contextIntentReceiver, storeFilter);
@@ -111,23 +110,23 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		IntentFilter restartFilter = new IntentFilter();
 		restartFilter.addAction(ContextConstants.CONTEXT_RESTART_INTENT);
 		registerReceiver(restartIntentReceiver, restartFilter);
-		
-//		if (accuracyPopupEnabled)
-//		popupTimer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
+
+		// if (accuracyPopupEnabled)
+		// popupTimer.schedule(new ContextPopupTask(), (accuracyPopupPeriod *
+		// 1000)); // seconds*1000
 	}
-	
-	
+
 	private void stopService() {
+		stopMonitors();
 		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
 		unregisterReceiver(restartIntentReceiver);
 		unregisterReceiver(contextIntentReceiver);
 	}
-	
-	
+
 	private void startMonitors() {
-		
+
 		Intent intent = null;
-		
+
 		if (locationEnabled) {
 			/* Start GPS Service */
 			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.GPSService.class);
@@ -138,7 +137,8 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 			/* Start LocationMonitor */
 			Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 			LocationMonitor.StartThread(locationPollFreq, geocoder);
-//			locationStoreTimer.schedule(new LocationStoreTask(), (locationStoreFreq * 1000)); // seconds*1000
+			// locationStoreTimer.schedule(new LocationStoreTask(),
+			// (locationStoreFreq * 1000)); // seconds*1000
 		}
 		if (movementEnabled) {
 			/* Start Accelerometer Service */
@@ -146,32 +146,35 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 			startService(intent);
 			/* Start movement context */
 			MovementMonitor.StartThread(movementPollFreq);
-//			movementStoreTimer.schedule(new MovementStoreTask(), (movementStoreFreq * 1000)); // seconds*1000
+			// movementStoreTimer.schedule(new MovementStoreTask(),
+			// (movementStoreFreq * 1000)); // seconds*1000
 		}
 		if (weatherEnabled) {
 			/* Start weather monitor */
 			WeatherMonitor.StartThread(weatherPollFreq);
-//			weatherStoreTimer.schedule(new WeatherStoreTask(), (weatherStoreFreq * 1000)); // seconds*1000
+			// weatherStoreTimer.schedule(new WeatherStoreTask(),
+			// (weatherStoreFreq * 1000)); // seconds*1000
 		}
 		if (systemEnabled) {
-//			/* Start Phone/SMS State Monitor Services */
-//			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.TelephonyService.class);
-//			startService(intent);
+			// /* Start Phone/SMS State Monitor Services */
+			// intent = new Intent(this.getApplicationContext(),
+			// edu.fsu.cs.contextprovider.sensor.TelephonyService.class);
+			// startService(intent);
 		}
 		if (socialEnabled) {
-//			/* Start social monitor */
-//			SocialMonitor.StartThread(weatherPollFreq);
+			// /* Start social monitor */
+			// SocialMonitor.StartThread(weatherPollFreq);
 		}
 		if (derivedEnabled) {
 			/* Start derived monitor */
 			DerivedMonitor.StartThread(derivedCalcFreq);
-//			derivedStoreTimer.schedule(new DerivedStoreTask(), (derivedStoreFreq * 1000)); // seconds*1000
+			// derivedStoreTimer.schedule(new DerivedStoreTask(),
+			// (derivedStoreFreq * 1000)); // seconds*1000
 		}
 	}
-	
 
 	private void stopMonitors() {
-		
+
 		if (locationEnabled) {
 			LocationMonitor.StopThread();
 			locationStoreTimer.cancel();
@@ -182,52 +185,51 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		}
 		if (weatherEnabled) {
 			WeatherMonitor.StopThread();
-			weatherStoreTimer.cancel();			
+			weatherStoreTimer.cancel();
 		}
 		if (derivedEnabled) {
 			DerivedMonitor.StopThread();
 			derivedStoreTimer.cancel();
 		}
 	}
-		
-	
+
 	private void getPrefs() {
 
 		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
-		
+
 		accuracyPopupEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_ENABLED, true);
 		accuracyPopupPeriod = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_PERIOD, 45);
-		
+
 		locationEnabled = prefs.getBoolean(ContextConstants.PREFS_LOCATION_ENABLED, true);
 		locationProximityEnabled = prefs.getBoolean(ContextConstants.PREFS_LOCATION_PROXIMITY_ENABLED, true);
 		locationPollFreq = prefs.getInt(ContextConstants.PREFS_LOCATION_POLL_FREQ, 30);
 		locationStoreFreq = prefs.getInt(ContextConstants.PREFS_LOCATION_STORE_FREQ, 30);
-		
+
 		movementEnabled = prefs.getBoolean(ContextConstants.PREFS_MOVEMENT_ENABLED, true);
 		movementPollFreq = prefs.getInt(ContextConstants.PREFS_MOVEMENT_POLL_FREQ, 5);
 		movementStoreFreq = prefs.getInt(ContextConstants.PREFS_MOVEMENT_STORE_FREQ, 30);
-		
+
 		weatherEnabled = prefs.getBoolean(ContextConstants.PREFS_WEATHER_ENABLED, true);
 		weatherPollFreq = prefs.getInt(ContextConstants.PREFS_WEATHER_POLL_FREQ, 60);
 		weatherStoreFreq = prefs.getInt(ContextConstants.PREFS_WEATHER_STORE_FREQ, 30);
 
 		socialEnabled = prefs.getBoolean(ContextConstants.PREFS_SOCIAL_ENABLED, true);
 		systemEnabled = prefs.getBoolean(ContextConstants.PREFS_SYSTEM_ENABLED, true);
-		
+
 		derivedEnabled = prefs.getBoolean(ContextConstants.PREFS_DERIVED_ENABLED, true);
 		derivedCalcFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_CALC_FREQ, 5);
 		derivedStoreFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_STORE_FREQ, 30);
-		
+
 		prefs.registerOnSharedPreferenceChangeListener(this);
 	}
-	
+
 	private class ContextPopupTask extends TimerTask {
 		public void run() {
 			toastHandler.sendEmptyMessage(0);
 			popupTimer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
 		}
-	}	
-	
+	}
+
 	private class LocationStoreTask extends TimerTask {
 		public void run() {
 			try {
@@ -239,7 +241,7 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 			locationStoreTimer.schedule(new LocationStoreTask(), (locationStoreFreq * 1000)); // seconds*1000
 		}
 	}
-	
+
 	private class MovementStoreTask extends TimerTask {
 		public void run() {
 			try {
@@ -251,7 +253,7 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 			movementStoreTimer.schedule(new MovementStoreTask(), (movementStoreFreq * 1000)); // seconds*1000
 		}
 	}
-	
+
 	private class WeatherStoreTask extends TimerTask {
 		public void run() {
 			try {
@@ -263,7 +265,7 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 			weatherStoreTimer.schedule(new WeatherStoreTask(), (weatherStoreFreq * 1000)); // seconds*1000
 		}
 	}
-	
+
 	private class DerivedStoreTask extends TimerTask {
 		public void run() {
 			try {
@@ -289,7 +291,7 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		public void handleMessage(Message msg) {
 			Toast.makeText(getApplicationContext(), "Context Accuracy Popup", Toast.LENGTH_SHORT).show();
 			Intent intent = new Intent(ctx, edu.fsu.cs.contextprovider.ContextAccuracyActivity.class);
-//			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			// intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(intent);
 		}
 	};
@@ -304,13 +306,12 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 			activityAccurate = intent.getIntExtra(ContextConstants.ACTIVITY_ACCURATE, 10);
 			shelterAccurate = intent.getIntExtra(ContextConstants.SHELTER_ACCURATE, 10);
 			onPersonAccurate = intent.getIntExtra(ContextConstants.ONPERSON_ACCURATE, 10);
-			
+
 			Toast.makeText(
 					getApplicationContext(),
-					"ContextService Accuracy: \n" + "Place: " + placeAccurate + "\n" + "Movement: " + movementAccurate + "\n" + "Activity: "
-							+ activityAccurate + "\n" + "Shelter: " + shelterAccurate + "\n" + "OnPerson: " + onPersonAccurate,
-					Toast.LENGTH_LONG).show();
-			
+					"ContextService Accuracy: \n" + "Place: " + placeAccurate + "\n" + "Movement: " + movementAccurate + "\n" + "Activity: " + activityAccurate
+							+ "\n" + "Shelter: " + shelterAccurate + "\n" + "OnPerson: " + onPersonAccurate, Toast.LENGTH_LONG).show();
+
 			try {
 				StoreAccuracy(placeAccurate, movementAccurate, activityAccurate, shelterAccurate, onPersonAccurate);
 			} catch (Exception e) {
@@ -318,7 +319,6 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 				e.printStackTrace();
 			}
 
-			
 		}
 	};
 
@@ -442,7 +442,7 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 			throw e;
 		}
 	}
-	
+
 	private void StoreAccuracy(int place, int movement, int activity, int shelter, int onPerson) throws Exception {
 		try {
 			entityManager = EntityManager.GetManager(this);
@@ -460,30 +460,9 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 	}
 
 	@Override
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		// TODO Auto-generated method stub
-			
-//		locationEnabled = prefs.getBoolean(ContextConstants.PREFS_LOCATION_ENABLED, true);
-//		locationProximityEnabled = prefs.getBoolean(ContextConstants.PREFS_LOCATION_PROXIMITY_ENABLED, true);
-//		locationPollFreq = prefs.getInt(ContextConstants.PREFS_LOCATION_POLL_FREQ, 30);
-//		locationStoreFreq = prefs.getInt(ContextConstants.PREFS_LOCATION_STORE_FREQ, 30);
-//		
-//		movementEnabled = prefs.getBoolean(ContextConstants.PREFS_MOVEMENT_ENABLED, true);
-//		movementPollFreq = prefs.getInt(ContextConstants.PREFS_MOVEMENT_POLL_FREQ, 5);
-//		movementStoreFreq = prefs.getInt(ContextConstants.PREFS_MOVEMENT_STORE_FREQ, 30);
-//		
-//		weatherEnabled = prefs.getBoolean(ContextConstants.PREFS_WEATHER_ENABLED, true);
-//		weatherPollFreq = prefs.getInt(ContextConstants.PREFS_WEATHER_POLL_FREQ, 60);
-//		weatherStoreFreq = prefs.getInt(ContextConstants.PREFS_WEATHER_STORE_FREQ, 30);
-//
-//		socialEnabled = prefs.getBoolean(ContextConstants.PREFS_SOCIAL_ENABLED, true);
-//		systemEnabled = prefs.getBoolean(ContextConstants.PREFS_SYSTEM_ENABLED, true);
-//		
-//		derivedEnabled = prefs.getBoolean(ContextConstants.PREFS_DERIVED_ENABLED, true);
-//		derivedCalcFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_CALC_FREQ, 5);
-//		derivedStoreFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_STORE_FREQ, 30);
-		
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {		
+		stopService();
+		startService();
 	}
-	
 
 }

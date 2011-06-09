@@ -114,7 +114,7 @@ public class ContextConstants {
 	public static final String PREFS_TTS_ENABLED = "PREFS_TTS_ENABLED";
 	public static final String PREFS_SHAKE_ENABLED = "PREFS_SHAKE_ENABLED";
 	
-	
+	public static final String PREFS_FIRST_RUN = "PREFS_FIRST_RUN";
 	
 	public static float getMaxSensorRange(Context context, int sensorType, float defaultValue) {
 		float max = defaultValue;

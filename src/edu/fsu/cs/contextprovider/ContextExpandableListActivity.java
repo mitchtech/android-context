@@ -41,9 +41,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ExpandableListActivity;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -58,6 +60,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.text.ClipboardManager;
@@ -87,15 +90,14 @@ import edu.fsu.cs.contextprovider.rpc.IContextProviderService;
 import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
 import edu.fsu.cs.contextprovider.sensor.LightService;
 
-public class ContextExpandableListActivity extends ExpandableListActivity
-		implements OnChildClickListener, TextToSpeech.OnInitListener {
+public class ContextExpandableListActivity extends ExpandableListActivity implements OnChildClickListener, TextToSpeech.OnInitListener {
 	private static final String TAG = "ContextExpandableListActivity";
 
 	private static final String NAME = "NAME";
 	private static final String VALUE = "VALUE";
 
 	private ExpandableListAdapter mAdapter;
-	private static Timer timer = new Timer(); 
+	private static Timer timer = new Timer();
 
 	// private static final int MENU_ADD_ID = Menu.FIRST + 2;
 	// private static final int MENU_SHARE_ID = Menu.FIRST + 3;
@@ -139,6 +141,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity
 	// debug
 	private boolean ttsEnabled;
 	private boolean shakeEnabled;
+	SharedPreferences prefs;
 
 	public static boolean running = false;
 	public static TextToSpeech tts;
@@ -170,24 +173,36 @@ public class ContextExpandableListActivity extends ExpandableListActivity
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		getPrefs();
+		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
 
-		// startup the primary context service (if just installed)
-		startService(new Intent(this, ContextService.class));
+		if (!prefs.contains(ContextConstants.PREFS_FIRST_RUN)) {
+			
+			SharedPreferences.Editor prefsEditor = prefs.edit();
+			prefsEditor.putBoolean(ContextConstants.PREFS_FIRST_RUN, false);
+			prefsEditor.commit();
+			
+			// startup the primary context service (if just installed)
+			startService(new Intent(this, ContextService.class));
+
+			AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+			Intent intent = new Intent(getBaseContext(), edu.fsu.cs.contextprovider.wakeup.WakeupAlarmReceiver.class);
+			PendingIntent pi = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
+			manager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 10000, accuracyPopupPeriod * 1000, pi);
+
+		}
+
+		getPrefs();
 
 		tts = new TextToSpeech(this, this);
 
 		running = true;
-
-		Intent intent = null;
 
 		if (clip == null) {
 			clip = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 		}
 
 		/* Start ContextProviderService */
-		bindService(new Intent(this, ContextProviderService.class), conn,
-				Context.BIND_AUTO_CREATE);
+		bindService(new Intent(this, ContextProviderService.class), conn, Context.BIND_AUTO_CREATE);
 
 		if (locationEnabled) {
 			refreshLocation();
@@ -212,25 +227,19 @@ public class ContextExpandableListActivity extends ExpandableListActivity
 			refreshDerived();
 		}
 
-		mAdapter = new SimpleExpandableListAdapter(this, groupData,
-				android.R.layout.simple_expandable_list_item_1, new String[] {
-						NAME, VALUE }, new int[] { android.R.id.text1,
-						android.R.id.text2 }, childData,
-				android.R.layout.simple_expandable_list_item_2, new String[] {
-						NAME, VALUE }, new int[] { android.R.id.text1,
-						android.R.id.text2 });
+		mAdapter = new SimpleExpandableListAdapter(this, groupData, android.R.layout.simple_expandable_list_item_1, new String[] { NAME, VALUE }, new int[] {
+				android.R.id.text1, android.R.id.text2 }, childData, android.R.layout.simple_expandable_list_item_2, new String[] { NAME, VALUE }, new int[] {
+				android.R.id.text1, android.R.id.text2 });
 
 		setListAdapter(mAdapter);
 
-		
-		
-		Handler handler = new Handler(); 
-	    handler.postDelayed(new Runnable() { 
-	         public void run() { 
-	              refresh(); 
-	         } 
-	    }, 1000); 
-		
+		Handler handler = new Handler();
+		handler.postDelayed(new Runnable() {
+			public void run() {
+				refresh();
+			}
+		}, 1000);
+
 	}
 
 	public void onInit(int status) {
@@ -239,16 +248,14 @@ public class ContextExpandableListActivity extends ExpandableListActivity
 			tts.setLanguage(loc);
 		}
 		if (ttsEnabled)
-			tts.speak("Text to Speach Initialized", TextToSpeech.QUEUE_FLUSH,
-					null);
+			tts.speak("Text to Speach Initialized", TextToSpeech.QUEUE_FLUSH, null);
 	}
 
 	private void getPrefs() {
 
 		// SharedPreferences prefs =
 		// PreferenceManager.getDefaultSharedPreferences(this);
-		SharedPreferences prefs = getSharedPreferences(
-				ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
+		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
 
 		// general
 		// startupEnabled = prefs.getBoolean("PREFS_STARTUP_ENABLED", true);
@@ -356,13 +363,11 @@ public class ContextExpandableListActivity extends ExpandableListActivity
 		curChildMap = new HashMap<String, String>();
 		movement.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.MOVEMENT_STEP_COUNT);
-		curChildMap.put(VALUE, String.valueOf(AccelerometerService
-				.getStepCount()));
+		curChildMap.put(VALUE, String.valueOf(AccelerometerService.getStepCount()));
 		curChildMap = new HashMap<String, String>();
 		movement.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.MOVEMENT_LAST_STEP);
-		curChildMap.put(VALUE, String.valueOf(AccelerometerService
-				.getStepTimestamp()));
+		curChildMap.put(VALUE, String.valueOf(AccelerometerService.getStepTimestamp()));
 
 		childData.add(movement);
 	}
@@ -377,8 +382,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity
 		proximityMap.put(VALUE, "Proximity");
 		List<Map<String, String>> proximity = new ArrayList<Map<String, String>>();
 
-		SharedPreferences pref = getSharedPreferences(
-				ContextConstants.PREFS_ADDRESS, 0);
+		SharedPreferences pref = getSharedPreferences(ContextConstants.PREFS_ADDRESS, 0);
 		Map<String, String> list = (Map<String, String>) pref.getAll();
 		for (Map.Entry<String, String> entry : list.entrySet()) {
 			Map<String, String> curChildMap = new HashMap<String, String>();
@@ -484,18 +488,15 @@ public class ContextExpandableListActivity extends ExpandableListActivity
 		curChildMap = new HashMap<String, String>();
 		system.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.SYSTEM_PLUGGED);
-		curChildMap
-				.put(VALUE, String.valueOf(SystemMonitor.isBatteryPlugged()));
+		curChildMap.put(VALUE, String.valueOf(SystemMonitor.isBatteryPlugged()));
 		curChildMap = new HashMap<String, String>();
 		system.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.SYSTEM_LAST_PLUGGED);
-		curChildMap.put(VALUE, String.valueOf(SystemMonitor
-				.getBatteryLastPlugged()));
+		curChildMap.put(VALUE, String.valueOf(SystemMonitor.getBatteryLastPlugged()));
 		curChildMap = new HashMap<String, String>();
 		system.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.SYSTEM_LAST_PRESENT);
-		curChildMap.put(VALUE, String.valueOf(SystemMonitor
-				.getUserLastPresent()));
+		curChildMap.put(VALUE, String.valueOf(SystemMonitor.getUserLastPresent()));
 		curChildMap = new HashMap<String, String>();
 		system.add(curChildMap);
 		curChildMap.put(NAME, ContextConstants.SYSTEM_WIFI_SSID);
@@ -553,20 +554,13 @@ public class ContextExpandableListActivity extends ExpandableListActivity
 
 		// menu.add(Menu.NONE, MENU_ADD_ID, Menu.NONE,
 		// "Add").setIcon(android.R.drawable.ic_menu_add).setAlphabeticShortcut('a');
-		menu.add(Menu.NONE, MENU_SET_HOME_ID, Menu.NONE, "Set Home").setIcon(
-				android.R.drawable.ic_menu_compass).setAlphabeticShortcut('h');
-		menu.add(Menu.NONE, MENU_SET_WORK_ID, Menu.NONE, "Set Work").setIcon(
-				android.R.drawable.ic_menu_compass).setAlphabeticShortcut('w');
-		menu.add(Menu.NONE, MENU_REFRESH_ID, Menu.NONE, "Refresh").setIcon(
-				android.R.drawable.ic_menu_rotate).setAlphabeticShortcut('r');
+		menu.add(Menu.NONE, MENU_SET_HOME_ID, Menu.NONE, "Set Home").setIcon(android.R.drawable.ic_menu_compass).setAlphabeticShortcut('h');
+		menu.add(Menu.NONE, MENU_SET_WORK_ID, Menu.NONE, "Set Work").setIcon(android.R.drawable.ic_menu_compass).setAlphabeticShortcut('w');
+		menu.add(Menu.NONE, MENU_REFRESH_ID, Menu.NONE, "Refresh").setIcon(android.R.drawable.ic_menu_rotate).setAlphabeticShortcut('r');
 		// menu.add(Menu.NONE, MENU_SHARE_ID, Menu.NONE,
 		// "Share").setIcon(android.R.drawable.ic_menu_share).setAlphabeticShortcut('s');
-		menu.add(Menu.NONE, MENU_PREFS_ID, Menu.NONE, "Prefs").setIcon(
-				android.R.drawable.ic_menu_preferences).setAlphabeticShortcut(
-				'p');
-		menu.add(Menu.NONE, MENU_ABOUT_ID, Menu.NONE, "About").setIcon(
-				android.R.drawable.ic_menu_info_details).setAlphabeticShortcut(
-				'i');
+		menu.add(Menu.NONE, MENU_PREFS_ID, Menu.NONE, "Prefs").setIcon(android.R.drawable.ic_menu_preferences).setAlphabeticShortcut('p');
+		menu.add(Menu.NONE, MENU_ABOUT_ID, Menu.NONE, "About").setIcon(android.R.drawable.ic_menu_info_details).setAlphabeticShortcut('i');
 
 		return (super.onCreateOptionsMenu(menu));
 	}
@@ -579,18 +573,14 @@ public class ContextExpandableListActivity extends ExpandableListActivity
 			refresh();
 			return true;
 		case MENU_SET_HOME_ID:
-			intent = new Intent(getApplicationContext(),
-					edu.fsu.cs.contextprovider.map.AddPlaceMapActivity.class);
-			intent.putExtra(ContextConstants.PLACE_REQUEST_ID,
-					ContextConstants.SET_HOME_REQUEST);
+			intent = new Intent(getApplicationContext(), edu.fsu.cs.contextprovider.map.AddPlaceMapActivity.class);
+			intent.putExtra(ContextConstants.PLACE_REQUEST_ID, ContextConstants.SET_HOME_REQUEST);
 			startActivityForResult(intent, ContextConstants.SET_HOME_REQUEST);
 			// refresh();
 			return true;
 		case MENU_SET_WORK_ID:
-			intent = new Intent(getApplicationContext(),
-					edu.fsu.cs.contextprovider.map.AddPlaceMapActivity.class);
-			intent.putExtra(ContextConstants.PLACE_REQUEST_ID,
-					ContextConstants.SET_WORK_REQUEST);
+			intent = new Intent(getApplicationContext(), edu.fsu.cs.contextprovider.map.AddPlaceMapActivity.class);
+			intent.putExtra(ContextConstants.PLACE_REQUEST_ID, ContextConstants.SET_WORK_REQUEST);
 			startActivityForResult(intent, ContextConstants.SET_WORK_REQUEST);
 
 			// startActivityForResult(new Intent(getApplicationContext(),
@@ -649,18 +639,15 @@ public class ContextExpandableListActivity extends ExpandableListActivity
 	}
 
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-			ContextMenu.ContextMenuInfo menuInfo) {
-		menu.add(Menu.NONE, CONTEXT_DELETE_ID, Menu.NONE, "Delete").setIcon(
-				android.R.drawable.ic_menu_delete).setAlphabeticShortcut('d');
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+		menu.add(Menu.NONE, CONTEXT_DELETE_ID, Menu.NONE, "Delete").setIcon(android.R.drawable.ic_menu_delete).setAlphabeticShortcut('d');
 	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case CONTEXT_DELETE_ID:
-			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
-					.getMenuInfo();
+			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 			return true;
 
 		}
@@ -694,8 +681,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity
 	}
 
 	@Override
-	public boolean onChildClick(ExpandableListView parent, View v,
-			int groupPosition, int childPosition, long id) {
+	public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 		String copiedString = null;
 		Context context = getApplicationContext();
 		List<Map<String, String>> category = childData.get(groupPosition);
@@ -713,11 +699,9 @@ public class ContextExpandableListActivity extends ExpandableListActivity
 			copiedString = name;
 		}
 
-		Toast.makeText(context, "Copied: [" + copiedString + "]",
-				Toast.LENGTH_SHORT).show();
+		Toast.makeText(context, "Copied: [" + copiedString + "]", Toast.LENGTH_SHORT).show();
 		clip.setText(copiedString);
-		Log.i("LIST", "Name [" + name + "] | Value [" + value + "] | id [" + id
-				+ "]");
+		Log.i("LIST", "Name [" + name + "] | Value [" + value + "] | id [" + id + "]");
 
 		return true;
 	}
@@ -775,22 +759,17 @@ public class ContextExpandableListActivity extends ExpandableListActivity
 	}
 
 	private AlertDialog getAboutBox() {
-		String title = getString(R.string.app_name) + " build "
-				+ getVersion(this);
+		String title = getString(R.string.app_name) + " build " + getVersion(this);
 
-		return new AlertDialog.Builder(ContextExpandableListActivity.this)
-				.setTitle(title).setView(
-						View.inflate(this, R.layout.about, null)).setIcon(
-						R.drawable.context64).setPositiveButton("OK", null)
-				.create();
+		return new AlertDialog.Builder(ContextExpandableListActivity.this).setTitle(title).setView(View.inflate(this, R.layout.about, null)).setIcon(
+				R.drawable.context64).setPositiveButton("OK", null).create();
 
 	}
 
 	public static String getVersion(Context context) {
 		String version = "1.0";
 		try {
-			PackageInfo pi = context.getPackageManager().getPackageInfo(
-					context.getPackageName(), 0);
+			PackageInfo pi = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
 			version = pi.versionName;
 		} catch (PackageManager.NameNotFoundException e) {
 			Log.e(TAG, "Package name not found", e);
@@ -799,19 +778,16 @@ public class ContextExpandableListActivity extends ExpandableListActivity
 	}
 
 	public void exportToFile() throws IOException {
-		String path = Environment.getExternalStorageDirectory() + "/"
-				+ CSV_FILENAME;
+		String path = Environment.getExternalStorageDirectory() + "/" + CSV_FILENAME;
 
 		File file = new File(path);
 		file.createNewFile();
 
 		if (!file.isFile()) {
-			throw new IllegalArgumentException("Should not be a directory: "
-					+ file);
+			throw new IllegalArgumentException("Should not be a directory: " + file);
 		}
 		if (!file.canWrite()) {
-			throw new IllegalArgumentException("File cannot be written: "
-					+ file);
+			throw new IllegalArgumentException("File cannot be written: " + file);
 		}
 
 		Writer output = new BufferedWriter(new FileWriter(file));
@@ -833,14 +809,12 @@ public class ContextExpandableListActivity extends ExpandableListActivity
 
 		output.close();
 
-		Toast.makeText(this, String.format("Saved", path), Toast.LENGTH_LONG)
-				.show();
+		Toast.makeText(this, String.format("Saved", path), Toast.LENGTH_LONG).show();
 
 		Intent shareIntent = new Intent(Intent.ACTION_SEND);
 		shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + path));
 		shareIntent.setType("text/plain");
-		startActivity(Intent.createChooser(shareIntent,
-				"Share Context Using..."));
+		startActivity(Intent.createChooser(shareIntent, "Share Context Using..."));
 	}
 
 }

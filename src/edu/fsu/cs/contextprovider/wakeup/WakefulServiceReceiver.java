@@ -19,9 +19,8 @@ public class WakefulServiceReceiver extends BroadcastReceiver {
 		AlarmManager manager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
 		Intent i = new Intent(context, edu.fsu.cs.contextprovider.wakeup.WakeupAlarmReceiver.class);
 		PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
-		Log.d(TAG, "onReceive: manager.setRepeating");
 		manager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime()+10000, PERIOD * 1000, pi);
-		
+
 		context.startService(new Intent(context, edu.fsu.cs.contextprovider.ContextService.class));
 	}
 }
