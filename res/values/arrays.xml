@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string-array name="prefs_polling_freq">
+		<item>Low</item>
+		<item>Medium</item>
+		<item>High</item>
+	</string-array>
+
+	<string-array name="prefs_polling_freq_values">
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+	</string-array>
+	
+	<string-array name="prefs_accel_freq">
+		<item>SENSOR_DELAY_UI</item>
+		<item>SENSOR_DELAY_NORMAL</item>
+		<item>SENSOR_DELAY_GAME</item>
+		<item>SENSOR_DELAY_FASTEST</item>
+	</string-array>
+
+	<string-array name="prefs_accel_freq_values">
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+	</string-array>
+	
+	<string-array name="prefs_storing_freq">
+		<item>Low</item>
+		<item>Medium</item>
+		<item>High</item>
+	</string-array>
+
+	<string-array name="prefs_storing_freq_values">
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+	</string-array>
+
+	<string-array name="prefs_popup_freq">
+		<item>15 Minutes</item>
+		<item>30 Minutes</item>
+		<item>60 Minutes</item>
+		<item>30 Seconds (DEBUG)</item>
+	</string-array>
+
+	<string-array name="prefs_popup_freq_values">
+		<item>900</item>
+		<item>1800</item>
+		<item>3600</item>
+		<item>30</item>
+	</string-array>
+
+	<string-array name="prefs_popup_dismiss_freq">
+		<item>15 Seconds</item>
+		<item>30 Seconds</item>
+		<item>60 Seconds</item>
+		<item>5 Seconds (DEBUG)</item>
+	</string-array>
+
+	<string-array name="prefs_popup_dismiss_freq_values">
+		<item>15</item>
+		<item>30</item>
+		<item>60</item>
+		<item>5</item>
+	</string-array>
+
+
+
+</resources>

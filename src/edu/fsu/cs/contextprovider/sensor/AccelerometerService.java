@@ -27,20 +27,21 @@ import android.widget.Toast;
 public class AccelerometerService extends Service implements SensorEventListener, OnSharedPreferenceChangeListener {
 
 	private static final String TAG = "AccelerometerService";
+	private static final boolean DEBUG = false;
 	private static boolean serviceEnabled = false;
-	private static final boolean DEBUG = true;
+
 	private SensorManager sm;
 	private Sensor accelerometerSensor;
 
-	private int ignoreThreshold = 0;
-
-	int ACCELEROMETER_POLL_FREQUENCY;
-	int ACCELEROMETER_IGNORE_THRESHOLD;
-
-	private int ignoreCounter = 0;
-
 	public final static int READINGS_REMEMBER_MAX = 100;
 
+	SharedPreferences prefs;
+	private boolean shakeEnabled;
+	private int accelPoll = 0; // eg SensorManager.SENSOR_DELAY_UI
+
+	private int ignoreThreshold = 0;
+	private int ignoreCounter = 0;
+	
 	/*
 	 * TODO: Make this a circular buffer or a double ended queue It seems that
 	 * deque (double ended queue) is only in the newest (3.0) android sdk
@@ -53,22 +54,17 @@ public class AccelerometerService extends Service implements SensorEventListener
 	private static long step_count = 0;
 	private static long step_timestamp = 0;
 	private static int shakeCount = 0;
-	private Date lastStep = new Date();
+//	private Date lastStep = new Date();
 
 	/* Accelerometer -> walking calculation variables */
 	private static float mLimit = 10;
 	private static float mLastValues[] = new float[3 * 2];
 	private static float mScale[] = new float[2];
 	private static float mYOffset;
-
 	private static float mLastDirections[] = new float[3 * 2];
 	private static float mLastExtremes[][] = { new float[3 * 2], new float[3 * 2] };
 	private static float mLastDiff[] = new float[3 * 2];
 	private static int mLastMatch = -1;
-
-	// preferences
-	SharedPreferences prefs;
-	private boolean shakeEnabled;
 
 	public AccelerometerService() {
 		xHistory.ensureCapacity(READINGS_REMEMBER_MAX);
@@ -95,7 +91,7 @@ public class AccelerometerService extends Service implements SensorEventListener
 
 	@Override
 	public void onCreate() {
-		Log.i(TAG, "init() called for AccelerometerService");
+
 		if (!serviceEnabled) {
 			startService();
 		}
@@ -122,23 +118,31 @@ public class AccelerometerService extends Service implements SensorEventListener
 	}
 
 	private void getPrefs() {
-		// prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		// frequency = prefs.getInt(AccelerometerEditActivity.PREF_FREQUENCY,
-		// 50);
+		
+		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		accelPoll = prefs.getInt(ContextConstants.PREFS_ACCEL_POLL_FREQ, 1);
+		
+		
+		// frequency = prefs.getInt(AccelerometerEditActivity.PREF_FREQUENCY, 50);
 		// ignoreThreshold = AccelerometerEditActivity.getRate(frequency);
+		
+//		locationPollFreq = prefs.getInt(ContextConstants.PREFS_LOCATION_POLL_FREQ, 30);
+//		locationStoreFreq = prefs.getInt(ContextConstants.PREFS_LOCATION_STORE_FREQ, 30);
 
-		// prefs.registerOnSharedPreferenceChangeListener(this);
+		prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	private void stopService() {
 		sm.unregisterListener(this);
-		// PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
 		unregisterReceiver(restartIntentReceiver);
 	}
-	
+
 	BroadcastReceiver restartIntentReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
-			Log.d(TAG, TAG + "Restart Intent: " + intent.getAction());
+			if (DEBUG) {
+				Log.d(TAG, TAG + "Restart Intent: " + intent.getAction());
+			}
 			if (serviceEnabled) {
 				stopService();
 			}
@@ -164,9 +168,6 @@ public class AccelerometerService extends Service implements SensorEventListener
 		Sensor sensor = event.sensor;
 
 		if (sensor.getType() != Sensor.TYPE_ACCELEROMETER) {
-			if (DEBUG) {
-				Log.i(TAG, "Why exactly is the sensor type not TYPE_ACCELEROMETER?!?");
-			}
 			return;
 		}
 
@@ -220,15 +221,16 @@ public class AccelerometerService extends Service implements SensorEventListener
 		if (stepTaken == true) {
 			step_count++;
 			step_timestamp = System.currentTimeMillis();
-			Log.i(TAG, "Step Taken: [" + step_count + "] | At: [" + step_timestamp + "]");
+			if (DEBUG) {
+				Log.i(TAG, "Step Taken: [" + step_count + "] | At: [" + step_timestamp + "]");
+			}
 		}
 
 		if (shakeEnabled) {
-
 			if (ContextExpandableListActivity.running == false) {
 				boolean isShaken = isShakeEnough(x, y, z);
 				if (isShaken == true) {
-					if (DEBUG == true) {
+					if (DEBUG) {
 						Log.i(TAG, "Shake detected, going to start activity");
 					}
 					Intent intent = new Intent(this, edu.fsu.cs.contextprovider.ContextExpandableListActivity.class);
@@ -237,8 +239,7 @@ public class AccelerometerService extends Service implements SensorEventListener
 				}
 			}
 		}
-
-	}
+	}	
 
 	private boolean isStepTaken() {
 		boolean stepTaken = false;
@@ -266,7 +267,9 @@ public class AccelerometerService extends Service implements SensorEventListener
 				boolean isNotContra = (mLastMatch != 1 - extType);
 
 				if (isAlmostAsLargeAsPrevious && isPreviousLargeEnough && isNotContra) {
-					Log.i(TAG, "step");
+					if (DEBUG) {
+						Log.i(TAG, "step");
+					}
 					stepTaken = true;
 					mLastMatch = extType;
 				} else {
@@ -291,9 +294,13 @@ public class AccelerometerService extends Service implements SensorEventListener
 		lastY = y;
 		lastZ = z;
 
-		Log.i(TAG, "Force detected [" + force + "]");
+		if (DEBUG) {
+			Log.i(TAG, "Force detected [" + force + "]");
+		}
 		if (force > Defaults.THRESHOLD) {
-			Log.i(TAG, "Shake detected but we haven't reached our limit yet");
+			if (DEBUG) {
+				Log.i(TAG, "Shake detected but we haven't reached our limit yet");
+			}
 			shakeCount++;
 			if (shakeCount > Defaults.SHAKE_COUNT) {
 				shakeCount = 0;
@@ -318,10 +325,9 @@ public class AccelerometerService extends Service implements SensorEventListener
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		// if (AccelerometerEditActivity.PREF_FREQUENCY.equals(key)) {
-		// ignoreThreshold = AccelerometerEditActivity.getRate(prefs.getInt(key,
-		// 50));
-		// }
+//		if (key.equals(object)) {
+//			ignoreThreshold = PrefsActivity.getRate(prefs.getInt(key, 50));
+//		}
 	}
 
 	@Override
@@ -329,7 +335,5 @@ public class AccelerometerService extends Service implements SensorEventListener
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
 
 }

@@ -96,43 +96,4 @@
 	<string name="submit">Submit</string>
 	<string name="reset">Reset</string>
 
-
-	<string-array name="prefs_polling_freq">
-		<item>Low</item>
-		<item>Medium</item>
-		<item>High</item>
-	</string-array>
-
-	<string-array name="prefs_polling_freq_values">
-		<item>1</item>
-		<item>2</item>
-		<item>3</item>
-	</string-array>
-
-	<string-array name="prefs_popup_freq">
-		<item>15 Minutes</item>
-		<item>30 Minutes</item>
-		<item>60 Minutes</item>
-	</string-array>
-
-	<string-array name="prefs_popup_freq_values">
-		<item>15</item>
-		<item>30</item>
-		<item>60</item>
-	</string-array>
-
-	<string-array name="prefs_popup_dismiss_freq">
-		<item>15 Seconds</item>
-		<item>30 Seconds</item>
-		<item>60 Seconds</item>
-	</string-array>
-
-	<string-array name="prefs_popup_dismiss_freq_values">
-		<item>15</item>
-		<item>30</item>
-		<item>60</item>
-	</string-array>
-
-
-
 </resources>

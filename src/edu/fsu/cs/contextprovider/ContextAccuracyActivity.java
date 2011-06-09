@@ -69,12 +69,13 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 
 	private static Timer timer = new Timer(); 
 	private Activity ctx;
+	private int backCount = 0;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		this.ctx = this;
+//		this.ctx = this;
 		Log.d(TAG, "WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON");
 //		 Window w = getWindow(); // in Activity's onCreate() for instance
 //		 w.setFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);		
@@ -124,7 +125,7 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
         	startVibrate();
         
         timer = new Timer();
-        timer.schedule(new ContextDismissTask(), (5 * 1000));
+        timer.schedule(new ContextDismissTask(), (accuracyDismissDelay * 1000));
         
 	}
 	
@@ -137,9 +138,7 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 	@Override
 	protected void onDestroy() {
 		wakelock.release();
-		timer.cancel();
-		tone.stop();
-		vibrate.cancel();
+//		vibrate.cancel();
 		super.onDestroy();
 	}
 
@@ -147,6 +146,18 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 	protected void onResume() {
 		super.onResume();
 //		wakelock.acquire();
+	}
+	
+	@Override
+	public void onBackPressed() {
+		if (backCount++ < 1) {
+			Toast.makeText(this, "Press Back again to submit", Toast.LENGTH_SHORT).show();		
+		} else {		
+		timer.cancel();
+		sendAccurate();
+		finish();
+		}
+//		return;
 	}
 	
 	private void getPrefs() {
@@ -158,7 +169,8 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 		accuracyPopupPeriod = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_PERIOD, 30);
 		accuracyDismissDelay = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_DISMISS_DELAY, 5);
 		
-		setRingtone();
+		if (accuracyAudioEnabled)
+			setRingtone();
 	}
 	
 	private void resetBars() {
@@ -168,6 +180,7 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 		initBar(shelterBar, INDEX_SHELTER);
 		initBar(onPersonBar, INDEX_ONPERSON);
 	}
+	
 
 
 	private void initBar(SeekBar bar, final int stream) {
@@ -193,7 +206,8 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 				Toast.makeText(this, "Reset defaults", Toast.LENGTH_SHORT).show();		
 				resetBars();
 			} else if (v == submitBtn) {
-				Toast.makeText(this, "Context Submited", Toast.LENGTH_SHORT).show();
+				timer.cancel();
+				sendAccurate();
 				finish();
 			}
 	}
@@ -203,18 +217,27 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
     { 
         public void run() 
         {
-        	Intent intent = new Intent(ContextConstants.CONTEXT_STORE_INTENT);
-        	
-        	intent.putExtra(ContextConstants.PLACE_ACCURATE, (int) placeBar.getProgress());
-      		intent.putExtra(ContextConstants.MOVEMENT_ACCURATE, (int) movementBar.getProgress());
-     		intent.putExtra(ContextConstants.ACTIVITY_ACCURATE, (int) activityBar.getProgress());
-        	intent.putExtra(ContextConstants.SHELTER_ACCURATE, (int) shelterBar.getProgress());
-        	intent.putExtra(ContextConstants.ONPERSON_ACCURATE, (int) onPersonBar.getProgress());
-        	sendBroadcast(intent);
-        	       	
-        	ctx.finish();
+        	sendAccurate();	
+        	finish();
         }
     }   
+    
+    private void sendAccurate() {
+//    	Toast.makeText(this, "Context Submited", Toast.LENGTH_SHORT).show();
+    	Intent intent = new Intent(ContextConstants.CONTEXT_STORE_INTENT);
+    	
+    	intent.putExtra(ContextConstants.PLACE_ACCURATE, (int) placeBar.getProgress());
+  		intent.putExtra(ContextConstants.MOVEMENT_ACCURATE, (int) movementBar.getProgress());
+ 		intent.putExtra(ContextConstants.ACTIVITY_ACCURATE, (int) activityBar.getProgress());
+    	intent.putExtra(ContextConstants.SHELTER_ACCURATE, (int) shelterBar.getProgress());
+    	intent.putExtra(ContextConstants.ONPERSON_ACCURATE, (int) onPersonBar.getProgress());
+    	sendBroadcast(intent);    		
+    }
+    
+    
+    
+    
+    
     
 	private void setRingtone() {
 		Uri ringUri;
