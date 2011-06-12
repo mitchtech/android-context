@@ -31,6 +31,8 @@ import edu.fsu.cs.contextprovider.monitor.WeatherMonitor;
 import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
 import edu.fsu.cs.contextprovider.wakeup.WakefulIntentService;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -45,6 +47,7 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -95,12 +98,12 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 	public void onCreate() {
 		super.onCreate();
 		ctx = this;
+		getPrefs();
 		startService();
 	}
 
 	private void startService() {
 
-		getPrefs();
 		startMonitors();
 
 		IntentFilter storeFilter = new IntentFilter();
@@ -112,8 +115,7 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		registerReceiver(restartIntentReceiver, restartFilter);
 
 		// if (accuracyPopupEnabled)
-		// popupTimer.schedule(new ContextPopupTask(), (accuracyPopupPeriod *
-		// 1000)); // seconds*1000
+		// popupTimer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
 	}
 
 	private void stopService() {
@@ -460,7 +462,23 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 	}
 
 	@Override
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {		
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		
+		getPrefs();
+		
+        if (key.equals(ContextConstants.PREFS_ACCURACY_POPUP_ENABLED) || key.equals(ContextConstants.PREFS_ACCURACY_POPUP_PERIOD)) {
+			AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+			Intent intent = new Intent(getBaseContext(), edu.fsu.cs.contextprovider.wakeup.WakeupAlarmReceiver.class);
+			PendingIntent pi = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
+        	
+        	if (accuracyPopupEnabled) {
+        		manager.cancel(pi);
+    			manager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 10000, accuracyPopupPeriod * 1000, pi);
+        	} else {
+        		manager.cancel(pi);
+        	}
+        }
+        			
 		stopService();
 		startService();
 	}
