@@ -22,10 +22,13 @@ import android.util.Log;
 public class SystemMonitor extends BroadcastReceiver {
 
 	private static final String TAG = "SystemBroadcastMonitor";
+	private boolean DEBUG = true;
 	
 	// system monitor status
 	private static long userLastPresent = 0;
-	private static boolean batteryPlugged = false;
+	private static boolean powerPlugged = false;
+	private static boolean umsPlugged = false;
+	
 	private static boolean batteryLow = false;
 	private static int batteryLevel = 0;
 	private static long batteryLastPlugged = 0;
@@ -38,24 +41,7 @@ public class SystemMonitor extends BroadcastReceiver {
 	private static String SCREEN_OFF = "android.intent.action.SCREEN_OFF";
 	private static String SCREEN_ON = "android.intent.action.SCREEN_ON";
 	private static String USER_PRESENT = "android.intent.action.USER_PRESENT";
-	private static String HEADSET_PLUG = "android.intent.action.HEADSET_PLUG";
-	private static String DOCK_EVENT = "android.intent.action.DOCK_EVENT";
-	private static String MEDIA_BUTTON = "android.intent.action.MEDIA_BUTTON";
-	private static String CAMERA_BUTTON = "android.intent.action.CAMERA_BUTTON";
-	private static String INPUT_METHOD_CHANGED = "android.intent.action.INPUT_METHOD_CHANGED";
-	private static String AIRPLANE_MODE = "android.intent.action.AIRPLANE_MODE";
-	private static String ALARM_CHANGED = "android.intent.action.ALARM_CHANGED";
-//	private static String UID_REMOVED = "android.intent.action.UID_REMOVED";
-//	private static String WALLPAPER_CHANGED = "android.intent.action.WALLPAPER_CHANGED";
-//	private static String CONFIGURATION_CHANGED = "android.intent.action.CONFIGURATION_CHANGED";
-//	private static String LOCALE_CHANGED = "android.intent.action.LOCALE_CHANGED";
 	
-	// date/time intents
-	private static String TIME_TICK = "android.intent.action.TIME_TICK";
-	private static String TIME_SET = "android.intent.action.TIME_SET";
-	private static String DATE_CHANGED = "android.intent.action.DATE_CHANGED";
-	private static String TIMEZONE_CHANGED = "android.intent.action.TIMEZONE_CHANGED";
-
 	// power intents/connections
 	private static String BATTERY_CHANGED = "android.intent.action.BATTERY_CHANGED";
 	private static String BATTERY_LOW = "android.intent.action.BATTERY_LOW";
@@ -64,6 +50,22 @@ public class SystemMonitor extends BroadcastReceiver {
 	private static String ACTION_POWER_DISCONNECTED = "android.intent.action.ACTION_POWER_DISCONNECTED";
 	private static String UMS_CONNECTED = "android.intent.action.UMS_CONNECTED";
 	private static String UMS_DISCONNECTED = "android.intent.action.UMS_DISCONNECTED";
+	
+//	private static String HEADSET_PLUG = "android.intent.action.HEADSET_PLUG";
+//	private static String DOCK_EVENT = "android.intent.action.DOCK_EVENT";
+//	private static String MEDIA_BUTTON = "android.intent.action.MEDIA_BUTTON";
+//	private static String CAMERA_BUTTON = "android.intent.action.CAMERA_BUTTON";
+//	private static String INPUT_METHOD_CHANGED = "android.intent.action.INPUT_METHOD_CHANGED";
+//	private static String AIRPLANE_MODE = "android.intent.action.AIRPLANE_MODE";
+//	private static String ALARM_CHANGED = "android.intent.action.ALARM_CHANGED";
+//	private static String CONFIGURATION_CHANGED = "android.intent.action.CONFIGURATION_CHANGED";
+//	private static String LOCALE_CHANGED = "android.intent.action.LOCALE_CHANGED";
+//	
+//	// date/time intents
+//	private static String TIME_TICK = "android.intent.action.TIME_TICK";
+//	private static String TIME_SET = "android.intent.action.TIME_SET";
+//	private static String DATE_CHANGED = "android.intent.action.DATE_CHANGED";
+//	private static String TIMEZONE_CHANGED = "android.intent.action.TIMEZONE_CHANGED";
 
 	// services
 //	private static String SYNC_STATE_CHANGED = "android.intent.action.SYNC_STATE_CHANGED";
@@ -117,15 +119,14 @@ public class SystemMonitor extends BroadcastReceiver {
 	private static String state;
 	private static String SSID;
 	private static String signal;
-
+	
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Log.d(TAG, "B/C intent=" + intent);
-//		fields.put(BroadcastSchema.BroadcastTable.TITLE, intent.getAction());
-//		fields.put(BroadcastSchema.BroadcastTable.EXTRAS, extrasToString(extras));
-//		fields.put(BroadcastSchema.BroadcastTable.TIME,	System.currentTimeMillis());
-		
+		if (DEBUG) {
+			Log.d(TAG, "B/C intent=" + intent);
+		}
+
 		String intentName = intent.getAction();
 		Bundle extras = intent.getExtras();
 		
@@ -134,14 +135,22 @@ public class SystemMonitor extends BroadcastReceiver {
 			userLastPresent = System.currentTimeMillis();
 		}
 		
-		else if (intentName == ACTION_POWER_CONNECTED || intentName == UMS_CONNECTED)
+		else if (intentName == ACTION_POWER_CONNECTED)
 		{
-			batteryPlugged = true;
+			powerPlugged = true;			
 		}
-		else if (intentName == ACTION_POWER_DISCONNECTED || intentName == UMS_DISCONNECTED)
+		else if (intentName == UMS_CONNECTED)
 		{
-			batteryPlugged = false;
+			umsPlugged = true;			
+		}
+		else if (intentName == ACTION_POWER_DISCONNECTED)
+		{
+			powerPlugged = false;
 			batteryLastPlugged = System.currentTimeMillis();
+		}
+		else if (intentName == UMS_DISCONNECTED)
+		{
+			umsPlugged = false;
 		}
 		else if (intentName == BATTERY_CHANGED)
 		{
@@ -155,7 +164,6 @@ public class SystemMonitor extends BroadcastReceiver {
 		{
 			batteryLow = false;
 		}
-
 	}
 
 	private static final String extrasToString(Bundle extras) {
@@ -183,15 +191,24 @@ public class SystemMonitor extends BroadcastReceiver {
 	}
 
 	public static boolean isBatteryPlugged() {
-		return batteryPlugged;
+		return powerPlugged;
 	}
 	
 	public static String isBatteryPluggedString() {
-		return String.valueOf(batteryPlugged);
+		return String.valueOf(powerPlugged);
 	}
 
+	public static boolean isUMSPlugged() {
+		return umsPlugged;
+	}
+	
+	public static String isUMSPluggedString() {
+		return String.valueOf(umsPlugged);
+	}
+	
+	
 	public static void setBatteryPlugged(boolean batteryPlugged) {
-		SystemMonitor.batteryPlugged = batteryPlugged;
+		SystemMonitor.powerPlugged = batteryPlugged;
 	}
 
 	public static boolean isBatteryLow() {

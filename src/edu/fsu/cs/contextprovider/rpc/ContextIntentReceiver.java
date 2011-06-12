@@ -1,4 +1,4 @@
-package edu.fsu.cs.contextprovider.intent;
+package edu.fsu.cs.contextprovider.rpc;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
