@@ -95,5 +95,8 @@
 	<string name="accuracy">Accuracy</string>
 	<string name="submit">Submit</string>
 	<string name="reset">Reset</string>
+	<string name="correct">Correct</string>
+	<string name="incorrect">Incorrect</string>
+	<string name="accurate">Accurate</string>
 
 </resources>

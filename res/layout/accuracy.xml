@@ -38,8 +38,11 @@
             <EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:editable="false" android:text="@string/shelterTitle" android:id="@+id/editShelter"></EditText>
         </LinearLayout>
         <LinearLayout android:id="@+id/linearLayout4" android:layout_width="fill_parent" android:paddingBottom="10px" android:layout_height="wrap_content">
-            <TextView android:layout_height="wrap_content" android:id="@+id/textView4" android:text="@string/accuracy" android:layout_width="wrap_content"></TextView>
-            <SeekBar android:layout_width="fill_parent" android:layout_height="wrap_content" android:paddingLeft="20px" android:paddingRight="30px" android:id="@+id/shelter"></SeekBar>
+            <TextView android:layout_height="wrap_content" android:id="@+id/textView4" android:layout_width="wrap_content" android:text="@string/accurate"></TextView>
+            <RadioGroup android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:id="@+id/shelter">
+                <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:text="@string/correct" android:id="@+id/shelterCorrect"></RadioButton>
+                <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/incorrect" android:id="@+id/shelterIncorrect"></RadioButton>
+            </RadioGroup>
         </LinearLayout>
         <TextView android:layout_height="wrap_content" android:id="@+id/systemHeader" android:layout_width="wrap_content" android:text="@string/onPersonTitle"></TextView>
         <LinearLayout android:id="@+id/LinearLayout05" android:layout_width="fill_parent" android:layout_height="wrap_content">
@@ -47,8 +50,11 @@
             <EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:editable="false" android:text="@string/onPersonTitle" android:id="@+id/editOnPerson"></EditText>
         </LinearLayout>
         <LinearLayout android:id="@+id/linearLayout5" android:layout_width="fill_parent" android:paddingBottom="10px" android:layout_height="wrap_content">
-            <TextView android:layout_height="wrap_content" android:id="@+id/textView5" android:text="@string/accuracy" android:layout_width="wrap_content"></TextView>
-            <SeekBar android:layout_width="fill_parent" android:layout_height="wrap_content" android:paddingLeft="20px" android:paddingRight="30px" android:id="@+id/onPerson"></SeekBar>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/accurate" android:id="@+id/textView5"></TextView>
+            <RadioGroup android:layout_width="wrap_content" android:id="@+id/onPerson" android:layout_height="wrap_content" android:orientation="horizontal">
+                <RadioButton android:layout_width="wrap_content" android:text="@string/correct" android:layout_height="wrap_content" android:checked="true" android:id="@+id/onPersonCorrect"></RadioButton>
+                <RadioButton android:layout_width="wrap_content" android:text="@string/incorrect" android:layout_height="wrap_content" android:id="@+id/onPersonIncorrect"></RadioButton>
+            </RadioGroup>
         </LinearLayout>
         <LinearLayout android:id="@+id/linearLayout7" android:layout_width="wrap_content" android:layout_height="fill_parent" android:paddingTop="10px">
             <Button android:id="@+id/SubmitButton" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/submit"></Button>

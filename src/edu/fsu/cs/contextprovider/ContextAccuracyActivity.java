@@ -28,8 +28,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Toast;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 
 public class ContextAccuracyActivity extends Activity implements View.OnClickListener {
 	private static final String TAG = "ContextAccuracyActivity";
@@ -49,8 +52,12 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 	SeekBar placeBar = null;
 	SeekBar movementBar = null;
 	SeekBar activityBar = null;
-	SeekBar shelterBar = null;
-	SeekBar onPersonBar = null;
+//	SeekBar shelterBar = null;
+//	SeekBar onPersonBar = null;
+	RadioGroup shelterGroup = null;
+	RadioGroup onPersonGroup = null;
+	RadioButton shelterCorrect = null;
+	RadioButton onPersonCorrect = null;
 	
 	EditText placeText = null;
 	EditText movementText = null;
@@ -94,8 +101,13 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 		placeBar = (SeekBar) findViewById(R.id.place);
 		movementBar = (SeekBar) findViewById(R.id.movement);
 		activityBar = (SeekBar) findViewById(R.id.activity);
-		shelterBar = (SeekBar) findViewById(R.id.shelter);
-		onPersonBar = (SeekBar) findViewById(R.id.onPerson);
+//		shelterBar = (SeekBar) findViewById(R.id.shelter);
+//		onPersonBar = (SeekBar) findViewById(R.id.onPerson);
+		shelterGroup = (RadioGroup) findViewById(R.id.shelter);
+		shelterCorrect = (RadioButton) findViewById(R.id.shelterCorrect);
+	
+		onPersonGroup = (RadioGroup) findViewById(R.id.onPerson);
+		onPersonCorrect = (RadioButton) findViewById(R.id.onPersonCorrect);
 		
 		placeText = (EditText) findViewById(R.id.editPlace);
 		movementText = (EditText) findViewById(R.id.editMovement);
@@ -150,7 +162,7 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 			Toast.makeText(this, "Press Back again to submit", Toast.LENGTH_SHORT).show();		
 		} else {		
 		timer.cancel();
-		sendAccuracy();
+		sendAccuracy(true);
 		finish();
 		}
 	}
@@ -176,8 +188,8 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 		initBar(placeBar, INDEX_PLACE);
 		initBar(movementBar, INDEX_MOVEMENT);
 		initBar(activityBar, INDEX_ACTIVITY);
-		initBar(shelterBar, INDEX_SHELTER);
-		initBar(onPersonBar, INDEX_ONPERSON);
+//		initBar(shelterBar, INDEX_SHELTER);
+//		initBar(onPersonBar, INDEX_ONPERSON);
 	}
 	
 
@@ -205,7 +217,7 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 				resetBars();
 			} else if (v == submitBtn) {
 				timer.cancel();
-				sendAccuracy();
+				sendAccuracy(true);
 				finish();
 			}
 	}
@@ -215,19 +227,32 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
     { 
         public void run() 
         {
-        	sendAccuracy();	
+        	sendAccuracy(false);	
         	finish();
         }
     }   
     
-    private void sendAccuracy() {
+    private void sendAccuracy(boolean response) {
     	Intent intent = new Intent(ContextConstants.CONTEXT_STORE_INTENT);
     	
     	intent.putExtra(ContextConstants.PLACE_ACCURATE, (int) placeBar.getProgress());
   		intent.putExtra(ContextConstants.MOVEMENT_ACCURATE, (int) movementBar.getProgress());
  		intent.putExtra(ContextConstants.ACTIVITY_ACCURATE, (int) activityBar.getProgress());
-    	intent.putExtra(ContextConstants.SHELTER_ACCURATE, (int) shelterBar.getProgress());
-    	intent.putExtra(ContextConstants.ONPERSON_ACCURATE, (int) onPersonBar.getProgress());
+//    	intent.putExtra(ContextConstants.SHELTER_ACCURATE, (int) shelterBar.getProgress());
+//    	intent.putExtra(ContextConstants.ONPERSON_ACCURATE, (int) onPersonBar.getProgress());
+ 		if (shelterCorrect.isChecked()) {
+ 			intent.putExtra(ContextConstants.SHELTER_ACCURATE, true);
+ 		} else {
+ 			intent.putExtra(ContextConstants.SHELTER_ACCURATE, false);
+ 		}
+ 		if (onPersonCorrect.isChecked()) {
+ 			intent.putExtra(ContextConstants.ONPERSON_ACCURATE, true);
+ 		} else {
+ 			intent.putExtra(ContextConstants.ONPERSON_ACCURATE, false);
+ 		}
+ 		
+    	intent.putExtra(ContextConstants.DERIVED_RESPONSE, response);
+    	
     	sendBroadcast(intent);    		
     }
         

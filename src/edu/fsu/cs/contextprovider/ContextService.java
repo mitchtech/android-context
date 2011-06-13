@@ -31,6 +31,7 @@ import edu.fsu.cs.contextprovider.monitor.WeatherMonitor;
 import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
 import edu.fsu.cs.contextprovider.wakeup.WakefulIntentService;
 
+import android.R.bool;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -302,21 +303,26 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 	BroadcastReceiver contextIntentReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			Log.d(TAG, "Received Intent: " + intent.getAction());
-			int placeAccurate, movementAccurate, activityAccurate, shelterAccurate, onPersonAccurate;
+			int placeAccurate, movementAccurate, activityAccurate;
+			boolean shelterAccurate, onPersonAccurate, response;
 
 			placeAccurate = intent.getIntExtra(ContextConstants.PLACE_ACCURATE, 10);
 			movementAccurate = intent.getIntExtra(ContextConstants.MOVEMENT_ACCURATE, 10);
 			activityAccurate = intent.getIntExtra(ContextConstants.ACTIVITY_ACCURATE, 10);
-			shelterAccurate = intent.getIntExtra(ContextConstants.SHELTER_ACCURATE, 10);
-			onPersonAccurate = intent.getIntExtra(ContextConstants.ONPERSON_ACCURATE, 10);
+			
+//			shelterAccurate = intent.getIntExtra(ContextConstants.SHELTER_ACCURATE, 10);
+//			onPersonAccurate = intent.getIntExtra(ContextConstants.ONPERSON_ACCURATE, 10);
+			shelterAccurate = intent.getBooleanExtra(ContextConstants.SHELTER_ACCURATE, true);
+			onPersonAccurate = intent.getBooleanExtra(ContextConstants.ONPERSON_ACCURATE, true);
+			response = intent.getBooleanExtra(ContextConstants.DERIVED_RESPONSE, false);
 
 			Toast.makeText(
 					getApplicationContext(),
 					"ContextService Accuracy: \n" + "Place: " + placeAccurate + "\n" + "Movement: " + movementAccurate + "\n" + "Activity: " + activityAccurate
-							+ "\n" + "Shelter: " + shelterAccurate + "\n" + "OnPerson: " + onPersonAccurate, Toast.LENGTH_LONG).show();
+							+ "\n" + "Shelter: " + shelterAccurate + "\n" + "OnPerson: " + onPersonAccurate + "\n" + "User Responsed: " + response, Toast.LENGTH_LONG).show();
 
 			try {
-				StoreAccuracy(placeAccurate, movementAccurate, activityAccurate, shelterAccurate, onPersonAccurate);
+				StoreAccuracy(placeAccurate, movementAccurate, activityAccurate, shelterAccurate, onPersonAccurate, response);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -446,7 +452,7 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		}
 	}
 
-	private void StoreAccuracy(int place, int movement, int activity, int shelter, int onPerson) throws Exception {
+	private void StoreAccuracy(int place, int movement, int activity, boolean shelter, boolean onPerson, boolean response) throws Exception {
 		try {
 			entityManager = EntityManager.GetManager(this);
 			AccuracyEntity accuracy = new AccuracyEntity();
@@ -456,6 +462,7 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 			accuracy.Activity.setValue(activity);
 			accuracy.Shelter.setValue(shelter);
 			accuracy.OnPerson.setValue(onPerson);
+			accuracy.Response.setValue(response);
 			int uid = entityManager.store(accuracy);
 		} catch (Exception e) {
 			throw e;
@@ -466,7 +473,8 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		
 		if (DEBUG) {
-			Toast.makeText(this, "ContextService prefs changed", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "ContextService prefs changed", Toast.LENGTH_SHORT).show();
+			Log.d(TAG, "ContextService prefs changed");
 		}
 		
 		getPrefs();

@@ -17,8 +17,10 @@ public class AccuracyEntity extends AbstractEntity {
     public final IntegerField Place = new IntegerField(ContextConstants.DERIVED_PLACE);
     public final IntegerField Movement = new IntegerField(ContextConstants.MOVEMENT_STATE);
     public final IntegerField Activity = new IntegerField(ContextConstants.DERIVED_ACTIVITY);
-    public final IntegerField Shelter = new IntegerField(ContextConstants.DERIVED_SHELTER);
-    public final IntegerField OnPerson = new IntegerField(ContextConstants.DERIVED_ONPERSON);
+//    public final IntegerField Shelter = new IntegerField(ContextConstants.DERIVED_SHELTER);
+//    public final IntegerField OnPerson = new IntegerField(ContextConstants.DERIVED_ONPERSON);
+    public final BooleanField Shelter = new BooleanField(ContextConstants.DERIVED_SHELTER);
+    public final BooleanField OnPerson = new BooleanField(ContextConstants.DERIVED_ONPERSON);
     public final BooleanField Response = new BooleanField(ContextConstants.DERIVED_RESPONSE);
     
 	@Override
