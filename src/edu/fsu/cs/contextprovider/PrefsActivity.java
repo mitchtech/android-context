@@ -44,13 +44,14 @@ public class PrefsActivity extends PreferenceActivity implements OnSharedPrefere
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		getPreferenceManager().setSharedPreferencesName(ContextConstants.CONTEXT_PREFS);
 		addPreferencesFromResource(R.xml.prefs);
+		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_PRIVATE);
 //      PreferenceManager.setDefaultValues(this, ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE, R.xml.prefs, false);
 //      PreferenceManager.setDefaultValues(PrefsActivity.this, R.xml.prefs, false);
-		getPreferenceManager().setSharedPreferencesName(ContextConstants.CONTEXT_PREFS);
-		prefs = getPreferenceScreen().getSharedPreferences();
+//		prefs = getPreferenceScreen().getSharedPreferences();
 //		prefs = PreferenceManager.getDefaultSharedPreferences(this);
-//		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_PRIVATE);
 		prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 
