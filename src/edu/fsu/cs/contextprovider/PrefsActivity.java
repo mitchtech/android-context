@@ -47,6 +47,7 @@ public class PrefsActivity extends PreferenceActivity implements OnSharedPrefere
 		addPreferencesFromResource(R.xml.prefs);
 //      PreferenceManager.setDefaultValues(this, ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE, R.xml.prefs, false);
 //      PreferenceManager.setDefaultValues(PrefsActivity.this, R.xml.prefs, false);
+		getPreferenceManager().setSharedPreferencesName(ContextConstants.CONTEXT_PREFS);
 		prefs = getPreferenceScreen().getSharedPreferences();
 //		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 //		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_PRIVATE);

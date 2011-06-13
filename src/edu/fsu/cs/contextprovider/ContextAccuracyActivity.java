@@ -136,13 +136,11 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
         
         timer = new Timer();
         timer.schedule(new ContextDismissTask(), (dismissDelay * 1000));
-        
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
-
 	}
 	
 	@Override
@@ -173,7 +171,7 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 		accuracyAudioEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_AUDIO_ENABLED, false);
 		accuracyVibrateEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_VIBRATE_ENABLED, true);
 //		accuracyDismissDelay = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_DISMISS_FREQ, 5);
-		accuracyDismissDelay = prefs.getString(ContextConstants.PREFS_ACCURACY_POPUP_DISMISS_FREQ, "5");
+		accuracyDismissDelay = prefs.getString(ContextConstants.PREFS_ACCURACY_POPUP_DISMISS_FREQ, "15");
 		dismissDelay = Integer.parseInt(accuracyDismissDelay);
 		
 		if (DEBUG) {
