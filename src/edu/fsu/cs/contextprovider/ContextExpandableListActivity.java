@@ -51,6 +51,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.Geocoder;
@@ -90,9 +91,10 @@ import edu.fsu.cs.contextprovider.rpc.IContextProviderService;
 import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
 import edu.fsu.cs.contextprovider.sensor.LightService;
 
-public class ContextExpandableListActivity extends ExpandableListActivity implements OnChildClickListener, TextToSpeech.OnInitListener {
+public class ContextExpandableListActivity extends ExpandableListActivity implements OnChildClickListener, TextToSpeech.OnInitListener, OnSharedPreferenceChangeListener {
 	private static final String TAG = "ContextExpandableListActivity";
-
+	private static final boolean DEBUG = true;
+	
 	private static final String NAME = "NAME";
 	private static final String VALUE = "VALUE";
 
@@ -113,34 +115,20 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	private static final int DIALOG_ABOUT = 0;
 	private static final String CSV_FILENAME = "Context.csv";
 
-	// location prefs
 	private boolean locationEnabled;
-	private int locationPollFreq;
-	private int locationStoreFreq;
-	// movement prefs
 	private boolean movementEnabled;
-	private int movementPollFreq;
-	// weather prefs
 	private boolean weatherEnabled;
-	private int weatherPollFreq;
-	private int weatherStoreFreq;
-	// social prefs
 	private boolean socialEnabled;
-	// system prefs
 	private boolean systemEnabled;
-	// derived prefs
 	private boolean derivedEnabled;
-	private int derivedCalcFreq;
-	private int derivedStoreFreq;
+
 	// general prefs
 	private boolean startupEnabled;
 	private boolean accuracyPopupEnabled;
 	private boolean accuracyAudioEnabled;
 	private int accuracyPopupPeriod;
 	private int accuracyDismissDelay;
-	// debug
 	private boolean ttsEnabled;
-	private boolean shakeEnabled;
 	SharedPreferences prefs;
 
 	public static boolean running = false;
@@ -172,25 +160,25 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
-
-		if (!prefs.contains(ContextConstants.PREFS_FIRST_RUN)) {
-			
-			SharedPreferences.Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean(ContextConstants.PREFS_FIRST_RUN, false);
-			prefsEditor.commit();
-			
-			// startup the primary context service (if just installed)
-			startService(new Intent(this, ContextService.class));
-
-			AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-			Intent intent = new Intent(getBaseContext(), edu.fsu.cs.contextprovider.wakeup.WakeupAlarmReceiver.class);
-			PendingIntent pi = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
-			manager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 10000, accuracyPopupPeriod * 1000, pi);
-
-		}
-
+	
+//		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        PreferenceManager.setDefaultValues(this, ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE, R.xml.prefs, false);
+        prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_PRIVATE);
+        		
+//		if (!prefs.contains(ContextConstants.PREFS_FIRST_RUN)) {
+//			SharedPreferences.Editor prefsEditor = prefs.edit();
+//			prefsEditor.putBoolean(ContextConstants.PREFS_FIRST_RUN, false);
+//			prefsEditor.commit();
+//			
+//			// startup the primary context service (if just installed)
+//			startService(new Intent(this, ContextService.class));
+//
+//			AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//			Intent intent = new Intent(getBaseContext(), edu.fsu.cs.contextprovider.wakeup.WakeupAlarmReceiver.class);
+//			PendingIntent pi = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
+//			manager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 10000, accuracyPopupPeriod * 1000, pi);
+//		}
+        
 		getPrefs();
 
 		tts = new TextToSpeech(this, this);
@@ -252,21 +240,14 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	}
 
 	private void getPrefs() {
-
-		// SharedPreferences prefs =
-		// PreferenceManager.getDefaultSharedPreferences(this);
-		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
-
-		// general
-		// startupEnabled = prefs.getBoolean("PREFS_STARTUP_ENABLED", true);
-		ttsEnabled = prefs.getBoolean("PREFS_TTS_ENABLED", false);
-
 		locationEnabled = prefs.getBoolean("PREFS_LOCATION_ENABLED", true);
 		movementEnabled = prefs.getBoolean("PREFS_MOVEMENT_ENABLED", true);
 		weatherEnabled = prefs.getBoolean("PREFS_WEATHER_ENABLED", true);
 		socialEnabled = prefs.getBoolean("PREFS_SOCIAL_ENABLED", true);
 		systemEnabled = prefs.getBoolean("PREFS_SYSTEM_ENABLED", true);
 		derivedEnabled = prefs.getBoolean("PREFS_DERIVED_ENABLED", true);
+		
+		ttsEnabled = prefs.getBoolean("PREFS_TTS_ENABLED", false);
 	}
 
 	private void refresh() {
@@ -547,6 +528,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		// MovementMonitor.StopThread();
 		super.onDestroy();
 		tts.shutdown();
+		unbindService(conn);
 	}
 
 	@Override
@@ -582,7 +564,6 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 			intent = new Intent(getApplicationContext(), edu.fsu.cs.contextprovider.map.AddPlaceMapActivity.class);
 			intent.putExtra(ContextConstants.PLACE_REQUEST_ID, ContextConstants.SET_WORK_REQUEST);
 			startActivityForResult(intent, ContextConstants.SET_WORK_REQUEST);
-
 			// startActivityForResult(new Intent(getApplicationContext(),
 			// edu.fsu.cs.contextprovider.map.AddPlaceMapActivity.class),
 			// ContextConstants.SET_WORK_REQUEST);
@@ -625,14 +606,10 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == ContextConstants.SET_HOME_REQUEST) {
 			if (resultCode == RESULT_OK) {
-				// Toast.makeText(this, "My Location:" + location.getLatitude()
-				// + "," + location.getLongitude(), Toast.LENGTH_LONG);
 				Toast.makeText(this, "Home Set Sucessfully", Toast.LENGTH_LONG);
 			}
 		} else if (requestCode == ContextConstants.SET_WORK_REQUEST) {
 			if (resultCode == RESULT_OK) {
-				// Toast.makeText(this, "My Location:" + location.getLatitude()
-				// + "," + location.getLongitude(), Toast.LENGTH_LONG);
 				Toast.makeText(this, "Work Set Sucessfully", Toast.LENGTH_LONG);
 			}
 		}
@@ -815,6 +792,13 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + path));
 		shareIntent.setType("text/plain");
 		startActivity(Intent.createChooser(shareIntent, "Share Context Using..."));
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		if (DEBUG) {
+			Toast.makeText(this, "ContextExpandableList prefs changed", Toast.LENGTH_SHORT).show();
+		}		
 	}
 
 }

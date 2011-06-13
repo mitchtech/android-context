@@ -22,6 +22,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -31,7 +32,8 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 public class ContextAccuracyActivity extends Activity implements View.OnClickListener {
-	private static final String TAG = "WakeupServiceSliderActivity";
+	private static final String TAG = "ContextAccuracyActivity";
+	private static final boolean DEBUG = true;	
 
 	private Ringtone tone;
 	private AudioManager volume;
@@ -41,8 +43,8 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 	SharedPreferences prefs;
 	private boolean accuracyAudioEnabled;
 	private boolean accuracyVibrateEnabled;
-	private int accuracyPopupPeriod;
-	private int accuracyDismissDelay;
+	private String accuracyDismissDelay;
+	private int dismissDelay;
 	
 	SeekBar placeBar = null;
 	SeekBar movementBar = null;
@@ -68,13 +70,12 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 	private PowerManager.WakeLock wakelock;
 
 	private static Timer timer = new Timer(); 
-	private Activity ctx;
+//	private Activity ctx;
 	private int backCount = 0;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 //		getWindow().setFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);		
 		final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		wakelock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "ContextAccuracyActivity");
@@ -122,7 +123,7 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
         	startVibrate();
         
         timer = new Timer();
-        timer.schedule(new ContextDismissTask(), (accuracyDismissDelay * 1000));
+        timer.schedule(new ContextDismissTask(), (dismissDelay * 1000));
         
 	}
 	
@@ -149,19 +150,23 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 			Toast.makeText(this, "Press Back again to submit", Toast.LENGTH_SHORT).show();		
 		} else {		
 		timer.cancel();
-		sendAccurate();
+		sendAccuracy();
 		finish();
 		}
 	}
 	
 	private void getPrefs() {
-
-		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
-
+		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_PRIVATE);
+//		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		accuracyAudioEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_AUDIO_ENABLED, false);
 		accuracyVibrateEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_VIBRATE_ENABLED, true);
-		accuracyPopupPeriod = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_PERIOD, 30);
-		accuracyDismissDelay = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_DISMISS_DELAY, 5);
+//		accuracyDismissDelay = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_DISMISS_FREQ, 5);
+		accuracyDismissDelay = prefs.getString(ContextConstants.PREFS_ACCURACY_POPUP_DISMISS_FREQ, "5");
+		dismissDelay = Integer.parseInt(accuracyDismissDelay);
+		
+		if (DEBUG) {
+			Log.d(TAG, "accuracyDismissDelay: " + accuracyDismissDelay + "  dismissDelay: " + dismissDelay);
+		}
 		
 		if (accuracyAudioEnabled)
 			setRingtone();
@@ -200,7 +205,7 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
 				resetBars();
 			} else if (v == submitBtn) {
 				timer.cancel();
-				sendAccurate();
+				sendAccuracy();
 				finish();
 			}
 	}
@@ -210,12 +215,12 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
     { 
         public void run() 
         {
-        	sendAccurate();	
+        	sendAccuracy();	
         	finish();
         }
     }   
     
-    private void sendAccurate() {
+    private void sendAccuracy() {
     	Intent intent = new Intent(ContextConstants.CONTEXT_STORE_INTENT);
     	
     	intent.putExtra(ContextConstants.PLACE_ACCURATE, (int) placeBar.getProgress());

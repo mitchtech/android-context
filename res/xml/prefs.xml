@@ -7,35 +7,26 @@
 			android:title="Run at Startup" android:summaryOn="Run at Startup Enabled"
 			android:summaryOff="Run at Startup Disabled" android:defaultValue="true"></CheckBoxPreference>
 		<CheckBoxPreference android:key="PREFS_ACCURACY_POPUP_ENABLED"
-			android:title="Context Accuracy Popup" android:summaryOn="Context Accuracy Popup Enabled"
+			android:summaryOn="Context Accuracy Popup Enabled"
 			android:summaryOff="Context Accuracy Popup Disabled"
-			android:defaultValue="true"></CheckBoxPreference>
+			android:defaultValue="true" android:title="Accuracy Popup"></CheckBoxPreference>
 		<CheckBoxPreference android:key="PREFS_ACCURACY_POPUP_AUDIO_ENABLED"
-			android:title="Context Accuracy Audio" android:summaryOn="Context Accuracy Audio Enabled"
-			android:summaryOff="Context Accuracy Audio Disabled"
 			android:defaultValue=""
-			android:dependency="PREFS_ACCURACY_POPUP_ENABLED"></CheckBoxPreference>
-		<RingtonePreference android:title="Context Popup Ringtone"
+			android:dependency="PREFS_ACCURACY_POPUP_ENABLED" android:title="Popup Audio" android:summaryOff="Context Popup Audio Disabled" android:summaryOn="Context Popup Audio Enabled"></CheckBoxPreference>
+		<RingtonePreference android:title="Popup Ringtone"
 			android:ringtoneType="ringtone" android:key="PREFS_ACCURACY_POPUP_AUDIO"
 			android:summary="Select ringtone to play at popup"
 			android:dependency="PREFS_ACCURACY_POPUP_AUDIO_ENABLED"></RingtonePreference>
 		<CheckBoxPreference android:key="PREFS_ACCURACY_POPUP_VIBRATE_ENABLED"
-			android:title="Context Accuracy Popup Vibration" android:summaryOn="Context Accuracy Vibrate Enabled"
-			android:summaryOff="Context Accuracy Popup Vibrate Disabled"
 			android:dependency="PREFS_ACCURACY_POPUP_ENABLED"
-			android:defaultValue="true"></CheckBoxPreference>
+			android:defaultValue="true" android:title="Popup Vibration" android:summaryOff="Context Popup Vibration Disabled" android:summaryOn="Context Popup Vibration Enabled"></CheckBoxPreference>
 		<ListPreference android:entryValues="@array/prefs_popup_freq_values"
-			android:entries="@array/prefs_popup_freq" android:defaultValue="30"
-			android:negativeButtonText="@string/cancel"
-			android:positiveButtonText="@string/ok" android:dialogTitle="Context Popup Frequency"
-			android:title="Context Popup Frequency" android:key="PREFS_POPUP_FREQ"
-			android:dependency="PREFS_ACCURACY_POPUP_ENABLED"></ListPreference>
+			android:entries="@array/prefs_popup_freq" android:negativeButtonText="@string/cancel"
+			android:positiveButtonText="@string/ok" android:title="Popup Frequency" android:dependency="PREFS_ACCURACY_POPUP_ENABLED" android:dialogTitle="Popup Frequency" android:defaultValue="30" android:key="PREFS_ACCURACY_POPUP_FREQ"></ListPreference>
 		<ListPreference android:entryValues="@array/prefs_popup_dismiss_freq_values"
 			android:entries="@array/prefs_popup_dismiss_freq"
 			android:defaultValue="5" android:negativeButtonText="@string/cancel"
-			android:positiveButtonText="@string/ok" android:dialogTitle="Context Popup Auto-Dismiss"
-			android:title="Context Popup Auto-Dismiss" android:key="PREFS_POPUP_DISMISS_FREQ"
-			android:dependency="PREFS_ACCURACY_POPUP_ENABLED"></ListPreference>
+			android:positiveButtonText="@string/ok" android:dependency="PREFS_ACCURACY_POPUP_ENABLED" android:dialogTitle="Popup Auto-Dismiss" android:title="Popup Auto-Dismiss" android:key="PREFS_ACCURACY_POPUP_DISMISS_FREQ"></ListPreference>
 	</PreferenceCategory>
 	<PreferenceCategory android:key="PREFS_LOCATION"
 		android:title="Location Paramaters">

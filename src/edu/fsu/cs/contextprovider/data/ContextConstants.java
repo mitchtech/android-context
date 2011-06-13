@@ -58,6 +58,8 @@ public class ContextConstants {
 	public static final String DERIVED_ACTIVITY = "Activity";
 	public static final String DERIVED_SHELTER = "Shelter";
 	public static final String DERIVED_ONPERSON = "OnPerson";
+	public static final String DERIVED_RESPONSE = "Response";
+	
 	public static final String DERIVED_MOOD = "Mood";
 		
 	// for accuracy checking screen
@@ -108,8 +110,9 @@ public class ContextConstants {
 	public static final String PREFS_ACCURACY_POPUP_AUDIO_ENABLED = "PREFS_ACCURACY_POPUP_AUDIO_ENABLED";
 	public static final String PREFS_ACCURACY_POPUP_AUDIO = "PREFS_ACCURACY_POPUP_AUDIO";
 	public static final String PREFS_ACCURACY_POPUP_VIBRATE_ENABLED = "PREFS_ACCURACY_POPUP_VIBRATE_ENABLED";
-	public static final String PREFS_ACCURACY_POPUP_PERIOD = "PREFS_ACCURACY_POPUP_PERIOD";
-	public static final String PREFS_ACCURACY_POPUP_DISMISS_DELAY = "PREFS_ACCURACY_POPUP_DISMISS_DELAY";
+	public static final String PREFS_ACCURACY_POPUP_FREQ = "PREFS_ACCURACY_POPUP_FREQ";
+	public static final String PREFS_ACCURACY_POPUP_FREQ_VALUES = "PREFS_ACCURACY_POPUP_FREQ_VALUES";
+	public static final String PREFS_ACCURACY_POPUP_DISMISS_FREQ = "PREFS_ACCURACY_POPUP_DISMISS_FREQ";
 	// debug
 	public static final String PREFS_TTS_ENABLED = "PREFS_TTS_ENABLED";
 	public static final String PREFS_SHAKE_ENABLED = "PREFS_SHAKE_ENABLED";

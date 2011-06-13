@@ -55,6 +55,7 @@ import android.widget.Toast;
 public class ContextService extends Service implements OnSharedPreferenceChangeListener {
 
 	private static final String TAG = "ContextService";
+	private static final boolean DEBUG = true;
 
 	private static Timer popupTimer = new Timer();
 	private static Timer locationStoreTimer = new Timer();
@@ -62,34 +63,34 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 	private static Timer weatherStoreTimer = new Timer();
 	private static Timer derivedStoreTimer = new Timer();
 
-	private Context ctx;
+//	private Context ctx;
 	EntityManager entityManager;
 	SharedPreferences prefs;
 
 	// location prefs
 	private boolean locationEnabled;
-	private boolean locationProximityEnabled;
-	private int locationPollFreq;
-	private int locationStoreFreq;
+//	private boolean locationProximityEnabled;
+	private String locationPollFreq;
+	private String locationStoreFreq;
 	// movement prefs
 	private boolean movementEnabled;
-	private int movementPollFreq;
-	private int movementStoreFreq;
+	private String movementPollFreq;
+	private String movementStoreFreq;
 	// weather prefs
 	private boolean weatherEnabled;
-	private int weatherPollFreq;
-	private int weatherStoreFreq;
+	private String weatherPollFreq;
+	private String weatherStoreFreq;
 	// social prefs
 	private boolean socialEnabled;
 	// system prefs
 	private boolean systemEnabled;
 	// derived prefs
 	private boolean derivedEnabled;
-	private int derivedCalcFreq;
-	private int derivedStoreFreq;
+	private String derivedCalcFreq;
+	private String derivedStoreFreq;
 	// general prefs
 	private boolean accuracyPopupEnabled;
-	private int accuracyPopupPeriod;
+	private String accuracyPopupPeriod;
 
 	public IBinder onBind(Intent arg0) {
 		return null;
@@ -97,7 +98,9 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 
 	public void onCreate() {
 		super.onCreate();
-		ctx = this;
+		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_PRIVATE);
+//		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//		ctx = this;
 		getPrefs();
 		startService();
 	}
@@ -105,6 +108,8 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 	private void startService() {
 
 		startMonitors();
+		
+		prefs.registerOnSharedPreferenceChangeListener(this);
 
 		IntentFilter storeFilter = new IntentFilter();
 		storeFilter.addAction(ContextConstants.CONTEXT_STORE_INTENT);
@@ -120,7 +125,9 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 
 	private void stopService() {
 		stopMonitors();
-		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+//		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+		prefs.unregisterOnSharedPreferenceChangeListener(this);
+
 		unregisterReceiver(restartIntentReceiver);
 		unregisterReceiver(contextIntentReceiver);
 	}
@@ -138,7 +145,7 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 			startService(intent);
 			/* Start LocationMonitor */
 			Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-			LocationMonitor.StartThread(locationPollFreq, geocoder);
+			LocationMonitor.StartThread(Integer.parseInt(locationPollFreq), geocoder);
 			// locationStoreTimer.schedule(new LocationStoreTask(),
 			// (locationStoreFreq * 1000)); // seconds*1000
 		}
@@ -147,13 +154,13 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 			intent = new Intent(this.getApplicationContext(), edu.fsu.cs.contextprovider.sensor.AccelerometerService.class);
 			startService(intent);
 			/* Start movement context */
-			MovementMonitor.StartThread(movementPollFreq);
+			MovementMonitor.StartThread(Integer.parseInt(movementPollFreq));
 			// movementStoreTimer.schedule(new MovementStoreTask(),
 			// (movementStoreFreq * 1000)); // seconds*1000
 		}
 		if (weatherEnabled) {
 			/* Start weather monitor */
-			WeatherMonitor.StartThread(weatherPollFreq);
+			WeatherMonitor.StartThread(Integer.parseInt(weatherPollFreq));
 			// weatherStoreTimer.schedule(new WeatherStoreTask(),
 			// (weatherStoreFreq * 1000)); // seconds*1000
 		}
@@ -169,7 +176,7 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		}
 		if (derivedEnabled) {
 			/* Start derived monitor */
-			DerivedMonitor.StartThread(derivedCalcFreq);
+			DerivedMonitor.StartThread(Integer.parseInt(derivedCalcFreq));
 			// derivedStoreTimer.schedule(new DerivedStoreTask(),
 			// (derivedStoreFreq * 1000)); // seconds*1000
 		}
@@ -196,39 +203,35 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 	}
 
 	private void getPrefs() {
-
-		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE);
-
 		accuracyPopupEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_ENABLED, true);
-		accuracyPopupPeriod = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_PERIOD, 45);
+		accuracyPopupPeriod = prefs.getString(ContextConstants.PREFS_ACCURACY_POPUP_FREQ, "45");
 
 		locationEnabled = prefs.getBoolean(ContextConstants.PREFS_LOCATION_ENABLED, true);
-		locationProximityEnabled = prefs.getBoolean(ContextConstants.PREFS_LOCATION_PROXIMITY_ENABLED, true);
-		locationPollFreq = prefs.getInt(ContextConstants.PREFS_LOCATION_POLL_FREQ, 30);
-		locationStoreFreq = prefs.getInt(ContextConstants.PREFS_LOCATION_STORE_FREQ, 30);
+//		locationProximityEnabled = prefs.getBoolean(ContextConstants.PREFS_LOCATION_PROXIMITY_ENABLED, true);
+		locationPollFreq = prefs.getString(ContextConstants.PREFS_LOCATION_POLL_FREQ, "30");
+		locationStoreFreq = prefs.getString(ContextConstants.PREFS_LOCATION_STORE_FREQ, "30");
 
 		movementEnabled = prefs.getBoolean(ContextConstants.PREFS_MOVEMENT_ENABLED, true);
-		movementPollFreq = prefs.getInt(ContextConstants.PREFS_MOVEMENT_POLL_FREQ, 5);
-		movementStoreFreq = prefs.getInt(ContextConstants.PREFS_MOVEMENT_STORE_FREQ, 30);
+		movementPollFreq = prefs.getString(ContextConstants.PREFS_MOVEMENT_POLL_FREQ, "5");
+		movementStoreFreq = prefs.getString(ContextConstants.PREFS_MOVEMENT_STORE_FREQ, "30");
 
 		weatherEnabled = prefs.getBoolean(ContextConstants.PREFS_WEATHER_ENABLED, true);
-		weatherPollFreq = prefs.getInt(ContextConstants.PREFS_WEATHER_POLL_FREQ, 60);
-		weatherStoreFreq = prefs.getInt(ContextConstants.PREFS_WEATHER_STORE_FREQ, 30);
+		weatherPollFreq = prefs.getString(ContextConstants.PREFS_WEATHER_POLL_FREQ, "60");
+		weatherStoreFreq = prefs.getString(ContextConstants.PREFS_WEATHER_STORE_FREQ, "30");
 
 		socialEnabled = prefs.getBoolean(ContextConstants.PREFS_SOCIAL_ENABLED, true);
 		systemEnabled = prefs.getBoolean(ContextConstants.PREFS_SYSTEM_ENABLED, true);
 
 		derivedEnabled = prefs.getBoolean(ContextConstants.PREFS_DERIVED_ENABLED, true);
-		derivedCalcFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_CALC_FREQ, 5);
-		derivedStoreFreq = prefs.getInt(ContextConstants.PREFS_DERIVED_STORE_FREQ, 30);
-
-		prefs.registerOnSharedPreferenceChangeListener(this);
+		derivedCalcFreq = prefs.getString(ContextConstants.PREFS_DERIVED_CALC_FREQ, "5");
+		derivedStoreFreq = prefs.getString(ContextConstants.PREFS_DERIVED_STORE_FREQ, "30");
+		
 	}
 
 	private class ContextPopupTask extends TimerTask {
 		public void run() {
 			toastHandler.sendEmptyMessage(0);
-			popupTimer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
+			popupTimer.schedule(new ContextPopupTask(), (Integer.parseInt(accuracyPopupPeriod) * 1000)); // seconds*1000
 		}
 	}
 
@@ -240,7 +243,7 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			locationStoreTimer.schedule(new LocationStoreTask(), (locationStoreFreq * 1000)); // seconds*1000
+			locationStoreTimer.schedule(new LocationStoreTask(), (Integer.parseInt(locationStoreFreq) * 1000)); // seconds*1000
 		}
 	}
 
@@ -252,7 +255,7 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			movementStoreTimer.schedule(new MovementStoreTask(), (movementStoreFreq * 1000)); // seconds*1000
+			movementStoreTimer.schedule(new MovementStoreTask(), (Integer.parseInt(movementStoreFreq) * 1000)); // seconds*1000
 		}
 	}
 
@@ -264,7 +267,7 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			weatherStoreTimer.schedule(new WeatherStoreTask(), (weatherStoreFreq * 1000)); // seconds*1000
+			weatherStoreTimer.schedule(new WeatherStoreTask(), (Integer.parseInt(weatherStoreFreq) * 1000)); // seconds*1000
 		}
 	}
 
@@ -276,7 +279,7 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			derivedStoreTimer.schedule(new DerivedStoreTask(), (derivedStoreFreq * 1000)); // seconds*1000
+			derivedStoreTimer.schedule(new DerivedStoreTask(), (Integer.parseInt(derivedStoreFreq) * 1000)); // seconds*1000
 		}
 	}
 
@@ -284,17 +287,15 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		super.onDestroy();
 		Toast.makeText(this, "Service Stopped ...", Toast.LENGTH_SHORT).show();
 		stopService();
-		unregisterReceiver(contextIntentReceiver);
-		unregisterReceiver(restartIntentReceiver);
 	}
 
 	private final Handler toastHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			Toast.makeText(getApplicationContext(), "Context Accuracy Popup", Toast.LENGTH_SHORT).show();
-			Intent intent = new Intent(ctx, edu.fsu.cs.contextprovider.ContextAccuracyActivity.class);
+			// Intent intent = new Intent(this, edu.fsu.cs.contextprovider.ContextAccuracyActivity.class);
 			// intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			startActivity(intent);
+			// startActivity(intent);
 		}
 	};
 
@@ -464,20 +465,26 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		
-		getPrefs();
+		if (DEBUG) {
+			Toast.makeText(this, "ContextService prefs changed", Toast.LENGTH_SHORT).show();
+		}
 		
-        if (key.equals(ContextConstants.PREFS_ACCURACY_POPUP_ENABLED) || key.equals(ContextConstants.PREFS_ACCURACY_POPUP_PERIOD)) {
-			AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-			Intent intent = new Intent(getBaseContext(), edu.fsu.cs.contextprovider.wakeup.WakeupAlarmReceiver.class);
-			PendingIntent pi = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
-        	
-        	if (accuracyPopupEnabled) {
-        		manager.cancel(pi);
-    			manager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 10000, accuracyPopupPeriod * 1000, pi);
-        	} else {
-        		manager.cancel(pi);
-        	}
-        }
+		getPrefs();
+//		Toast.makeText(getApplicationContext(), "ContextService prefs changed", Toast.LENGTH_SHORT).show();
+//        if (key.equals(ContextConstants.PREFS_ACCURACY_POPUP_ENABLED) || key.equals(ContextConstants.PREFS_ACCURACY_POPUP_PERIOD)) {
+//        	Toast.makeText(this, "ACCURACY_POPUP changed", Toast.LENGTH_SHORT).show();
+//        	
+//        	AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//			Intent intent = new Intent(getBaseContext(), edu.fsu.cs.contextprovider.wakeup.WakeupAlarmReceiver.class);
+//			PendingIntent pi = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
+//        	
+//        	if (accuracyPopupEnabled) {
+//        		manager.cancel(pi);
+//    			manager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 10000, accuracyPopupPeriod * 1000, pi);
+//        	} else {
+//        		manager.cancel(pi);
+//        	}
+//        }
         			
 		stopService();
 		startService();

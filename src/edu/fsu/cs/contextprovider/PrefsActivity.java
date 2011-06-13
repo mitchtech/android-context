@@ -1,8 +1,10 @@
 package edu.fsu.cs.contextprovider;
 
 import edu.fsu.cs.contextprovider.data.ContextConstants;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,6 +14,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -26,14 +29,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 public class PrefsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	private static final String TAG = "edu.fsu.cs.PrefsActivity";
-	private static final String PREFS_NAME = ContextConstants.CONTEXT_PREFS;
-
+	private static final boolean DEBUG = true;
+	
 	private static final int MENU_ABOUT_ID = Menu.FIRST;
 	private static final int ABOUT_DIALOG = 0;
-	private static final int DIALOG_ABOUT = 0;
+	private static final int DIALOG_ABOUT = 0;		
 
 	private SharedPreferences prefs;
 
@@ -41,14 +45,19 @@ public class PrefsActivity extends PreferenceActivity implements OnSharedPrefere
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.prefs);
+//      PreferenceManager.setDefaultValues(this, ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE, R.xml.prefs, false);
+//      PreferenceManager.setDefaultValues(PrefsActivity.this, R.xml.prefs, false);
 		prefs = getPreferenceScreen().getSharedPreferences();
+//		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+//		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_PRIVATE);
+		prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		
+		prefs.unregisterOnSharedPreferenceChangeListener(this);
 //		Intent intent = new Intent(ContextConstants.CONTEXT_RESTART_INTENT);
 //		sendBroadcast(intent);
 	}
@@ -105,12 +114,37 @@ public class PrefsActivity extends PreferenceActivity implements OnSharedPrefere
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-	    Preference pref = findPreference(key);
-
-	    if (pref instanceof ListPreference) {
-	        ListPreference listPref = (ListPreference) pref;
-	        pref.setSummary(listPref.getEntry());
-	    }
+//	    Preference pref = findPreference(key);
+//	    if (pref instanceof ListPreference) {
+//	        ListPreference listPref = (ListPreference) pref;
+//	        pref.setSummary(listPref.getEntry());
+//	    }
+        if (key.equals(ContextConstants.PREFS_ACCURACY_POPUP_ENABLED) || key.equals(ContextConstants.PREFS_ACCURACY_POPUP_FREQ)) {
+    		if (DEBUG) {
+    			Toast.makeText(this, "ACCURACY_POPUP changed", Toast.LENGTH_SHORT).show();
+    		}
+        	
+        	boolean accuracyPopupEnabled = prefs.getBoolean(ContextConstants.PREFS_ACCURACY_POPUP_ENABLED, true);
+//        	int accuracyPopupPeriod = prefs.getInt(ContextConstants.PREFS_ACCURACY_POPUP_FREQ, 45);
+        	String accuracyPopupPeriod = prefs.getString(ContextConstants.PREFS_ACCURACY_POPUP_FREQ, "45");
+        	int period = Integer.parseInt(accuracyPopupPeriod);
+        	
+        	if (DEBUG) {
+        		Log.d(TAG, "accuracyPopupPeriod: " + accuracyPopupPeriod + "  period: " + period);
+        	}
+        	
+        	
+        	AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+			Intent intent = new Intent(getBaseContext(), edu.fsu.cs.contextprovider.wakeup.WakeupAlarmReceiver.class);
+			PendingIntent pi = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
+        	
+        	if (accuracyPopupEnabled) {
+        		manager.cancel(pi);
+    			manager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 10000, period * 1000, pi);
+        	} else {
+        		manager.cancel(pi);
+        	}
+        }	    	    	    
 	}
 	
 //	private void enabled(final boolean enable) {
