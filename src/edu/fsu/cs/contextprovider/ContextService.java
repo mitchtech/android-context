@@ -22,6 +22,7 @@ import edu.fsu.cs.contextprovider.data.MovementEntity;
 import edu.fsu.cs.contextprovider.data.SocialEntity;
 import edu.fsu.cs.contextprovider.data.SystemEntity;
 import edu.fsu.cs.contextprovider.data.WeatherEntity;
+import edu.fsu.cs.contextprovider.map.FloatingPointGeoPoint;
 import edu.fsu.cs.contextprovider.monitor.DerivedMonitor;
 import edu.fsu.cs.contextprovider.monitor.LocationMonitor;
 import edu.fsu.cs.contextprovider.monitor.MovementMonitor;
@@ -51,6 +52,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 public class ContextService extends Service implements OnSharedPreferenceChangeListener {
@@ -221,6 +223,21 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		derivedCalcFreq = prefs.getString(ContextConstants.PREFS_DERIVED_CALC_FREQ, "5");
 		derivedStoreFreq = prefs.getString(ContextConstants.PREFS_DERIVED_STORE_FREQ, "30");
 		
+//		if (prefs.contains(ContextConstants.HOME_COORDINATES)) {
+//			SharedPreferences.Editor prefsEditor = prefs.edit();
+//			prefsEditor.putBoolean(ContextConstants.PREFS_FIRST_RUN, false);
+//			prefsEditor.commit();
+//		}		
+		
+		if (prefs.contains(ContextConstants.HOME_COORDINATES)) {
+			String homeString = prefs.getString(ContextConstants.HOME_COORDINATES, "");
+			DerivedMonitor.Home = new FloatingPointGeoPoint(homeString);
+		}
+		
+		if (prefs.contains(ContextConstants.WORK_COORDINATES)) {
+			String workString = prefs.getString(ContextConstants.WORK_COORDINATES, "");
+			DerivedMonitor.Work = new FloatingPointGeoPoint(workString);
+		}		
 	}
 
 	private class ContextPopupTask extends TimerTask {
@@ -282,6 +299,7 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		super.onDestroy();
 		Toast.makeText(this, "Service Stopped ...", Toast.LENGTH_SHORT).show();
 		stopService();
+		savePrefs();
 	}
 
 	private final Handler toastHandler = new Handler() {
@@ -489,6 +507,21 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
         			
 		stopService();
 		startService();
+	}
+	
+	private void savePrefs() {
+		SharedPreferences.Editor editor = prefs.edit();		
+		
+		if (DerivedMonitor.Home != null) {
+			String homeString = DerivedMonitor.Home.getGeoPoint().toString();
+			editor.putString(ContextConstants.HOME_COORDINATES, homeString);
+		}
+		
+		if (DerivedMonitor.Work != null) {
+			String workString = DerivedMonitor.Work.getGeoPoint().toString();
+			editor.putString(ContextConstants.WORK_COORDINATES, workString);
+		}
+		editor.commit();
 	}
 
 }

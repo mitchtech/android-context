@@ -91,10 +91,11 @@ import edu.fsu.cs.contextprovider.rpc.IContextProviderService;
 import edu.fsu.cs.contextprovider.sensor.AccelerometerService;
 import edu.fsu.cs.contextprovider.sensor.LightService;
 
-public class ContextExpandableListActivity extends ExpandableListActivity implements OnChildClickListener, TextToSpeech.OnInitListener, OnSharedPreferenceChangeListener {
+public class ContextExpandableListActivity extends ExpandableListActivity implements OnChildClickListener, TextToSpeech.OnInitListener,
+		OnSharedPreferenceChangeListener {
 	private static final String TAG = "ContextExpandableListActivity";
 	private static final boolean DEBUG = true;
-	
+
 	private static final String NAME = "NAME";
 	private static final String VALUE = "VALUE";
 
@@ -160,25 +161,25 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-	
-//		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        PreferenceManager.setDefaultValues(this, ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE, R.xml.prefs, false);
-        prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_PRIVATE);
-        		
-//		if (!prefs.contains(ContextConstants.PREFS_FIRST_RUN)) {
-//			SharedPreferences.Editor prefsEditor = prefs.edit();
-//			prefsEditor.putBoolean(ContextConstants.PREFS_FIRST_RUN, false);
-//			prefsEditor.commit();
-//			
-//			// startup the primary context service (if just installed)
-//			startService(new Intent(this, ContextService.class));
-//
-//			AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//			Intent intent = new Intent(getBaseContext(), edu.fsu.cs.contextprovider.wakeup.WakeupAlarmReceiver.class);
-//			PendingIntent pi = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
-//			manager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 10000, accuracyPopupPeriod * 1000, pi);
-//		}
-        
+
+		PreferenceManager.setDefaultValues(this, ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE, R.xml.prefs, false);
+		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_PRIVATE);
+
+		if (!prefs.contains(ContextConstants.PREFS_FIRST_RUN)) {
+			SharedPreferences.Editor prefsEditor = prefs.edit();
+			prefsEditor.putBoolean(ContextConstants.PREFS_FIRST_RUN, false);
+			prefsEditor.commit();
+			
+			// startup the primary context service (if just installed)
+			startService(new Intent(this, ContextService.class));
+			
+			AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+			Intent intent = new Intent(getBaseContext(), edu.fsu.cs.contextprovider.wakeup.WakeupAlarmReceiver.class);
+			PendingIntent pi = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
+			manager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 10000, accuracyPopupPeriod * 1000,  pi);
+			
+		}
+
 		getPrefs();
 
 		tts = new TextToSpeech(this, this);
@@ -246,7 +247,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		socialEnabled = prefs.getBoolean("PREFS_SOCIAL_ENABLED", true);
 		systemEnabled = prefs.getBoolean("PREFS_SYSTEM_ENABLED", true);
 		derivedEnabled = prefs.getBoolean("PREFS_DERIVED_ENABLED", true);
-		
+
 		ttsEnabled = prefs.getBoolean("PREFS_TTS_ENABLED", false);
 	}
 
@@ -798,7 +799,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		if (DEBUG) {
 			Toast.makeText(this, "ContextExpandableList prefs changed", Toast.LENGTH_SHORT).show();
-		}		
+		}
 	}
 
 }
