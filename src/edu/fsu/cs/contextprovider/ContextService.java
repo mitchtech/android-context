@@ -119,16 +119,11 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		IntentFilter restartFilter = new IntentFilter();
 		restartFilter.addAction(ContextConstants.CONTEXT_RESTART_INTENT);
 		registerReceiver(restartIntentReceiver, restartFilter);
-
-		// if (accuracyPopupEnabled)
-		// popupTimer.schedule(new ContextPopupTask(), (accuracyPopupPeriod * 1000)); // seconds*1000
 	}
 
 	private void stopService() {
 		stopMonitors();
-//		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
 		prefs.unregisterOnSharedPreferenceChangeListener(this);
-
 		unregisterReceiver(restartIntentReceiver);
 		unregisterReceiver(contextIntentReceiver);
 	}
@@ -208,7 +203,6 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		accuracyPopupPeriod = prefs.getString(ContextConstants.PREFS_ACCURACY_POPUP_FREQ, "45");
 
 		locationEnabled = prefs.getBoolean(ContextConstants.PREFS_LOCATION_ENABLED, true);
-//		locationProximityEnabled = prefs.getBoolean(ContextConstants.PREFS_LOCATION_PROXIMITY_ENABLED, true);
 		locationPollFreq = prefs.getString(ContextConstants.PREFS_LOCATION_POLL_FREQ, "30");
 		locationStoreFreq = prefs.getString(ContextConstants.PREFS_LOCATION_STORE_FREQ, "30");
 
@@ -309,7 +303,6 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 			placeAccurate = intent.getIntExtra(ContextConstants.PLACE_ACCURATE, 10);
 			movementAccurate = intent.getIntExtra(ContextConstants.MOVEMENT_ACCURATE, 10);
 			activityAccurate = intent.getIntExtra(ContextConstants.ACTIVITY_ACCURATE, 10);
-			
 //			shelterAccurate = intent.getIntExtra(ContextConstants.SHELTER_ACCURATE, 10);
 //			onPersonAccurate = intent.getIntExtra(ContextConstants.ONPERSON_ACCURATE, 10);
 			shelterAccurate = intent.getBooleanExtra(ContextConstants.SHELTER_ACCURATE, true);

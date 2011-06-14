@@ -69,6 +69,10 @@ public class ContextConstants {
 	public static final String SHELTER_ACCURATE = "SHELTER_ACCURATE";
 	public static final String ONPERSON_ACCURATE = "ONPERSON_ACCURATE";
 	
+	// map activity
+	public static final String HOME_COORDINATES = "HOME_COORDINATES";
+	public static final String WORK_COORDINATES = "WORK_COORDINATES";
+
 	
 	// intent IDs
 	public static final String CONTEXT_STORE_INTENT = "edu.fsu.cs.contextprovider.store";
