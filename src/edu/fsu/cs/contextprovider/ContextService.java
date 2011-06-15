@@ -173,6 +173,12 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 			// SocialMonitor.StartThread(weatherPollFreq);
 		}
 		if (derivedEnabled) {
+			if (prefs.contains(ContextConstants.HOME_COORDINATES)) {
+				
+				String placeString = prefs.getString(ContextConstants.HOME_COORDINATES, "");
+
+			}
+			
 			/* Start derived monitor */
 			DerivedMonitor.StartThread(Integer.parseInt(derivedCalcFreq));
 			// derivedStoreTimer.schedule(new DerivedStoreTask(),
@@ -222,22 +228,22 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		derivedEnabled = prefs.getBoolean(ContextConstants.PREFS_DERIVED_ENABLED, true);
 		derivedCalcFreq = prefs.getString(ContextConstants.PREFS_DERIVED_CALC_FREQ, "5");
 		derivedStoreFreq = prefs.getString(ContextConstants.PREFS_DERIVED_STORE_FREQ, "30");
-		
-//		if (prefs.contains(ContextConstants.HOME_COORDINATES)) {
-//			SharedPreferences.Editor prefsEditor = prefs.edit();
-//			prefsEditor.putBoolean(ContextConstants.PREFS_FIRST_RUN, false);
-//			prefsEditor.commit();
-//		}		
-		
+				
 		if (prefs.contains(ContextConstants.HOME_COORDINATES)) {
 			String homeString = prefs.getString(ContextConstants.HOME_COORDINATES, "");
 			DerivedMonitor.Home = new FloatingPointGeoPoint(homeString);
+		} else {
+			// Default to FSU: 30.4368794, -84.3033083
+			DerivedMonitor.Home = new FloatingPointGeoPoint(30.4368794, -84.3033083);
 		}
 		
 		if (prefs.contains(ContextConstants.WORK_COORDINATES)) {
 			String workString = prefs.getString(ContextConstants.WORK_COORDINATES, "");
 			DerivedMonitor.Work = new FloatingPointGeoPoint(workString);
-		}		
+		} else {
+			// Default to FSU: 30.4368794, -84.3033083
+			DerivedMonitor.Work = new FloatingPointGeoPoint(30.4368794, -84.3033083);
+		}
 	}
 
 	private class ContextPopupTask extends TimerTask {

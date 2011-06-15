@@ -127,7 +127,8 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	private boolean startupEnabled;
 	private boolean accuracyPopupEnabled;
 	private boolean accuracyAudioEnabled;
-	private int accuracyPopupPeriod;
+	private String accuracyPopupString;
+	private long accuracyPopupPeriod;
 	private int accuracyDismissDelay;
 	private boolean ttsEnabled;
 	SharedPreferences prefs;
@@ -165,7 +166,10 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		PreferenceManager.setDefaultValues(this, ContextConstants.CONTEXT_PREFS, MODE_WORLD_READABLE, R.xml.prefs, false);
 		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_PRIVATE);
 
+		getPrefs();
+		
 		if (!prefs.contains(ContextConstants.PREFS_FIRST_RUN)) {
+			Toast.makeText(this, "First Run", Toast.LENGTH_LONG);
 			SharedPreferences.Editor prefsEditor = prefs.edit();
 			prefsEditor.putBoolean(ContextConstants.PREFS_FIRST_RUN, false);
 			prefsEditor.commit();
@@ -177,10 +181,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 			Intent intent = new Intent(getBaseContext(), edu.fsu.cs.contextprovider.wakeup.WakeupAlarmReceiver.class);
 			PendingIntent pi = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
 			manager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 10000, accuracyPopupPeriod * 1000,  pi);
-			
 		}
-
-		getPrefs();
 
 		tts = new TextToSpeech(this, this);
 
@@ -248,6 +249,10 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		systemEnabled = prefs.getBoolean("PREFS_SYSTEM_ENABLED", true);
 		derivedEnabled = prefs.getBoolean("PREFS_DERIVED_ENABLED", true);
 
+//		accuracyPopupPeriod = prefs.getLong(ContextConstants.PREFS_ACCURACY_POPUP_FREQ, 30);
+		accuracyPopupString = prefs.getString(ContextConstants.PREFS_ACCURACY_POPUP_FREQ, "30");
+		accuracyPopupPeriod = Long.parseLong(accuracyPopupString);
+		
 		ttsEnabled = prefs.getBoolean("PREFS_TTS_ENABLED", false);
 	}
 

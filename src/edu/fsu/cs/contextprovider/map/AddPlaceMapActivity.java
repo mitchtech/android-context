@@ -167,47 +167,15 @@ public class AddPlaceMapActivity extends MapActivity {
 		case ContextConstants.SET_WORK_REQUEST:
 			if (DerivedMonitor.Work != null) {
 				
+			} else {
+				
 			}
 			break;
 		default:
 			break;
 		}
-		
-		String placeString = prefs.getString(ContextConstants.HOME_COORDINATES, "");		
-		if (DEBUG) {
-//			Log.d(TAG, "accuracyDismissDelay: " + accuracyDismissDelay + "  dismissDelay: " + dismissDelay);
-		}
 	}
 	
-	
-//	public void createOverlay(){
-//		mapOverlays=mapView.getOverlays();
-//		OverlayItem item; 
-//		drawable = this.getResources().getDrawable(R.drawable.icon_map);
-//		MixOverlay mixOverlay = new MixOverlay(this, drawable);
-//
-//		for(Marker marker:markerList) {
-//			if(marker.isActive()) {
-//				GeoPoint point = new GeoPoint((int)(marker.getLatitude()*1E6), (int)(marker.getLongitude()*1E6));
-//				item = new OverlayItem(point, "", "");
-//				mixOverlay.addOverlay(item);
-//			}
-//		}
-//		//Solved issue 39: only one overlay with all marker instead of one overlay for each marker
-//		mapOverlays.add(mixOverlay);
-//
-//		MixOverlay myOverlay;
-//		drawable = this.getResources().getDrawable(R.drawable.loc_icon);
-//		myOverlay = new MixOverlay(this, drawable);
-//
-//		item = new OverlayItem(startPoint, "Your Position", "");
-//		myOverlay.addOverlay(item);
-//		mapOverlays.add(myOverlay); 
-//	}
-	
-	
-	
-
 	private void update(Location location) {
 		if (location != null) {
 			// Update your current location
@@ -234,10 +202,8 @@ public class AddPlaceMapActivity extends MapActivity {
 
 		// List<Overlay> mapOverlays = map.getOverlays();
 		// mapOverlays.add(new PlaceOverlay(this));
-		// OverlayItem overlayitem = new OverlayItem(point.getGeoPoint(),
-		// "Home", "Home");
-		// overlay = new
-		// PlaceItemizedOverlay(getResources().getDrawable(R.drawable.home));
+		// OverlayItem overlayitem = new OverlayItem(point.getGeoPoint(), "Home", "Home");
+		// overlay = new PlaceItemizedOverlay(getResources().getDrawable(R.drawable.home));
 		// overlay.addOverlay(overlayitem);
 
 		new AlertDialog.Builder(this).setMessage("Add Place?").setIcon(R.drawable.location).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
