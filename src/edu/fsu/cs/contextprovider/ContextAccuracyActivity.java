@@ -236,8 +236,7 @@ public class ContextAccuracyActivity extends Activity implements View.OnClickLis
     	intent.putExtra(ContextConstants.PLACE_ACCURATE, (int) placeBar.getProgress());
   		intent.putExtra(ContextConstants.MOVEMENT_ACCURATE, (int) movementBar.getProgress());
  		intent.putExtra(ContextConstants.ACTIVITY_ACCURATE, (int) activityBar.getProgress());
-//    	intent.putExtra(ContextConstants.SHELTER_ACCURATE, (int) shelterBar.getProgress());
-//    	intent.putExtra(ContextConstants.ONPERSON_ACCURATE, (int) onPersonBar.getProgress());
+
  		if (shelterCorrect.isChecked()) {
  			intent.putExtra(ContextConstants.SHELTER_ACCURATE, true);
  		} else {

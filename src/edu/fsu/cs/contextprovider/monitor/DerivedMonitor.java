@@ -17,8 +17,7 @@ public class DerivedMonitor extends TimerTask {
 	private static final String TAG = "DerivedMonitor";
 	private static final boolean DEBUG = true;
 	private static final boolean DEBUG_TTS = false;
-	private static final long ON_PERSON_STILL_THRESHOLD = 3600000; // 1 hour =
-																	// 1000*60*60
+	private static final long ON_PERSON_STILL_THRESHOLD = 3600000; // 1 hour = 1000*60*60
 
 	private static Timer timer = new Timer();
 	private static DerivedMonitor derivedObj = new DerivedMonitor();

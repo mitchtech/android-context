@@ -340,10 +340,13 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 
 			try {
 				StoreAccuracy(placeAccurate, movementAccurate, activityAccurate, shelterAccurate, onPersonAccurate, response);
+				StoreAllContext();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			
 
 		}
 	};
@@ -361,8 +364,8 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 	private void StoreAllContext() throws Exception {
 		StoreLocation();
 		StoreMovement();
-		StoreWeather();
-		StoreSocial();
+//		StoreWeather();
+//		StoreSocial();
 		StoreSystem();
 		StoreDerived();
 	}

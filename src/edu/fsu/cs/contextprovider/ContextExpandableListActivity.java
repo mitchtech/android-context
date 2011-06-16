@@ -169,7 +169,7 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 		getPrefs();
 		
 		if (!prefs.contains(ContextConstants.PREFS_FIRST_RUN)) {
-			Toast.makeText(this, "First Run", Toast.LENGTH_LONG);
+			Toast.makeText(this, "First Run", Toast.LENGTH_LONG).show();
 			SharedPreferences.Editor prefsEditor = prefs.edit();
 			prefsEditor.putBoolean(ContextConstants.PREFS_FIRST_RUN, false);
 			prefsEditor.commit();
@@ -612,11 +612,11 @@ public class ContextExpandableListActivity extends ExpandableListActivity implem
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == ContextConstants.SET_HOME_REQUEST) {
 			if (resultCode == RESULT_OK) {
-				Toast.makeText(this, "Home Set Sucessfully", Toast.LENGTH_LONG);
+				Toast.makeText(this, "Home Set Sucessfully", Toast.LENGTH_LONG).show();
 			}
 		} else if (requestCode == ContextConstants.SET_WORK_REQUEST) {
 			if (resultCode == RESULT_OK) {
-				Toast.makeText(this, "Work Set Sucessfully", Toast.LENGTH_LONG);
+				Toast.makeText(this, "Work Set Sucessfully", Toast.LENGTH_LONG).show();
 			}
 		}
 	}
