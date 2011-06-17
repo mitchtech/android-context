@@ -13,7 +13,6 @@ import net.smart_entity.TextField;
 
 public class AccuracyEntity extends AbstractEntity {
 	
-    public final DateField Timestamp = new DateField(ContextConstants.CONTEXT_TIMESTAMP);
     public final IntegerField Place = new IntegerField(ContextConstants.DERIVED_PLACE);
     public final IntegerField Movement = new IntegerField(ContextConstants.MOVEMENT_STATE);
     public final IntegerField Activity = new IntegerField(ContextConstants.DERIVED_ACTIVITY);
@@ -38,7 +37,7 @@ public class AccuracyEntity extends AbstractEntity {
 	@Override
 	public AbstractField<?>[] getFields() {
 		// TODO Auto-generated method stub
-		return new AbstractField<?>[]{ Timestamp, Place, Movement, Activity, Shelter, OnPerson, Response };
+		return new AbstractField<?>[]{ Place, Movement, Activity, Shelter, OnPerson, Response };
 	}
 
 	@Override

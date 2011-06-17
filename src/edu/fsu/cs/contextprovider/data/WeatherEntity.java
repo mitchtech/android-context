@@ -12,7 +12,6 @@ import net.smart_entity.TextField;
 
 public class WeatherEntity extends AbstractEntity {
 	
-    public final DateField Timestamp = new DateField(ContextConstants.CONTEXT_TIMESTAMP);
     public final StringField Condition = new StringField(ContextConstants.WEATHER_CONDITION);
     public final IntegerField Temperature = new IntegerField(ContextConstants.WEATHER_TEMPERATURE);
     public final StringField Humidity = new StringField(ContextConstants.WEATHER_HUMIDITY);
@@ -34,7 +33,7 @@ public class WeatherEntity extends AbstractEntity {
 	@Override
 	public AbstractField<?>[] getFields() {
 		// TODO Auto-generated method stub
-		return new AbstractField<?>[]{ Timestamp, Condition, Temperature, Humidity, Wind, HazardLevel };
+		return new AbstractField<?>[]{ Condition, Temperature, Humidity, Wind, HazardLevel };
 	}
 
 	@Override

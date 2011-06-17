@@ -12,7 +12,6 @@ import net.smart_entity.TextField;
 
 public class SystemEntity extends AbstractEntity {
 	
-    public final DateField Timestamp = new DateField(ContextConstants.CONTEXT_TIMESTAMP);    
     public final StringField State = new StringField(ContextConstants.SYSTEM_STATE);
     public final IntegerField BatteryLevel = new IntegerField(ContextConstants.SYSTEM_BATTERY_LEVEL);
     public final TextField Plugged = new TextField(ContextConstants.SYSTEM_PLUGGED);
@@ -36,7 +35,7 @@ public class SystemEntity extends AbstractEntity {
 	@Override
 	public AbstractField<?>[] getFields() {
 		// TODO Auto-generated method stub
-		return new AbstractField<?>[]{ Timestamp, State, BatteryLevel, Plugged, LastPlugged, LastPresent, SSID, Signal };
+		return new AbstractField<?>[]{ State, BatteryLevel, Plugged, LastPlugged, LastPresent, SSID, Signal };
 	}
 
 	@Override

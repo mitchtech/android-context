@@ -12,7 +12,6 @@ import net.smart_entity.TextField;
 
 public class LocationEntity extends AbstractEntity {
 	
-    public final DateField Timestamp = new DateField(ContextConstants.CONTEXT_TIMESTAMP);
     public final StringField Address = new StringField(ContextConstants.LOCATION_ADDRESS);
     public final StringField Neighborhood = new StringField(ContextConstants.LOCATION_HOOD);
     public final StringField Zip = new StringField(ContextConstants.LOCATION_ZIP);
@@ -35,7 +34,7 @@ public class LocationEntity extends AbstractEntity {
 	@Override
 	public AbstractField<?>[] getFields() {
 		// TODO Auto-generated method stub
-		return new AbstractField<?>[]{ Timestamp, Address, Neighborhood, Zip, Latitude, Longitude, Altitude };
+		return new AbstractField<?>[]{ Address, Neighborhood, Zip, Latitude, Longitude, Altitude };
 	}
 
 	@Override

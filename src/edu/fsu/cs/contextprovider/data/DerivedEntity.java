@@ -12,7 +12,6 @@ import net.smart_entity.TextField;
 
 public class DerivedEntity extends AbstractEntity {
 	
-    public final DateField Timestamp = new DateField(ContextConstants.CONTEXT_TIMESTAMP);
     public final TextField Place = new TextField(ContextConstants.DERIVED_PLACE);
     public final TextField Activity = new TextField(ContextConstants.DERIVED_ACTIVITY);
     public final TextField Shelter = new TextField(ContextConstants.DERIVED_SHELTER);
@@ -34,7 +33,7 @@ public class DerivedEntity extends AbstractEntity {
 	@Override
 	public AbstractField<?>[] getFields() {
 		// TODO Auto-generated method stub
-		return new AbstractField<?>[]{ Timestamp, Place, Activity, Shelter, Pocket, Mood };
+		return new AbstractField<?>[]{ Place, Activity, Shelter, Pocket, Mood };
 	}
 
 	@Override

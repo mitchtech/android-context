@@ -12,7 +12,6 @@ import net.smart_entity.TextField;
 
 public class SocialEntity extends AbstractEntity {
 	
-    public final DateField Timestamp = new DateField(ContextConstants.CONTEXT_TIMESTAMP);
     public final TextField Contact = new TextField(ContextConstants.SOCIAL_CONTACT);
     public final TextField Communication = new TextField(ContextConstants.SOCIAL_COMMUNICATION);
     public final StringField Message = new StringField(ContextConstants.SOCIAL_MESSAGE);
@@ -34,7 +33,7 @@ public class SocialEntity extends AbstractEntity {
 	@Override
 	public AbstractField<?>[] getFields() {
 		// TODO Auto-generated method stub
-		return new AbstractField<?>[]{ Timestamp, Contact, Communication, Message, LastIncoming, LastOutgoing };
+		return new AbstractField<?>[]{ Contact, Communication, Message, LastIncoming, LastOutgoing };
 	}
 
 	@Override

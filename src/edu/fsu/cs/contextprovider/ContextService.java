@@ -1,5 +1,6 @@
 package edu.fsu.cs.contextprovider;
 
+import java.io.File;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
@@ -18,6 +19,7 @@ import edu.fsu.cs.contextprovider.data.AccuracyEntity;
 import edu.fsu.cs.contextprovider.data.ContextConstants;
 import edu.fsu.cs.contextprovider.data.DerivedEntity;
 import edu.fsu.cs.contextprovider.data.LocationEntity;
+import edu.fsu.cs.contextprovider.data.LogWriter;
 import edu.fsu.cs.contextprovider.data.MovementEntity;
 import edu.fsu.cs.contextprovider.data.SocialEntity;
 import edu.fsu.cs.contextprovider.data.SystemEntity;
@@ -46,6 +48,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Geocoder;
 import android.media.MediaPlayer;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -94,6 +97,9 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 	// general prefs
 	private boolean accuracyPopupEnabled;
 	private String accuracyPopupPeriod;
+	
+	LogWriter buffer = null;
+	File root = null;
 
 	public IBinder onBind(Intent arg0) {
 		return null;
@@ -104,6 +110,10 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		prefs = getSharedPreferences(ContextConstants.CONTEXT_PREFS, MODE_PRIVATE);
 //		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 //		ctx = this;
+		
+		root = Environment.getExternalStorageDirectory();
+		buffer = new LogWriter(root.getAbsolutePath() + "/Logger/context.txt");
+		
 		getPrefs();
 		startService();
 	}
@@ -374,7 +384,6 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		try {
 			entityManager = EntityManager.GetManager(this);
 			LocationEntity location = new LocationEntity();
-			location.Timestamp.setValue(new Date());
 			location.Address.setValue(LocationMonitor.getAddress());
 			location.Neighborhood.setValue(LocationMonitor.getNeighborhood());
 			location.Zip.setValue(LocationMonitor.getZip());
@@ -385,6 +394,10 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 			// LocationEntity fetchedLocation = (LocationEntity)
 			// entityManager.fetchById(uid);
 			// String address = fetchedLocation.Address.getValue();
+			
+			if (DEBUG) { 
+				buffer.write("" + System.currentTimeMillis() + "," + LocationMonitor.getAddress() + "," + LocationMonitor.getNeighborhood() + "," + LocationMonitor.getZip() + "," + LocationMonitor.getLatitude() + "," + LocationMonitor.getLongitude() + "," + LocationMonitor.getAltitude() + "\n");
+			}
 		} catch (Exception e) {
 			throw e;
 		}
@@ -394,13 +407,16 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		try {
 			entityManager = EntityManager.GetManager(this);
 			MovementEntity movement = new MovementEntity();
-			movement.Timestamp.setValue(new Date());
 			movement.State.setValue(MovementMonitor.getMovementState());
 			movement.Speed.setValue((double) MovementMonitor.getSpeedMph());
 			movement.Bearing.setValue((double) LocationMonitor.getBearing());
 			movement.Steps.setValue((int) AccelerometerService.getStepCount());
 			movement.LastStep.setValue(AccelerometerService.getLastStepTimestamp());
 			int uid = entityManager.store(movement);
+			
+			if (DEBUG) { 
+				buffer.write("" + System.currentTimeMillis() + "," + MovementMonitor.getMovementState() + "," + MovementMonitor.getSpeedMph() + "," + LocationMonitor.getBearing() + "," + AccelerometerService.getStepCount() + "," + AccelerometerService.getLastStepTimestamp() + "\n");
+			}
 		} catch (Exception e) {
 			throw e;
 		}
@@ -410,13 +426,16 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		try {
 			entityManager = EntityManager.GetManager(this);
 			WeatherEntity weather = new WeatherEntity();
-			weather.Timestamp.setValue(new Date());
 			weather.Condition.setValue(WeatherMonitor.getWeatherCond());
 			weather.Temperature.setValue(WeatherMonitor.getWeatherTemp());
 			weather.Humidity.setValue(WeatherMonitor.getWeatherHumid());
 			weather.Wind.setValue(WeatherMonitor.getWeatherWindCond());
 			weather.HazardLevel.setValue(WeatherMonitor.getWeatherHazard());
 			int uid = entityManager.store(weather);
+			
+			if (DEBUG) { 
+				buffer.write("" + System.currentTimeMillis() + "," + WeatherMonitor.getWeatherCond() + "," + WeatherMonitor.getWeatherTemp() + "," + WeatherMonitor.getWeatherHumid() + "," + WeatherMonitor.getWeatherWindCond() + "," + WeatherMonitor.getWeatherHazard() + "\n"); 
+			}
 		} catch (Exception e) {
 			throw e;
 		}
@@ -426,13 +445,16 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		try {
 			entityManager = EntityManager.GetManager(this);
 			SocialEntity social = new SocialEntity();
-			social.Timestamp.setValue(new Date());
 			social.Contact.setValue(SocialMonitor.getContact());
 			social.Communication.setValue(SocialMonitor.getCommunication());
 			social.Message.setValue(SocialMonitor.getMessage());
 			social.LastIncoming.setValue(SocialMonitor.getLastInDate());
 			social.LastOutgoing.setValue(SocialMonitor.getLastOutDate());
 			int uid = entityManager.store(social);
+			
+			if (DEBUG) { 
+				buffer.write("" + System.currentTimeMillis() + "," + SocialMonitor.getContact() + "," + SocialMonitor.getCommunication() + "," + SocialMonitor.getMessage() + "," + SocialMonitor.getLastInDate() + "," + SocialMonitor.getLastOutDate() + "\n"); 
+			}
 		} catch (Exception e) {
 			throw e;
 		}
@@ -442,7 +464,6 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		try {
 			entityManager = EntityManager.GetManager(this);
 			SystemEntity system = new SystemEntity();
-			system.Timestamp.setValue(new Date());
 			system.State.setValue(SystemMonitor.getState());
 			system.BatteryLevel.setValue(SystemMonitor.getBatteryLevel());
 			system.Plugged.setValue(SystemMonitor.isBatteryPluggedString());
@@ -451,6 +472,10 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 			system.SSID.setValue(SystemMonitor.getSSID());
 			system.Signal.setValue(SystemMonitor.getSignal());
 			int uid = entityManager.store(system);
+			
+			if (DEBUG) { 
+				buffer.write("" + System.currentTimeMillis() + "," + SystemMonitor.getState() + "," + SystemMonitor.getBatteryLevel() + "," + SystemMonitor.isBatteryPluggedString() + "," + SystemMonitor.getBatteryLastPluggedDate() + "," + SystemMonitor.getUserLastPresentDate() + "," + SystemMonitor.getSSID() + "\n"); 
+			}
 		} catch (Exception e) {
 			throw e;
 		}
@@ -460,13 +485,16 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		try {
 			entityManager = EntityManager.GetManager(this);
 			DerivedEntity derived = new DerivedEntity();
-			derived.Timestamp.setValue(new Date());
 			derived.Place.setValue(DerivedMonitor.getPlace());
 			derived.Activity.setValue(DerivedMonitor.getActivity());
 			derived.Shelter.setValue(DerivedMonitor.getShelterString());
 			derived.Pocket.setValue(DerivedMonitor.getOnPersonString());
 			derived.Mood.setValue(DerivedMonitor.getMood());
 			int uid = entityManager.store(derived);
+			
+			if (DEBUG) { 
+				buffer.write("" + System.currentTimeMillis() + "," + DerivedMonitor.getPlace() + "," + DerivedMonitor.getActivity() + "," + DerivedMonitor.getShelterString() + "," + DerivedMonitor.getOnPersonString() + "," + DerivedMonitor.getOnPersonString() + "," + DerivedMonitor.getMood() + "\n"); 
+			}
 		} catch (Exception e) {
 			throw e;
 		}
@@ -476,7 +504,6 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 		try {
 			entityManager = EntityManager.GetManager(this);
 			AccuracyEntity accuracy = new AccuracyEntity();
-			accuracy.Timestamp.setValue(new Date());
 			accuracy.Place.setValue(place);
 			accuracy.Movement.setValue(movement);
 			accuracy.Activity.setValue(activity);
@@ -484,6 +511,10 @@ public class ContextService extends Service implements OnSharedPreferenceChangeL
 			accuracy.OnPerson.setValue(onPerson);
 			accuracy.Response.setValue(response);
 			int uid = entityManager.store(accuracy);
+
+			if (DEBUG) { 
+				buffer.write("" + System.currentTimeMillis() + "," + place + "," + movement + "," + activity + "," + shelter + "," + onPerson + "," + response + "\n"); 
+			}
 		} catch (Exception e) {
 			throw e;
 		}

@@ -12,7 +12,6 @@ import net.smart_entity.TextField;
 
 public class MovementEntity extends AbstractEntity {
 	
-    public final DateField Timestamp = new DateField(ContextConstants.CONTEXT_TIMESTAMP);
     public final TextField State = new TextField(ContextConstants.MOVEMENT_STATE);
     public final DoubleField Speed = new DoubleField(ContextConstants.MOVEMENT_SPEED);
     public final DoubleField Bearing = new DoubleField(ContextConstants.MOVEMENT_BEARING);
@@ -34,7 +33,7 @@ public class MovementEntity extends AbstractEntity {
 	@Override
 	public AbstractField<?>[] getFields() {
 		// TODO Auto-generated method stub
-		return new AbstractField<?>[]{ Timestamp, State, Speed, Bearing, Steps, LastStep };
+		return new AbstractField<?>[]{ State, Speed, Bearing, Steps, LastStep };
 	}
 
 	@Override
